@@ -1,0 +1,150 @@
+/* Base Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  background-color: #06070b;
+  color: #e8eaf0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+  line-height: 1.6;
+}
+
+/* Header */
+.site-header {
+  padding: 24px 32px;
+}
+
+.logo-symbol {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4f7cff, #8a5cff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* Hero */
+.hero {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 24px;
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.hero p {
+  max-width: 520px;
+  font-size: 1rem;
+  color: #b8bcc9;
+}
+
+.coming-soon {
+  margin-top: 28px;
+  font-size: 0.85rem;
+  color: #7f85a3;
+  letter-spacing: 0.08em;
+}
+
+/* Philosophy */
+.philosophy {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  padding: 80px 32px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.philosophy-item {
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 28px;
+  text-align: center;
+  color: #cdd1dd;
+  font-size: 0.95rem;
+}
+
+/* Exploring */
+.exploring {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 80px 32px;
+  text-align: center;
+}
+
+.exploring p {
+  color: #b0b4c3;
+}
+
+/* Status */
+.status {
+  text-align: center;
+  padding: 40px 24px 80px;
+  color: #8c91aa;
+  font-size: 0.9rem;
+}
+
+/* Footer */
+.site-footer {
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding: 32px;
+}
+
+.footer-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.brand {
+  font-weight: 500;
+}
+
+.socials {
+  display: flex;
+  gap: 16px;
+  font-size: 0.85rem;
+  color: #6f7590;
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 1.2s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .philosophy {
+    padding: 60px 20px;
+  }
+
+  .exploring {
+    padding: 60px 20px;
+  }
+}
