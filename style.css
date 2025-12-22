@@ -167,14 +167,21 @@ html, body {
 }
 
 .socials a {
+  display: inline-flex;
+  align-items: center;
   color: #6f7590;
-  text-decoration: none;
-  font-size: 0.85rem;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .socials a:hover {
   color: #a9adff;
+  transform: translateY(-2px);
+  filter: drop-shadow(0 0 8px rgba(140, 120, 255, 0.35));
+}
+
+.icon-instagram {
+  width: 18px;
+  height: 18px;
 }
 
 /* Animations */
