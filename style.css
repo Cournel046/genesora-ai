@@ -166,11 +166,15 @@ html, body {
   font-weight: 500;
 }
 
-.socials {
-  display: flex;
-  gap: 16px;
-  font-size: 0.85rem;
+.socials a {
   color: #6f7590;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.3s ease;
+}
+
+.socials a:hover {
+  color: #a9adff;
 }
 
 /* Animations */
