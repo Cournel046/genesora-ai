@@ -35,17 +35,36 @@ html, body {
   padding: 24px 32px;
 }
 
-.logo-symbol {
-  width: 36px;
-  height: 36px;
+.logo {
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #4f7cff, #8a5cff);
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  font-size: 1.6rem;
   font-weight: 600;
-  color: #ffffff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  background: linear-gradient(
+    135deg,
+    #3aa0ff,
+    #6f6bff,
+    #c85cff
+  );
+  background-size: 200% 200%;
+  animation: logoShift 6s ease-in-out infinite;
+
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  filter: drop-shadow(0 0 10px rgba(140, 120, 255, 0.45));
 }
+
 
 /* Hero */
 .hero {
@@ -192,5 +211,16 @@ html, body {
   }
   100% {
     background-position: 20% 30%, 80% 70%, center;
+  }
+}
+@keyframes logoShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
