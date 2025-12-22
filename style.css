@@ -8,14 +8,26 @@
 html, body {
   min-height: 100%;
   color: #e8eaf0;
-  background: linear-gradient(
-    120deg,
-    #0a071a,
-    #1a0f3f,
-    #0a071a
-  );
-  background-size: 320% 320%;
-  animation: gradientShift 24s ease-in-out infinite;
+
+  background:
+    radial-gradient(
+      circle at 35% 40%,
+      rgba(80, 140, 255, 0.45),
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 65% 60%,
+      rgba(190, 90, 255, 0.45),
+      transparent 42%
+    ),
+    linear-gradient(
+      180deg,
+      #05060a,
+      #0a0b12
+    );
+
+  background-size: 220% 220%;
+  animation: auraMove 14s ease-in-out infinite;
 }
 
 /* Header */
@@ -157,14 +169,14 @@ html, body {
 
 
 /* Gradient animation */
-@keyframes gradientShift {
+@keyframes auraMove {
   0% {
-    background-position: 0% 50%;
+    background-position: 20% 30%, 80% 70%, center;
   }
   50% {
-    background-position: 100% 50%;
+    background-position: 80% 40%, 20% 60%, center;
   }
   100% {
-    background-position: 0% 50%;
+    background-position: 20% 30%, 80% 70%, center;
   }
 }
