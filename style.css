@@ -22,7 +22,7 @@ html {
 html, body {
   min-height: 100%;
   color: #e8eaf0;
-  overflow-x: hidden; /* prevent horizontal scroll */
+  overflow-x: hidden;
 
   background:
     radial-gradient(
@@ -223,6 +223,12 @@ body::-webkit-scrollbar {
   font-weight: 500;
 }
 
+/* Social Icons */
+.socials {
+  display: flex;
+  gap: 18px;
+}
+
 .socials a {
   display: inline-flex;
   align-items: center;
@@ -236,7 +242,7 @@ body::-webkit-scrollbar {
   filter: drop-shadow(0 0 8px rgba(140, 120, 255, 0.35));
 }
 
-.icon-instagram {
+.icon {
   width: 18px;
   height: 18px;
 }
