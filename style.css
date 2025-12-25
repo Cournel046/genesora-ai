@@ -121,11 +121,34 @@ html, body {
 }
 
 .philosophy-item {
-  border: 1px solid rgba(255,255,255,0.06);
   padding: 28px;
   text-align: center;
-  color: #cdd1dd;
+
   font-size: 0.95rem;
+  color: #d6daf0;
+
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 12px 30px rgba(0, 0, 0, 0.35);
+
+  transition:
+    transform 0.4s ease,
+    box-shadow 0.4s ease,
+    background 0.4s ease;
+}
+.philosophy-item:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.045);
+
+  box-shadow:
+    0 0 0 1px rgba(170, 140, 255, 0.25),
+    0 18px 40px rgba(0, 0, 0, 0.45);
 }
 
 /* Exploring */
