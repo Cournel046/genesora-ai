@@ -1,15 +1,11 @@
-/* =========================
-   Base Reset
-========================= */
+/* Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* =========================
-   Typography
-========================= */
+/* Typography */
 html {
   font-family:
     Inter,
@@ -23,8 +19,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
-html,
-body {
+html, body {
   min-height: 100%;
   color: #e8eaf0;
   overflow-x: hidden;
@@ -38,10 +33,11 @@ body {
   animation: auraMove 14s ease-in-out infinite;
 }
 
-/* Hide scrollbar but allow scrolling */
+/* Hide scrollbar but keep scrolling */
 body {
   line-height: 1.6;
   letter-spacing: -0.01em;
+
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -51,63 +47,48 @@ body::-webkit-scrollbar {
   height: 0;
 }
 
-/* =========================
-   Header
-========================= */
+/* Header */
 .site-header {
-  padding: 24px 32px;
+  padding: 28px 32px;
 }
 
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+}
+
+/* Logo */
 .logo {
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  position: relative;
+  overflow: hidden;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  background:
-    radial-gradient(
-      circle at 30% 30%,
-      rgba(120, 160, 255, 0.25),
-      rgba(0, 0, 0, 0.85) 70%
-    );
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(120,160,255,.18),
+    rgba(0,0,0,.9) 70%
+  );
 
   box-shadow:
-    0 12px 30px rgba(0, 0, 0, 0.55),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-
-  overflow: hidden;
-}
-
-.logo::after {
-  content: "";
-  position: absolute;
-  inset: -30%;
-  background: radial-gradient(
-    circle,
-    rgba(120, 100, 255, 0.25),
-    transparent 60%
-  );
-  filter: blur(18px);
-  z-index: -1;
+    0 10px 28px rgba(0,0,0,.6),
+    inset 0 0 0 1px rgba(255,255,255,.06);
 }
 
 .logo img {
   width: 70%;
   height: 70%;
   object-fit: contain;
-  border-radius: 50%;
-
-  filter:
-    drop-shadow(0 0 6px rgba(140, 120, 255, 0.45));
+  display: block;
 }
 
-/* =========================
-   Hero
-========================= */
+/* Hero */
 .hero {
   min-height: 70vh;
   display: flex;
@@ -125,6 +106,7 @@ body::-webkit-scrollbar {
   inset: -18%;
   background: radial-gradient(circle, rgba(120,100,255,.12), transparent 60%);
   z-index: -1;
+  pointer-events: none;
 }
 
 .hero h1 {
@@ -137,6 +119,7 @@ body::-webkit-scrollbar {
 .hero p {
   max-width: 520px;
   font-size: 1.05rem;
+  line-height: 1.7;
   color: #b8bcc9;
 }
 
@@ -147,12 +130,10 @@ body::-webkit-scrollbar {
   letter-spacing: .08em;
 }
 
-/* =========================
-   Philosophy
-========================= */
+/* Philosophy */
 .philosophy {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 24px;
   padding: 80px 32px;
   max-width: 900px;
@@ -165,46 +146,47 @@ body::-webkit-scrollbar {
   font-size: .95rem;
   font-weight: 450;
   color: #d6daf0;
+
   background: rgba(255,255,255,.03);
   backdrop-filter: blur(8px);
   border-radius: 14px;
+
   box-shadow:
     0 0 0 1px rgba(255,255,255,.04),
     0 12px 30px rgba(0,0,0,.35);
-  transition: .4s ease;
+
+  transition: all .4s ease;
 }
 
 .philosophy-item:hover {
   transform: translateY(-4px);
+  background: rgba(255,255,255,.045);
   box-shadow:
     0 0 0 1px rgba(170,140,255,.25),
     0 18px 40px rgba(0,0,0,.45);
 }
 
-/* =========================
-   Exploring / Status
-========================= */
-.exploring,
-.status {
-  text-align: center;
-  padding: 80px 32px;
+/* Exploring */
+.exploring {
   max-width: 720px;
-  margin: auto;
+  margin: 0 auto;
+  padding: 80px 32px;
+  text-align: center;
 }
 
 .exploring p {
   color: #b0b4c3;
 }
 
+/* Status */
 .status {
-  padding-top: 40px;
-  font-size: .9rem;
+  text-align: center;
+  padding: 40px 24px 80px;
   color: #8c91aa;
+  font-size: .9rem;
 }
 
-/* =========================
-   Footer
-========================= */
+/* Footer */
 .site-footer {
   border-top: 1px solid rgba(255,255,255,.05);
   padding: 32px;
@@ -212,36 +194,26 @@ body::-webkit-scrollbar {
 
 .footer-inner {
   max-width: 900px;
-  margin: auto;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.socials {
-  display: flex;
-  gap: 16px;
+.brand {
+  font-weight: 500;
 }
 
 .socials a {
   color: #8f94b8;
-  transition: .3s ease;
+  text-decoration: none;
 }
 
 .socials a:hover {
   color: #a9adff;
-  transform: translateY(-2px);
-  filter: drop-shadow(0 0 8px rgba(140,120,255,.35));
 }
 
-.icon-instagram {
-  width: 18px;
-  height: 18px;
-}
-
-/* =========================
-   Animations
-========================= */
+/* Animations */
 .fade-in {
   animation: fadeIn 1.2s ease forwards;
 }
@@ -257,9 +229,7 @@ body::-webkit-scrollbar {
   100% { background-position: 20% 30%, 80% 70%, center; }
 }
 
-/* =========================
-   Reduced Motion
-========================= */
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;
