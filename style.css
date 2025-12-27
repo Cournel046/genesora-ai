@@ -10,6 +10,12 @@ html {
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
+html, body {
+  min-height: 100%;
+  color: #e8eaf0;
+  background: #05060a; /* fallback only */
+  overflow-x: hidden;
+}
 
 .background-layer {
   position: fixed;
@@ -31,6 +37,8 @@ html {
 body {
   line-height: 1.6;
   scrollbar-width: none;
+  background: #05060a;
+  overscroll-behavior: none;
 }
 body::-webkit-scrollbar {
   display: none;
