@@ -1,4 +1,4 @@
-/* Base Reset */
+/* Reset */
 * {
   margin: 0;
   padding: 0;
@@ -7,16 +7,8 @@
 
 /* Typography */
 html {
-  font-family:
-    Inter,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 html, body {
@@ -33,29 +25,25 @@ html, body {
   animation: auraMove 14s ease-in-out infinite;
 }
 
-/* Hide scrollbar but keep scroll */
+/* Hide scrollbar */
 body {
   line-height: 1.6;
-  letter-spacing: -0.01em;
   scrollbar-width: none;
-  -ms-overflow-style: none;
 }
 body::-webkit-scrollbar {
-  width: 0;
-  height: 0;
+  display: none;
 }
 
 /* Header */
 .site-header {
-  padding: 20px 24px;
+  padding: 24px 32px;
 }
 
 .logo {
-  width: 44px;
-  height: 44px;
+  width: 48px; /* slightly bigger */
+  height: 48px;
   border-radius: 50%;
-  display: block;
-  filter: drop-shadow(0 0 10px rgba(120,140,255,0.35));
+  filter: drop-shadow(0 0 12px rgba(120,140,255,0.4));
 }
 
 /* Hero */
@@ -81,7 +69,6 @@ body::-webkit-scrollbar {
 .hero h1 {
   font-size: clamp(2.2rem, 4.5vw, 3.2rem);
   font-weight: 500;
-  letter-spacing: -0.02em;
   margin-bottom: 16px;
 }
 
@@ -94,8 +81,8 @@ body::-webkit-scrollbar {
 .coming-soon {
   margin-top: 28px;
   font-size: 0.85rem;
-  color: #7f85a3;
   letter-spacing: 0.08em;
+  color: #7f85a3;
 }
 
 /* Philosophy */
@@ -111,18 +98,13 @@ body::-webkit-scrollbar {
 .philosophy-item {
   padding: 28px;
   text-align: center;
-  font-size: 0.95rem;
-  color: #d6daf0;
-
   background: rgba(255,255,255,0.03);
   backdrop-filter: blur(8px);
   border-radius: 14px;
-
   box-shadow:
     0 0 0 1px rgba(255,255,255,0.04),
     0 12px 30px rgba(0,0,0,0.35);
-
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  transition: all 0.4s ease;
 }
 
 .philosophy-item:hover {
@@ -138,9 +120,6 @@ body::-webkit-scrollbar {
   margin: 0 auto;
   padding: 80px 32px;
   text-align: center;
-}
-
-.exploring p {
   color: #b0b4c3;
 }
 
@@ -149,7 +128,6 @@ body::-webkit-scrollbar {
   text-align: center;
   padding: 40px 24px 80px;
   color: #8c91aa;
-  font-size: 0.9rem;
 }
 
 /* Footer */
@@ -170,16 +148,25 @@ body::-webkit-scrollbar {
   font-weight: 500;
 }
 
-.socials a {
+.socials {
+  display: flex;
+  gap: 16px;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
   color: #8f94b8;
-  text-decoration: none;
+  transition: all 0.3s ease;
 }
 
-.socials a:hover {
+.icon:hover {
   color: #a9adff;
+  transform: translateY(-2px);
+  filter: drop-shadow(0 0 8px rgba(140,120,255,0.35));
 }
 
-/* Animations */
+/* Fade */
 .fade-in {
   animation: fadeIn 1.2s ease forwards;
 }
@@ -189,16 +176,9 @@ body::-webkit-scrollbar {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Aura animation */
 @keyframes auraMove {
-  0% { background-position: 20% 30%, 80% 70%, center; }
-  50% { background-position: 80% 40%, 20% 60%, center; }
+  0%   { background-position: 20% 30%, 80% 70%, center; }
+  50%  { background-position: 80% 40%, 20% 60%, center; }
   100% { background-position: 20% 30%, 80% 70%, center; }
-}
-
-/* Reduced Motion */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
 }
