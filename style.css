@@ -10,17 +10,11 @@ html {
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
+
 html, body {
   min-height: 100%;
   color: #e8eaf0;
-  background: #05060a; /* fallback only */
   overflow-x: hidden;
-}
-
-.background-layer {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
 
   background:
     radial-gradient(circle at 35% 40%, rgba(80,140,255,0.45), transparent 42%),
@@ -29,16 +23,12 @@ html, body {
 
   background-size: 220% 220%;
   animation: auraMove 14s ease-in-out infinite;
-
-  will-change: background-position;
-  transform: translateZ(0);
 }
+
 /* Hide scrollbar */
 body {
   line-height: 1.6;
   scrollbar-width: none;
-  background: #05060a;
-  overscroll-behavior: none;
 }
 body::-webkit-scrollbar {
   display: none;
