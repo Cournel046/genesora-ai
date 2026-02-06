@@ -178,7 +178,63 @@ body::-webkit-scrollbar {
 
 /* Aura animation */
 @keyframes auraMove {
-  0%   { background-position: 20% 30%, 80% 70%, center; }
-  50%  { background-position: 80% 40%, 20% 60%, center; }
+  0% { background-position: 20% 30%, 80% 70%, center; }
+  50% { background-position: 80% 40%, 20% 60%, center; }
   100% { background-position: 20% 30%, 80% 70%, center; }
+}
+
+
+/* ------------------------------------------------ */
+/* NEW: Pre-Register Section (added exactly as asked) */
+/* ------------------------------------------------ */
+
+.pre-register {
+  text-align: center;
+  margin-top: 60px;
+}
+
+.pre-register h2 {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.pre-register p {
+  opacity: 0.8;
+  margin-bottom: 20px;
+}
+
+.pre-register-form {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pre-register-form input {
+  padding: 12px 18px;
+  border-radius: 30px;
+  border: none;
+  width: 260px;
+  outline: none;
+  font-size: 15px;
+}
+
+.pre-register-form button {
+  padding: 12px 20px;
+  border-radius: 30px;
+  border: none;
+  background: white;
+  color: black;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.pre-register-form button:hover {
+  opacity: 0.85;
+}
+
+.status-msg {
+  margin-top: 15px;
+  font-size: 14px;
+  opacity: 0.8;
 }
