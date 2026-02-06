@@ -102,13 +102,27 @@
     </div>
   </footer>
 
-  <!-- Pre-register script -->
+  <!-- Pre-register Google Forms script -->
   <script>
+    const GOOGLE_FORM_ACTION_URL =
+      "https://docs.google.com/forms/d/e/1FAIpQLSdsg6qqhrPeUYr_52btUnwqI_4TGtOc7Dfh3v5FYW9L5VIorg/formResponse";
+
+    const EMAIL_ENTRY_FIELD = "entry.174128988";
+
     document.getElementById("preRegForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
       const email = document.getElementById("emailInput").value;
       const msg = document.getElementById("preRegMessage");
+
+      const formData = new FormData();
+      formData.append(EMAIL_ENTRY_FIELD, email);
+
+      fetch(GOOGLE_FORM_ACTION_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: formData
+      });
 
       msg.textContent = "Thank you! You’re on the early access list.";
       msg.style.color = "#90EE90";
