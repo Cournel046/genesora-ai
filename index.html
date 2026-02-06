@@ -50,6 +50,19 @@
       <p>Currently in development. Launching soon.</p>
     </section>
 
+    <!-- Pre-Register (ADDED) -->
+    <section class="pre-register fade-in">
+      <h2>Pre-Register for early access</h2>
+      <p>Be the first to try Genesora AI when we launch.</p>
+
+      <form class="pre-register-form" id="preRegForm">
+        <input type="email" id="emailInput" placeholder="Enter your email" required />
+        <button type="submit">Pre-Register</button>
+      </form>
+
+      <p id="preRegMessage" class="status-msg"></p>
+    </section>
+
   </main>
 
   <!-- Footer -->
@@ -88,3 +101,21 @@
       </div>
     </div>
   </footer>
+
+  <!-- Pre-register script -->
+  <script>
+    document.getElementById("preRegForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const email = document.getElementById("emailInput").value;
+      const msg = document.getElementById("preRegMessage");
+
+      msg.textContent = "Thank you! You’re on the early access list.";
+      msg.style.color = "#90EE90";
+
+      document.getElementById("preRegForm").reset();
+    });
+  </script>
+
+</body>
+</html>
