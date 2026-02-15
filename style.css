@@ -235,3 +235,82 @@ body::-webkit-scrollbar {
   font-size: 14px;
   opacity: 0.8;
 }
+/* ===== Intelligent Architecture Section (ADDED) ===== */
+
+.architecture {
+  padding: 100px 32px;
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.architecture h2 {
+  font-size: 32px;
+  margin-bottom: 16px;
+}
+
+.architecture-sub {
+  max-width: 600px;
+  margin: 0 auto 50px;
+  opacity: 0.8;
+}
+
+.architecture-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+.architecture-item {
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(8px);
+  padding: 24px;
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.05),
+    0 12px 30px rgba(0,0,0,0.35);
+  transition: all 0.4s ease;
+}
+
+.architecture-item:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 0 0 1px rgba(170,140,255,0.25),
+    0 18px 40px rgba(0,0,0,0.45);
+}
+
+/* ===== Comparison Section (ADDED) ===== */
+
+.comparison {
+  padding: 100px 32px;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.comparison h2 {
+  font-size: 32px;
+  margin-bottom: 40px;
+}
+
+.comparison-table {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.comparison-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 18px 24px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(8px);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.05);
+}
+
+.comparison-header {
+  font-weight: 600;
+  background: rgba(255,255,255,0.05);
+}
