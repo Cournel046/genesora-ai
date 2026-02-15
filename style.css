@@ -40,7 +40,7 @@ body::-webkit-scrollbar {
 }
 
 .logo {
-  width: 48px; /* slightly bigger */
+  width: 48px;
   height: 48px;
   border-radius: 50%;
   filter: drop-shadow(0 0 12px rgba(120,140,255,0.4));
@@ -130,6 +130,140 @@ body::-webkit-scrollbar {
   color: #8c91aa;
 }
 
+/* ===== Intelligent Architecture Section ===== */
+
+.architecture {
+  padding: 120px 32px;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+}
+
+.architecture::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(170,140,255,0.3), transparent);
+}
+
+.architecture h2 {
+  font-size: 32px;
+  margin-bottom: 16px;
+}
+
+.architecture-sub {
+  max-width: 600px;
+  margin: 0 auto 60px;
+  opacity: 0.8;
+}
+
+.architecture-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  align-items: center;
+}
+
+.architecture-item {
+  max-width: 500px;
+  width: 100%;
+  padding: 28px;
+  border-radius: 14px;
+  text-align: left;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(8px);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.05),
+    0 12px 30px rgba(0,0,0,0.35);
+  position: relative;
+  transition: all 0.4s ease;
+}
+
+.architecture-item:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 0 0 1px rgba(170,140,255,0.25),
+    0 18px 40px rgba(0,0,0,0.45);
+}
+
+.architecture-item::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -20px;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 20px;
+  background: linear-gradient(to bottom, rgba(170,140,255,0.4), transparent);
+}
+
+.architecture-item:last-child::after {
+  display: none;
+}
+
+/* ===== Comparison Section ===== */
+
+.comparison {
+  padding: 120px 32px;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+}
+
+.comparison::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(170,140,255,0.3), transparent);
+}
+
+.comparison h2 {
+  font-size: 32px;
+  margin-bottom: 50px;
+}
+
+.comparison-table {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.comparison-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 20px 28px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.05);
+  transition: all 0.3s ease;
+}
+
+.comparison-row:hover {
+  background: rgba(255,255,255,0.06);
+  transform: scale(1.01);
+}
+
+.comparison-header {
+  font-weight: 600;
+  background: rgba(255,255,255,0.06);
+}
+
+.comparison-row div:last-child {
+  color: #a9adff;
+  font-weight: 500;
+}
+
 /* Footer */
 .site-footer {
   border-top: 1px solid rgba(255,255,255,0.05);
@@ -181,136 +315,4 @@ body::-webkit-scrollbar {
   0% { background-position: 20% 30%, 80% 70%, center; }
   50% { background-position: 80% 40%, 20% 60%, center; }
   100% { background-position: 20% 30%, 80% 70%, center; }
-}
-
-
-
-.pre-register {
-  text-align: center;
-  margin-top: 60px;
-}
-
-.pre-register h2 {
-  font-size: 28px;
-  margin-bottom: 10px;
-}
-
-.pre-register p {
-  opacity: 0.8;
-  margin-bottom: 20px;
-}
-
-.pre-register-form {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.pre-register-form input {
-  padding: 12px 18px;
-  border-radius: 30px;
-  border: none;
-  width: 260px;
-  outline: none;
-  font-size: 15px;
-}
-
-.pre-register-form button {
-  padding: 12px 20px;
-  border-radius: 30px;
-  border: none;
-  background: white;
-  color: black;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.pre-register-form button:hover {
-  opacity: 0.85;
-}
-
-.status-msg {
-  margin-top: 15px;
-  font-size: 14px;
-  opacity: 0.8;
-}
-/* ===== Intelligent Architecture Section (ADDED) ===== */
-
-.architecture {
-  padding: 100px 32px;
-  max-width: 1000px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.architecture h2 {
-  font-size: 32px;
-  margin-bottom: 16px;
-}
-
-.architecture-sub {
-  max-width: 600px;
-  margin: 0 auto 50px;
-  opacity: 0.8;
-}
-
-.architecture-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 24px;
-}
-
-.architecture-item {
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(8px);
-  padding: 24px;
-  border-radius: 14px;
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.05),
-    0 12px 30px rgba(0,0,0,0.35);
-  transition: all 0.4s ease;
-}
-
-.architecture-item:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    0 0 0 1px rgba(170,140,255,0.25),
-    0 18px 40px rgba(0,0,0,0.45);
-}
-
-/* ===== Comparison Section (ADDED) ===== */
-
-.comparison {
-  padding: 100px 32px;
-  max-width: 900px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.comparison h2 {
-  font-size: 32px;
-  margin-bottom: 40px;
-}
-
-.comparison-table {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.comparison-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  padding: 18px 24px;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(8px);
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.05);
-}
-
-.comparison-header {
-  font-weight: 600;
-  background: rgba(255,255,255,0.05);
 }
