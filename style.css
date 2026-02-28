@@ -316,3 +316,76 @@ body::-webkit-scrollbar {
   50% { background-position: 80% 40%, 20% 60%, center; }
   100% { background-position: 20% 30%, 80% 70%, center; }
 }
+/* ===== Premium Pre-Register Section (Final Fix) ===== */
+
+.pre-register {
+  text-align: center;
+  margin-top: 120px;
+  padding: 80px 0;
+}
+
+.pre-register h2 {
+  font-size: 32px;
+  margin-bottom: 14px;
+}
+
+.pre-register p {
+  opacity: 0.75;
+  margin-bottom: 28px;
+  font-size: 1rem;
+}
+
+.pre-register-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+/* Glass morph form style */
+.pre-register-form {
+  display: flex;
+  gap: 12px;
+  background: rgba(255,255,255,0.07);
+  padding: 14px 18px;
+  border-radius: 40px;
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.09),
+    0 12px 30px rgba(0,0,0,0.35);
+}
+
+.pre-register-form input {
+  padding: 12px 20px;
+  border-radius: 30px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  outline: none;
+  color: white;
+  width: 260px;
+}
+
+.pre-register-form input::placeholder {
+  color: rgba(255,255,255,0.55);
+}
+
+.pre-register-form button {
+  padding: 12px 24px;
+  border-radius: 30px;
+  border: none;
+  background: white;
+  color: black;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.pre-register-form button:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.status-msg {
+  margin-top: 20px;
+  font-size: 15px;
+  opacity: 0.8;
+  text-align: center;
+}
