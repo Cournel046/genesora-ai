@@ -402,11 +402,8 @@ body::-webkit-scrollbar {
   align-items: center;
   text-align: center;
 }
-/* Ultra-tight spacing between comparison and pre-register */
-.comparison {
-  padding-bottom: 10px !important;
-}
-
+/* Slight upward pull for pre-register section */
 .pre-register {
-  margin-top: 5px !important;
+  margin-top: -20px !important;  /* adjust spacing upward */
+  padding-top: 0 !important;
 }
