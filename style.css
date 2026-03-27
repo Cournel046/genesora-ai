@@ -204,3 +204,21 @@ body::-webkit-scrollbar {
   position: relative;
   z-index: 1;
 }
+/* About page text */
+.about-section {
+  max-width: 760px;
+  margin: 60px auto;
+  padding: 0 24px;
+  text-align: center;
+}
+
+.about-section p {
+  font-size: 1.18rem;
+  line-height: 1.9;
+  color: #b8bcc9;
+  margin-bottom: 22px;   /* spacing between paragraphs */
+}
+
+.about-section p:last-child {
+  margin-bottom: 0;
+}
