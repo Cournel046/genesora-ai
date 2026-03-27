@@ -207,16 +207,21 @@ body::-webkit-scrollbar {
 /* About page text */
 .about-section {
   max-width: 760px;
-  margin: 60px auto;
+  margin: 160px auto 80px auto;   /* TOP SPACE for fixed header */
   padding: 0 24px;
   text-align: center;
 }
 
 .about-section p {
-  font-size: 1.18rem;
-  line-height: 1.9;
+  font-size: 1.2rem;
+  line-height: 2;
   color: #b8bcc9;
-  margin-bottom: 22px;   /* spacing between paragraphs */
+  margin-bottom: 26px;   /* spacing between paragraphs */
+}
+
+.about-section p:first-child {
+  font-size: 1.35rem;    /* first line slightly bigger */
+  color: #e8eaf0;
 }
 
 .about-section p:last-child {
