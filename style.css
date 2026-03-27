@@ -190,6 +190,11 @@ body::-webkit-scrollbar {
 }
 
 /* ================= PRE REGISTER ================= */
+.pre-register-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
 .pre-register-form {
   display: flex;
   gap: 12px;
