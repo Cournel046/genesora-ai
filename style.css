@@ -1,11 +1,11 @@
-/* Reset */
+/* ================= RESET ================= */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Typography */
+/* ================= TYPOGRAPHY ================= */
 html {
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -15,6 +15,13 @@ html, body {
   min-height: 100%;
   color: #e8eaf0;
   overflow-x: hidden;
+}
+
+/* ================= ANIMATED BACKGROUND ================= */
+.background-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
 
   background:
     radial-gradient(circle at 35% 40%, rgba(80,140,255,0.45), transparent 42%),
@@ -34,19 +41,45 @@ body::-webkit-scrollbar {
   display: none;
 }
 
-/* Header */
+/* ================= HEADER ================= */
 .site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
   padding: 24px 32px;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .logo {
   width: 48px;
   height: 48px;
-  border-radius: 50%;
   filter: drop-shadow(0 0 12px rgba(120,140,255,0.4));
 }
 
-/* Hero */
+.nav-links {
+  display: flex;
+  gap: 24px;
+}
+
+.nav-links a {
+  color: #a9adff;
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.25s;
+}
+
+.nav-links a:hover {
+  color: white;
+}
+
+/* ================= HERO ================= */
 .hero {
   min-height: 70vh;
   display: flex;
@@ -55,15 +88,7 @@ body::-webkit-scrollbar {
   align-items: center;
   text-align: center;
   padding: 0 24px;
-  position: relative;
-}
-
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: -18%;
-  background: radial-gradient(circle, rgba(120,100,255,0.12), transparent 60%);
-  z-index: -1;
+  margin-top: 120px;
 }
 
 .hero h1 {
@@ -85,7 +110,7 @@ body::-webkit-scrollbar {
   color: #7f85a3;
 }
 
-/* Philosophy */
+/* ================= PHILOSOPHY ================= */
 .philosophy {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -109,57 +134,29 @@ body::-webkit-scrollbar {
 
 .philosophy-item:hover {
   transform: translateY(-4px);
-  box-shadow:
-    0 0 0 1px rgba(170,140,255,0.25),
-    0 18px 40px rgba(0,0,0,0.45);
 }
 
-/* Exploring */
-.exploring {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 80px 32px;
-  text-align: center;
-  color: #b0b4c3;
-}
-
-/* Status */
+/* ================= SECTIONS ================= */
+.exploring,
+.architecture,
+.comparison,
+.pre-register,
 .status {
-  text-align: center;
-  padding: 40px 24px 80px;
-  color: #8c91aa;
-}
-
-/* Intelligent Architecture */
-.architecture {
   padding: 120px 32px;
   max-width: 900px;
   margin: 0 auto;
   text-align: center;
-  position: relative;
 }
 
-.architecture h2 {
-  font-size: 32px;
-  margin-bottom: 16px;
-}
-
-.architecture-sub {
-  max-width: 600px;
-  margin: 0 auto 60px;
-  opacity: 0.8;
-}
-
+/* ================= ARCHITECTURE ================= */
 .architecture-grid {
   display: flex;
   flex-direction: column;
   gap: 40px;
-  align-items: center;
+  margin-top: 40px;
 }
 
 .architecture-item {
-  max-width: 500px;
-  width: 100%;
   padding: 28px;
   border-radius: 14px;
   text-align: left;
@@ -168,30 +165,14 @@ body::-webkit-scrollbar {
   box-shadow:
     0 0 0 1px rgba(255,255,255,0.05),
     0 12px 30px rgba(0,0,0,0.35);
-  transition: all 0.4s ease;
 }
 
-.architecture-item:hover {
-  transform: translateY(-4px);
-}
-
-/* Comparison */
-.comparison {
-  padding: 120px 32px;
-  max-width: 900px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.comparison h2 {
-  font-size: 32px;
-  margin-bottom: 50px;
-}
-
+/* ================= COMPARISON ================= */
 .comparison-table {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  margin-top: 40px;
 }
 
 .comparison-row {
@@ -201,7 +182,6 @@ body::-webkit-scrollbar {
   border-radius: 12px;
   background: rgba(255,255,255,0.04);
   backdrop-filter: blur(10px);
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.05);
 }
 
 .comparison-header {
@@ -209,33 +189,7 @@ body::-webkit-scrollbar {
   background: rgba(255,255,255,0.08);
 }
 
-.comparison-row div:last-child {
-  color: #a9adff;
-  font-weight: 500;
-}
-
-/* Pre-register */
-.pre-register {
-  text-align: center;
-  margin-top: 40px;
-}
-
-.pre-register h2 {
-  font-size: 32px;
-  margin-bottom: 14px;
-}
-
-.pre-register p {
-  opacity: 0.75;
-  margin-bottom: 28px;
-  font-size: 1rem;
-}
-
-.pre-register-wrapper {
-  display: flex;
-  justify-content: center;
-}
-
+/* ================= PRE REGISTER ================= */
 .pre-register-form {
   display: flex;
   gap: 12px;
@@ -243,9 +197,7 @@ body::-webkit-scrollbar {
   padding: 14px 18px;
   border-radius: 40px;
   backdrop-filter: blur(10px);
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.09),
-    0 12px 30px rgba(0,0,0,0.35);
+  margin-top: 20px;
 }
 
 .pre-register-form input {
@@ -253,7 +205,6 @@ body::-webkit-scrollbar {
   border-radius: 30px;
   background: rgba(255,255,255,0.15);
   border: none;
-  outline: none;
   color: white;
   width: 260px;
 }
@@ -268,7 +219,7 @@ body::-webkit-scrollbar {
   cursor: pointer;
 }
 
-/* Footer */
+/* ================= FOOTER ================= */
 .site-footer {
   border-top: 1px solid rgba(255,255,255,0.05);
   padding: 32px;
@@ -277,18 +228,14 @@ body::-webkit-scrollbar {
 .footer-inner {
   max-width: 900px;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.brand {
-  font-weight: 500;
+  text-align: center;
 }
 
 .socials {
   display: flex;
   gap: 16px;
+  justify-content: center;
+  margin-top: 10px;
 }
 
 .icon {
@@ -297,7 +244,7 @@ body::-webkit-scrollbar {
   color: #8f94b8;
 }
 
-/* Fade */
+/* ================= ANIMATIONS ================= */
 .fade-in {
   animation: fadeIn 1.2s ease forwards;
 }
@@ -307,7 +254,6 @@ body::-webkit-scrollbar {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Aura animation */
 @keyframes auraMove {
   0% { background-position: 20% 30%, 80% 70%, center; }
   50% { background-position: 80% 40%, 20% 60%, center; }
