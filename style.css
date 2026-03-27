@@ -227,3 +227,120 @@ body::-webkit-scrollbar {
 .about-section p:last-child {
   margin-bottom: 0;
 }
+/* ===== Architecture Section ===== */
+
+.architecture {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 120px 32px;
+  text-align: center;
+}
+
+.architecture-sub {
+  max-width: 600px;
+  margin: 0 auto 60px;
+  opacity: 0.8;
+}
+
+.architecture-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  align-items: center;
+}
+
+.architecture-item {
+  max-width: 520px;
+  width: 100%;
+  padding: 28px;
+  border-radius: 14px;
+  text-align: left;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(8px);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.05),
+    0 12px 30px rgba(0,0,0,0.35);
+  transition: 0.3s;
+}
+
+.architecture-item:hover {
+  transform: translateY(-4px);
+}
+
+/* ===== Comparison Section ===== */
+
+.comparison {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 120px 32px;
+  text-align: center;
+}
+
+.comparison-table {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 40px;
+}
+
+.comparison-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 20px 28px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+.comparison-header {
+  font-weight: 600;
+  background: rgba(255,255,255,0.06);
+}
+
+/* ===== Pre-register Section ===== */
+
+.pre-register {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 120px 32px;
+  text-align: center;
+}
+
+.pre-register-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pre-register-form {
+  display: flex;
+  gap: 12px;
+  background: rgba(255,255,255,0.07);
+  padding: 14px 18px;
+  border-radius: 40px;
+  backdrop-filter: blur(10px);
+}
+
+.pre-register-form input {
+  padding: 12px 20px;
+  border-radius: 30px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  outline: none;
+  color: white;
+}
+
+.pre-register-form button {
+  padding: 12px 24px;
+  border-radius: 30px;
+  border: none;
+  background: white;
+  color: black;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.status-msg {
+  margin-top: 20px;
+}
