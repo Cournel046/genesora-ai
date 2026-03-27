@@ -58,9 +58,18 @@
 
 <body>
 
+  <!-- Animated Background -->
+  <div class="background-layer"></div>
+
   <!-- Header -->
   <header class="site-header">
-    <img src="favicon.png" alt="Genesora AI logo" class="logo" />
+    <div class="nav">
+      <img src="favicon.png" alt="Genesora AI logo" class="logo" />
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+      </div>
+    </div>
   </header>
 
   <!-- Main -->
@@ -224,7 +233,7 @@
         body: formData
       });
 
-      msg.textContent = "Thank you! You’re on the early access list.";
+      msg.textContent = "Thank you! You're on the early access list.";
       msg.style.color = "#90EE90";
 
       document.getElementById("preRegForm").reset();
