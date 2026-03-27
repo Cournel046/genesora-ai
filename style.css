@@ -36,9 +36,13 @@ body::-webkit-scrollbar {
 
 /* Header */
 .site-header {
-  position: relative;
-  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10000;
   padding: 24px 0;
+  background: transparent;
 }
 
 .logo {
@@ -67,6 +71,8 @@ body::-webkit-scrollbar {
   text-decoration: none;
   font-size: 14px;
   transition: 0.25s;
+  position: relative;
+  z-index: 10001;
 }
 
 .nav-links a:hover {
@@ -83,6 +89,7 @@ body::-webkit-scrollbar {
   text-align: center;
   padding: 0 24px;
   position: relative;
+  margin-top: 120px;   /* THIS FIXES NAVBAR CLICK ISSUE */
 }
 
 .hero::before {
@@ -91,6 +98,7 @@ body::-webkit-scrollbar {
   inset: -18%;
   background: radial-gradient(circle, rgba(120,100,255,0.12), transparent 60%);
   z-index: -1;
+  pointer-events: none;
 }
 
 .hero h1 {
@@ -188,4 +196,11 @@ body::-webkit-scrollbar {
   0% { background-position: 20% 30%, 80% 70%, center; }
   50% { background-position: 80% 40%, 20% 60%, center; }
   100% { background-position: 20% 30%, 80% 70%, center; }
+}
+.hero,
+.philosophy,
+.exploring,
+.status {
+  position: relative;
+  z-index: 1;
 }
