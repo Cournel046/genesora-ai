@@ -84,6 +84,12 @@
       font-size: 1.3rem;
       padding: 0.3rem;
     }
+    
+    /* FIX: Hide mobile menu on desktop screens */
+    .mobile-menu {
+      display: none;
+    }
+
     @media(max-width: 720px) {
       .nav-center, .nav-cta { display: none; }
       .hamburger { display: block; }
@@ -406,7 +412,6 @@
 <body>
   <div class="background-layer"></div>
 
-  <!-- Header -->
   <header class="site-header">
     <div class="nav">
       <a href="index.html">
@@ -434,7 +439,6 @@
 
   <main>
 
-    <!-- ── HERO ── -->
     <section class="hero fade-in" style="padding-top:5rem; padding-bottom:3.5rem;">
       <p class="hero-eyebrow">Now in development &nbsp;·&nbsp; Launching soon</p>
       <h1>The next step<br/>after chat.</h1>
@@ -449,7 +453,6 @@
 
     <hr class="section-divider" />
 
-    <!-- ── THREE PILLARS ── -->
     <section class="pillars-section fade-in" id="how-it-works">
       <h2>One platform. Three experiences.</h2>
       <p class="section-sub">Designed around presence, emotion, and understanding — not just instructions.</p>
@@ -477,7 +480,6 @@
 
     <hr class="section-divider" />
 
-    <!-- ── AI VIDEO CALL ── -->
     <section class="video-section fade-in" id="ai-video-call">
       <h2>Talk face-to-face with an AI human you design.</h2>
       <p>
@@ -516,7 +518,6 @@
 
     <hr class="section-divider" />
 
-    <!-- ── RECRUITMENT ── -->
     <section class="recruit-section fade-in" id="recruitment">
       <h2>AI Recruitment — built into the platform.</h2>
       <p class="section-sub">Genesora is the AI middleman between people and companies. No recruiters. No waiting rooms.</p>
@@ -580,7 +581,6 @@
 
     <hr class="section-divider" />
 
-    <!-- ── PRE-REGISTER ── -->
     <section class="prereg-section fade-in" id="pre-register">
       <h2>Get early access to Genesora AI</h2>
       <p>Launching soon. Be first in line — tell us who you are.</p>
@@ -626,7 +626,6 @@
 
   </main>
 
-  <!-- Footer -->
   <footer class="site-footer">
     <div class="footer-inner">
       <p class="brand">Genesora AI</p>
