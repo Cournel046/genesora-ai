@@ -527,3 +527,21 @@ h2 {
     font-size: 12px;
   }
 }
+/* FIX NAVBAR BLUE LINKS */
+.nav-center a,
+.mobile-menu a,
+.nav-cta {
+  text-decoration: none !important;
+}
+
+.nav-center a {
+  color: rgba(255,255,255,0.72) !important;
+}
+
+.nav-center a:hover {
+  color: #ffffff !important;
+}
+
+.nav-cta {
+  color: #ffffff !important;
+}
