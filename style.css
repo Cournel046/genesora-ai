@@ -515,15 +515,16 @@ h2 {
     padding: 20px;
   }
 
-  .nav {
-    flex-direction: column;
-    gap: 20px;
+  .nav-center {
+    display: none;
   }
 
-  .nav-center {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 14px;
+  .nav-cta {
+    display: none;
+  }
+
+  .hamburger {
+    display: block;
   }
 
   .hero h1 {
