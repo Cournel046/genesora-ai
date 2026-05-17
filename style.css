@@ -527,35 +527,3 @@ h2 {
     font-size: 12px;
   }
 }
-/* ===== FIX NAVBAR LINKS ===== */
-
-.nav-links a {
-  color: #d7dcef !important;
-  text-decoration: none !important;
-
-  font-family: 'Outfit', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-
-  padding: 10px 18px;
-
-  border-radius: 999px;
-
-  background: rgba(255,255,255,0.04);
-
-  border: 1px solid rgba(255,255,255,0.08);
-
-  backdrop-filter: blur(10px);
-
-  transition: all 0.25s ease;
-}
-
-.nav-links a:hover {
-  color: white !important;
-
-  background: rgba(255,255,255,0.08);
-
-  border-color: rgba(255,255,255,0.15);
-
-  transform: translateY(-2px);
-}
