@@ -361,6 +361,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1.4rem;
+      align-items: stretch;
     }
     @media(max-width: 620px) { .forms-row { grid-template-columns: 1fr; } }
 
@@ -370,6 +371,14 @@
       border-radius: 14px;
       padding: 1.8rem 1.4rem;
       text-align: left;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .form-card form {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
     }
     .form-card.user-card { border-top: 2px solid rgba(39,174,96,0.6); }
     .form-card.ent-card  { border-top: 2px solid rgba(41,128,185,0.6); }
@@ -402,7 +411,7 @@
       width: 100%; background: #27ae60; color: #fff;
       border: none; padding: 0.72rem;
       border-radius: 8px; font-size: 0.88rem; font-weight: 700;
-      cursor: pointer; margin-top: 0.2rem;
+      cursor: pointer; margin-top: auto; 
       transition: background 0.2s, transform 0.15s;
     }
     .submit-user:hover { background: #219150; transform: translateY(-1px); }
@@ -411,7 +420,7 @@
       width: 100%; background: #2980b9; color: #fff;
       border: none; padding: 0.72rem;
       border-radius: 8px; font-size: 0.88rem; font-weight: 700;
-      cursor: pointer; margin-top: 0.2rem;
+      cursor: pointer; margin-top: auto; 
       transition: background 0.2s, transform 0.15s;
     }
     .submit-ent:hover { background: #2471a3; transform: translateY(-1px); }
@@ -633,7 +642,6 @@
               <option>1–10</option><option>11–50</option><option>51–200</option><option>201–500</option><option>500+</option>
             </select>
             <input type="email" id="entEmail" placeholder="Work email address" required />
-            <input type="text" placeholder="Roles you're hiring for" />
             <input type="text" placeholder="Country" />
             <button type="submit" class="submit-ent">Join as an Enterprise — Get Early Access</button>
           </form>
