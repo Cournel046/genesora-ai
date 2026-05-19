@@ -81,22 +81,19 @@
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 100;
-      background: rgba(8,16,30,0.6);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: none; 
+      background: transparent;
+      border: none;
     }
     .nav {
-      max-width: 1100px;
+      max-width: 1300px;
       margin: 0 auto;
-      padding: 0 32px;
-      height: 68px;
+      padding: 24px 40px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       position: relative;
     }
-    .logo { height: 34px; width: auto; display: block; }
+    .logo { height: 42px; width: auto; display: block; position: relative; z-index: 2; }
     .nav-links {
       display: flex;
       align-items: center;
@@ -514,14 +511,17 @@
     .footer-bottom a:hover { color: var(--text2); }
 
     /* ── Responsive ── */
-    @media (max-width: 700px) {
+    @media (max-width: 900px) {
       .nav-links { display: none; }
+    }
+    @media (max-width: 700px) {
+      .nav { padding: 16px 20px; }
       .nav-cta-group { display: none; }
       .page-hero { padding: 90px 20px 48px; }
       .status-bar { grid-template-columns: 1fr; padding: 0 20px 40px; }
       .roadmap-wrap { padding: 0 20px 80px; }
       .timeline { padding-left: 28px; }
-      .timeline::before { left: 9px; } /* Perfect alignment for Mobile */
+      .timeline::before { left: 9px; } 
       .phase-dot { left: -28px; width: 18px; height: 18px; }
       .phase-dot-inner { width: 6px; height: 6px; }
       .phase-card { padding: 24px 20px; }
