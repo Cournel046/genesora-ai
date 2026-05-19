@@ -79,10 +79,10 @@
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 100;
-      background: rgba(8,16,30,0.85);
+      background: rgba(8,16,30,0.6);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
+      border-bottom: none; /* Fixed black banner styling */
     }
     .nav {
       max-width: 1100px;
@@ -91,14 +91,17 @@
       height: 68px;
       display: flex;
       align-items: center;
-      gap: 40px;
+      justify-content: space-between;
+      position: relative;
     }
     .logo { height: 34px; width: auto; display: block; }
     .nav-links {
       display: flex;
       align-items: center;
       gap: 32px;
-      margin-left: auto;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
     }
     .nav-links a {
       font-family: var(--font-body);
@@ -111,7 +114,7 @@
     }
     .nav-links a:hover,
     .nav-links a.active { color: var(--text); }
-    .nav-cta-group { display: flex; gap: 10px; margin-left: 16px; }
+    .nav-cta-group { display: flex; gap: 10px; }
     .nav-btn {
       font-family: var(--font-body);
       font-size: 13px;
@@ -147,7 +150,7 @@
     .page-hero {
       max-width: 800px;
       margin: 0 auto;
-      padding: 96px 32px 64px;
+      padding: 120px 32px 64px;
       text-align: center;
     }
     .page-label {
@@ -332,19 +335,25 @@
       line-height: 1.65;
     }
 
-    /* ── Founder section ── */
-    .founder-section {
+    /* ── Founders section Grid ── */
+    .founders-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 32px;
+    }
+    .founder-card {
       background: var(--bg2);
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 48px;
-      display: grid;
-      grid-template-columns: 180px 1fr;
-      gap: 48px;
-      align-items: start;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 24px;
     }
     .founder-avatar {
-      width: 180px; height: 180px;
+      width: 100px; height: 100px;
       border-radius: 16px;
       background: linear-gradient(135deg, var(--blue-soft), var(--green-soft));
       border: 1px solid var(--border2);
@@ -352,7 +361,7 @@
       align-items: center;
       justify-content: center;
       font-family: var(--font-head);
-      font-size: 48px;
+      font-size: 40px;
       font-weight: 600;
       color: var(--blue);
       flex-shrink: 0;
@@ -367,7 +376,7 @@
     }
     .founder-name {
       font-family: var(--font-head);
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 600;
       color: var(--text);
       margin-bottom: 4px;
@@ -388,6 +397,7 @@
       display: flex;
       gap: 12px;
       margin-top: 24px;
+      flex-wrap: wrap; /* Ensures buttons won't overflow */
     }
     .founder-link {
       display: inline-flex;
@@ -433,14 +443,16 @@
       background: var(--bg);
       border: 1px solid var(--border2);
       border-radius: 12px;
-      padding: 14px 28px;
+      padding: 14px 20px;
       font-family: var(--font-head);
-      font-size: 18px;
+      font-size: clamp(14px, 4vw, 18px);
       font-weight: 500;
       color: var(--text);
       text-decoration: none;
       transition: all 0.2s;
       margin-bottom: 24px;
+      word-break: break-all;
+      max-width: 100%;
     }
     .contact-email:hover { border-color: var(--blue); color: var(--blue); }
     .contact-note {
@@ -570,19 +582,19 @@
       .mission-block { grid-template-columns: 1fr; gap: 40px; }
       .pillars-grid { grid-template-columns: 1fr; }
       .values-grid { grid-template-columns: 1fr; }
-      .founder-section { grid-template-columns: 1fr; padding: 32px; }
-      .founder-avatar { width: 100px; height: 100px; font-size: 36px; }
+      .founders-grid { grid-template-columns: 1fr; }
+      .founder-card { padding: 32px; }
       .footer-inner { grid-template-columns: 1fr; text-align: center; }
       .footer-social { justify-content: center; }
       .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+      .nav-links { display: none; } /* Hide on smaller screens to rely on hamburger menu typically present across site */
     }
     @media (max-width: 600px) {
       .nav { padding: 0 20px; gap: 16px; }
-      .nav-links { gap: 16px; }
       .nav-cta-group { display: none; }
-      .page-hero { padding: 72px 20px 48px; }
+      .page-hero { padding: 90px 20px 48px; }
       .content-wrap { padding: 0 20px 80px; }
-      .founder-section { padding: 24px; }
+      .founder-card { padding: 24px; }
       .contact-block { padding: 36px 24px; }
       .footer-inner { padding: 32px 20px; }
     }
@@ -590,12 +602,10 @@
 </head>
 <body>
 
-  <!-- Animated Background -->
   <div class="background-layer">
     <div class="grid-overlay"></div>
   </div>
 
-  <!-- Header -->
   <header class="site-header">
     <div class="nav">
       <a href="index.html">
@@ -615,7 +625,6 @@
 
   <main>
 
-    <!-- Page Hero -->
     <div class="page-hero">
       <div class="page-label fade-in">Our mission</div>
       <h1 class="fade-in fade-in-delay-1">
@@ -631,7 +640,6 @@
 
     <div class="content-wrap">
 
-      <!-- Mission -->
       <div class="mission-block scroll-reveal">
         <div>
           <div class="mission-label">Why we exist</div>
@@ -664,7 +672,6 @@
 
       <div class="section-divider"></div>
 
-      <!-- What we are building -->
       <div class="section-heading scroll-reveal">
         <div class="sh-label">What we are building</div>
         <h2>Three pillars. One platform.</h2>
@@ -703,7 +710,6 @@
 
       <div class="section-divider"></div>
 
-      <!-- Values -->
       <div class="section-heading scroll-reveal">
         <div class="sh-label">What we stand for</div>
         <h2>Our core values.</h2>
@@ -741,50 +747,78 @@
 
       <div class="section-divider"></div>
 
-      <!-- Founder -->
       <div class="section-heading scroll-reveal">
         <div class="sh-label">Who is building this</div>
         <h2>The team behind Genesora AI.</h2>
       </div>
 
-      <div class="founder-section scroll-reveal">
-        <div class="founder-avatar">G</div>
-        <div>
-          <div class="founder-label">Founder & CEO</div>
-          <div class="founder-name">Genesora AI Founder</div>
-          <div class="founder-role">Building the future of AI recruitment and human-AI interaction</div>
-          <div class="founder-bio">
-            <p>
-              Genesora AI was founded with a single belief: that artificial intelligence
-              should feel like a real conversation, not a search query. That the future
-              of hiring should be fair, fast, and intelligent — for both sides of the table.
-            </p>
-            <p>
-              We are a small, focused team in the early building phase — moving fast,
-              thinking long-term, and obsessed with getting this right. We believe
-              Genesora AI will be one of the defining platforms of this decade.
-            </p>
-            <p>
-              If you want to connect, collaborate, or just talk about the future of AI —
-              we would love to hear from you.
-            </p>
-          </div>
-          <div class="founder-links">
-            <a href="mailto:hello@genesoraai.com" class="founder-link">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-              hello@genesoraai.com
-            </a>
-            <a href="https://www.instagram.com/genesoraai" target="_blank" rel="noopener" class="founder-link">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
-              Instagram
-            </a>
+      <div class="founders-grid">
+        
+        <div class="founder-card scroll-reveal">
+          <div class="founder-avatar">G</div>
+          <div>
+            <div class="founder-label">Founder & CEO</div>
+            <div class="founder-name">Genesora AI Founder</div>
+            <div class="founder-role">Building the future of AI recruitment and human-AI interaction</div>
+            <div class="founder-bio">
+              <p>
+                Genesora AI was founded with a single belief: that artificial intelligence
+                should feel like a real conversation, not a search query. That the future
+                of hiring should be fair, fast, and intelligent — for both sides of the table.
+              </p>
+              <p>
+                We are a small, focused team in the early building phase — moving fast,
+                thinking long-term, and obsessed with getting this right. We believe
+                Genesora AI will be one of the defining platforms of this decade.
+              </p>
+              <p>
+                If you want to connect, collaborate, or just talk about the future of AI —
+                we would love to hear from you.
+              </p>
+            </div>
+            <div class="founder-links">
+              <a href="mailto:genesoraai@outlook.com" class="founder-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                Email
+              </a>
+              <a href="https://www.instagram.com/genesoraai" target="_blank" rel="noopener" class="founder-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
+                Instagram
+              </a>
+            </div>
           </div>
         </div>
+        
+        <div class="founder-card scroll-reveal fade-in-delay-1">
+          <div class="founder-avatar" style="background: linear-gradient(135deg, var(--purple-soft), var(--blue-soft)); color: var(--purple);">C</div>
+          <div>
+            <div class="founder-label" style="color: var(--purple);">Co-founder & CTO</div>
+            <div class="founder-name">Genesora AI Co-founder</div>
+            <div class="founder-role">Building the architecture and intelligence of Genesora</div>
+            <div class="founder-bio">
+              <p>
+                Every breakthrough in human-computer interaction requires a reimagined technical foundation. We aren't just tying APIs together; we are engineering a proprietary low-latency AI video pipeline.
+              </p>
+              <p>
+                Our focus is on making the intelligence behind Genesora feel deeply human. This means perfecting emotional resonance, context memory, and sub-second reaction times in our AI models.
+              </p>
+              <p>
+                We are building the technical infrastructure for a world where AI presence is indistinguishable from a video call with a real person.
+              </p>
+            </div>
+            <div class="founder-links">
+              <a href="mailto:genesoraai@outlook.com" class="founder-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                Email
+              </a>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div class="section-divider"></div>
 
-      <!-- Contact CTA -->
       <div class="contact-block scroll-reveal">
         <h2>Get in touch.</h2>
         <p>
@@ -792,9 +826,9 @@
           We are building in public and always happy to connect.
         </p>
         <div>
-          <a href="mailto:hello@genesoraai.com" class="contact-email">
+          <a href="mailto:genesoraai@outlook.com" class="contact-email">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-            hello@genesoraai.com
+            genesoraai@outlook.com
           </a>
         </div>
         <div class="contact-note">We read and reply to every message.</div>
@@ -803,7 +837,6 @@
     </div>
   </main>
 
-  <!-- Footer -->
   <footer class="site-footer">
     <div class="footer-inner">
       <div>
@@ -813,7 +846,7 @@
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
         <a href="roadmap.html">Roadmap</a>
-        <a href="mailto:hello@genesoraai.com">Contact</a>
+        <a href="mailto:genesoraai@outlook.com">Contact</a>
       </div>
       <div class="footer-social">
         <a href="https://www.instagram.com/genesoraai" target="_blank" rel="noopener" class="social-btn" aria-label="Instagram">
