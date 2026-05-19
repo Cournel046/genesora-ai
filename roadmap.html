@@ -81,10 +81,10 @@
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 100;
-      background: rgba(8,16,30,0.85);
+      background: rgba(8,16,30,0.6);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
+      border-bottom: none; 
     }
     .nav {
       max-width: 1100px;
@@ -93,14 +93,17 @@
       height: 68px;
       display: flex;
       align-items: center;
-      gap: 40px;
+      justify-content: space-between;
+      position: relative;
     }
     .logo { height: 34px; width: auto; display: block; }
     .nav-links {
       display: flex;
       align-items: center;
       gap: 32px;
-      margin-left: auto;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
     }
     .nav-links a {
       font-family: var(--font-body);
@@ -112,7 +115,7 @@
       transition: color 0.2s;
     }
     .nav-links a:hover, .nav-links a.active { color: var(--text); }
-    .nav-cta-group { display: flex; gap: 10px; margin-left: 16px; }
+    .nav-cta-group { display: flex; gap: 10px; }
     .nav-btn {
       font-family: var(--font-body);
       font-size: 13px;
@@ -238,10 +241,10 @@
     .timeline::before {
       content: '';
       position: absolute;
-      left: 11px;
+      left: 11px; /* Align precisely on desktop */
       top: 12px;
       bottom: 12px;
-      width: 1px;
+      width: 2px;
       background: linear-gradient(to bottom, var(--green) 0%, var(--blue) 40%, var(--border) 65%, var(--border) 100%);
     }
 
@@ -512,13 +515,13 @@
 
     /* ── Responsive ── */
     @media (max-width: 700px) {
-      .nav-links { gap: 16px; }
+      .nav-links { display: none; }
       .nav-cta-group { display: none; }
-      .page-hero { padding: 72px 20px 48px; }
+      .page-hero { padding: 90px 20px 48px; }
       .status-bar { grid-template-columns: 1fr; padding: 0 20px 40px; }
       .roadmap-wrap { padding: 0 20px 80px; }
       .timeline { padding-left: 28px; }
-      .timeline::before { left: 8px; }
+      .timeline::before { left: 9px; } /* Perfect alignment for Mobile */
       .phase-dot { left: -28px; width: 18px; height: 18px; }
       .phase-dot-inner { width: 6px; height: 6px; }
       .phase-card { padding: 24px 20px; }
@@ -537,7 +540,6 @@
     <div class="grid-overlay"></div>
   </div>
 
-  <!-- Header -->
   <header class="site-header">
     <div class="nav">
       <a href="index.html">
@@ -557,7 +559,6 @@
 
   <main>
 
-    <!-- Page Hero -->
     <div class="page-hero">
       <div class="page-label fade-in">
         <span class="pulse-dot"></span>
@@ -574,7 +575,6 @@
       </p>
     </div>
 
-    <!-- Status bar -->
     <div class="status-bar">
       <div class="status-card scroll-reveal">
         <div class="status-num" style="color: var(--green);">1</div>
@@ -590,14 +590,12 @@
       </div>
     </div>
 
-    <!-- Timeline -->
     <div class="roadmap-wrap">
 
       <div class="section-divider"></div>
 
       <div class="timeline">
 
-        <!-- Phase 1 — Done -->
         <div class="phase status-done">
           <div class="phase-dot">
             <div class="phase-dot-inner"></div>
@@ -629,7 +627,6 @@
           </div>
         </div>
 
-        <!-- Phase 2 — Active -->
         <div class="phase status-active">
           <div class="phase-dot">
             <div class="phase-dot-inner"></div>
@@ -661,7 +658,6 @@
           </div>
         </div>
 
-        <!-- Phase 3 — Active -->
         <div class="phase status-active">
           <div class="phase-dot">
             <div class="phase-dot-inner"></div>
@@ -696,7 +692,6 @@
           </div>
         </div>
 
-        <!-- Phase 4 — Soon -->
         <div class="phase status-soon">
           <div class="phase-dot">
             <div class="phase-dot-inner"></div>
@@ -727,7 +722,6 @@
           </div>
         </div>
 
-        <!-- Phase 5 — Future -->
         <div class="phase status-future">
           <div class="phase-dot">
             <div class="phase-dot-inner"></div>
@@ -760,7 +754,6 @@
 
       </div>
 
-      <!-- CTA block -->
       <div class="cta-block scroll-reveal">
         <h2>Be there from day one.</h2>
         <p>
@@ -768,11 +761,11 @@
           We are building this for people who believe AI can do better.
         </p>
         <div class="cta-buttons">
-          <a href="index.html#preregister" class="cta-btn cta-btn-green">
+          <a href="index.html#pre-register" class="cta-btn cta-btn-green">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             Join as a User
           </a>
-          <a href="index.html#preregister-enterprise" class="cta-btn cta-btn-blue">
+          <a href="index.html#pre-register-enterprise" class="cta-btn cta-btn-blue">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
             Join as an Enterprise
           </a>
@@ -782,7 +775,6 @@
     </div>
   </main>
 
-  <!-- Footer -->
   <footer class="site-footer">
     <div class="footer-inner">
       <div>
@@ -792,7 +784,7 @@
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
         <a href="roadmap.html">Roadmap</a>
-        <a href="mailto:hello@genesoraai.com">Contact</a>
+        <a href="mailto:genesoraai@outlook.com">Contact</a>
       </div>
       <div class="footer-social">
         <a href="https://www.instagram.com/genesoraai" target="_blank" rel="noopener" class="social-btn" aria-label="Instagram">
