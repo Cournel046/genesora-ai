@@ -528,6 +528,7 @@ h2 {
   height: 96px;
   border-radius: 20px;
   object-fit: cover;
+  object-position: top;
 }
 /* ================= MOBILE ================= */
 @media (max-width: 900px) {
