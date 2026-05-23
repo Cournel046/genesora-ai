@@ -39,6 +39,9 @@
 
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet" />
 
   <style>
     /* ── NAV ── */
@@ -51,6 +54,7 @@
       justify-content: space-between;
       gap: 1rem;
       position: relative;
+      z-index: 100;
     }
     .nav-center {
       display: flex;
@@ -96,12 +100,6 @@
       display: none;
     }
 
-    /* ── HERO ── */
-    .hero {
-      padding-top: 10rem;
-      padding-bottom: 4rem;
-    }
-
     @media(max-width: 900px) {
       .nav-center { display: none; }
     }
@@ -123,53 +121,238 @@
       }
       .mobile-menu.open { display: flex; }
       .mobile-menu a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.95rem; }
-      .site-header { position: relative; }
-      
-      .hero { padding-top: 7.5rem !important; }
+      .site-header { position: absolute; width: 100%; z-index: 999;}
     }
 
-    .hero-eyebrow {
-      font-size: 0.75rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.4);
-      margin-bottom: 1.4rem;
-    }
-    .hero h1 {
-      font-size: clamp(2.2rem, 5.5vw, 3.8rem);
-      font-weight: 700;
-      line-height: 1.12;
-      margin-bottom: 1.3rem;
-    }
-    .hero-sub {
-      font-size: 1.05rem;
-      color: rgba(255,255,255,0.58);
-      max-width: 580px;
-      margin: 0 auto 2.2rem;
-      line-height: 1.72;
-    }
-    .hero-ctas {
+    /* ── ANIMATED HERO SECTION ── */
+    .hero-anim {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      min-height: 800px;
+      overflow: hidden;
+      background: #080812;
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      justify-content: center;
+      flex-direction: column;
     }
-    .hero-btn {
-      padding: 0.72rem 1.5rem;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      text-decoration: none;
-      transition: transform 0.15s, opacity 0.2s;
-      display: inline-block;
-    }
-    .hero-btn:hover { transform: translateY(-2px); opacity: 0.88; }
-    .btn-primary { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.22); }
-    .btn-secondary { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.1); }
 
-    /* ── SECTION DIVIDER ── */
+    /* Dynamic Backgrounds */
+    .hero-bgs {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+      background-size: cover;
+      background-position: center;
+    }
+    .hero-bg.active { opacity: 1; }
+    
+    /* Cinematic Background Placeholders (Replace with real video elements/URLs when ready) */
+    .hero-bg.bg-1 { background: radial-gradient(circle at 70% 50%, rgba(100,60,220,0.15) 0%, rgba(8,8,18,0.9) 60%), linear-gradient(to right, #080812 30%, transparent); }
+    .hero-bg.bg-2 { background: radial-gradient(circle at 70% 50%, rgba(39,174,96,0.15) 0%, rgba(8,8,18,0.9) 60%), linear-gradient(to right, #080812 30%, transparent); }
+    .hero-bg.bg-3 { background: radial-gradient(circle at 70% 50%, rgba(41,128,185,0.15) 0%, rgba(8,8,18,0.9) 60%), linear-gradient(to right, #080812 30%, transparent); }
+
+    /* Content Wrapper */
+    .hero-anim-inner {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-left: 80px;
+    }
+
+    /* Top Elements */
+    .hero-top {
+      position: absolute;
+      top: 120px;
+    }
+    .hero-eyebrow {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.05em;
+    }
+
+    /* Middle Slides */
+    .hero-middle {
+      position: relative;
+      width: 100%;
+      margin-top: 20px;
+    }
+    .hero-slide {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease-in-out, visibility 0.5s;
+      width: 100%;
+      max-width: 800px;
+    }
+    .hero-slide.active {
+      position: relative;
+      top: auto;
+      transform: none;
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .hero-big-headline {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(52px, 5vw, 64px);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      background: rgba(255,255,255,0.08);
+      padding: 6px 16px;
+      border-radius: 30px;
+      border: 1px solid rgba(255,255,255,0.12);
+      margin-bottom: 20px;
+      color: #fff;
+      backdrop-filter: blur(10px);
+    }
+    .live-dot-hero {
+      width: 6px;
+      height: 6px;
+      background: #e74c3c;
+      border-radius: 50%;
+      animation: blink 1.2s infinite;
+    }
+
+    .hero-subtext {
+      font-size: 17px;
+      color: rgba(255,255,255,0.70);
+      line-height: 1.6;
+    }
+
+    /* Bottom Elements */
+    .hero-bottom {
+      position: absolute;
+      bottom: 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .ready-to-connect {
+      font-size: 14px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+    }
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+    }
+    .cta-btn-hero {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 12px 28px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+    }
+    .cta-btn-hero:hover {
+      background: rgba(255,255,255,0.16);
+      transform: translateY(-2px);
+    }
+
+    .hero-dots {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+      z-index: 3;
+    }
+    .h-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .h-dot.active {
+      background: #fff;
+      transform: scale(1.2);
+    }
+
+    /* Hero Mobile Overrides */
+    @media(max-width: 768px) {
+      .hero-anim-inner {
+        padding-left: 24px;
+        padding-right: 24px;
+        justify-content: flex-end; /* Move content down */
+        padding-bottom: 140px;
+        text-align: center;
+      }
+      .hero-top {
+        top: 100px;
+        left: 0;
+        width: 100%;
+        text-align: center;
+      }
+      .hero-slide {
+        text-align: center;
+      }
+      .hero-slide.active {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .hero-big-headline {
+        font-size: 28px; /* Precise scale down per spec */
+      }
+      .hero-subtext {
+        font-size: 14px; /* Precise scale down per spec */
+      }
+      .hero-bottom {
+        position: relative;
+        bottom: 0;
+        margin-top: 40px;
+        align-items: center;
+        width: 100%;
+      }
+      .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+      }
+      .cta-btn-hero {
+        width: 100%;
+      }
+      .hero-dots {
+        bottom: 30px;
+      }
+    }
+
+
+    /* ── REST OF GENERAL STYLES ── */
     .section-divider {
       border: none;
       border-top: 1px solid rgba(255,255,255,0.06);
@@ -185,6 +368,7 @@
       text-align: center;
     }
     .pillars-section h2 {
+      font-family: 'Sora', sans-serif;
       font-size: clamp(1.5rem, 3vw, 2.2rem);
       font-weight: 700;
       margin-bottom: 0.55rem;
@@ -212,7 +396,7 @@
     .pillar-card.chat    { border-top: 3px solid rgba(80,140,255,0.7); }
     .pillar-card.recruit { border-top: 3px solid rgba(39,174,96,0.7); }
     .pillar-icon { font-size: 1.7rem; margin-bottom: 0.9rem; }
-    .pillar-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.45rem; }
+    .pillar-card h3 { font-family: 'Sora', sans-serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 0.45rem; }
     .pillar-card p { font-size: 0.84rem; color: rgba(255,255,255,0.52); line-height: 1.65; margin-bottom: 1rem; }
     .pillar-link { font-size: 0.8rem; color: rgba(255,255,255,0.38); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.13); padding-bottom: 1px; transition: color 0.2s; }
     .pillar-link:hover { color: rgba(255,255,255,0.75); }
@@ -224,7 +408,7 @@
       margin: 0 auto;
       text-align: center;
     }
-    .video-section h2 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; margin-bottom: 1rem; }
+    .video-section h2 { font-family: 'Sora', sans-serif; font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; margin-bottom: 1rem; }
     .video-section > p { color: rgba(255,255,255,0.58); max-width: 560px; margin: 0 auto 2.8rem; line-height: 1.72; }
 
     .split-mockup {
@@ -291,7 +475,7 @@
       color: rgba(170,140,255,0.9);
       margin-bottom: 0.7rem;
     }
-    .uc-card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .uc-card h4 { font-family: 'Sora', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
     .uc-card p { font-size: 0.8rem; color: rgba(255,255,255,0.45); line-height: 1.55; }
 
     /* ── RECRUITMENT SECTION ── */
@@ -300,7 +484,7 @@
       max-width: 780px;
       margin: 0 auto;
     }
-    .recruit-section h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 700; margin-bottom: 0.5rem; text-align: center; }
+    .recruit-section h2 { font-family: 'Sora', sans-serif; font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 700; margin-bottom: 0.5rem; text-align: center; }
     .recruit-section > .section-sub { text-align: center; margin-bottom: 2.4rem; }
 
     .tabs-row { display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 2rem; }
@@ -343,7 +527,7 @@
       color: #5b9bd5;
     }
     .s-body { flex: 1; }
-    .s-body h4 { font-size: 0.93rem; font-weight: 600; margin-bottom: 0.22rem; }
+    .s-body h4 { font-family: 'Sora', sans-serif; font-size: 0.93rem; font-weight: 600; margin-bottom: 0.22rem; }
     .s-body p { font-size: 0.81rem; color: rgba(255,255,255,0.48); line-height: 1.55; }
     .s-tag { font-size: 0.7rem; color: rgba(255,255,255,0.28); text-transform: uppercase; letter-spacing: 0.05em; flex-shrink: 0; align-self: center; }
 
@@ -354,7 +538,7 @@
       margin: 0 auto;
       text-align: center;
     }
-    .prereg-section h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 700; margin-bottom: 0.55rem; }
+    .prereg-section h2 { font-family: 'Sora', sans-serif; font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 700; margin-bottom: 0.55rem; }
     .prereg-section > p { color: rgba(255,255,255,0.5); margin-bottom: 2.5rem; font-size: 0.93rem; }
 
     .forms-row {
@@ -386,7 +570,7 @@
     .form-tag { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.8rem; }
     .user-card .form-tag { color: #27ae60; }
     .ent-card .form-tag  { color: #5b9bd5; }
-    .form-card h3 { font-size: 0.97rem; font-weight: 700; margin-bottom: 1.1rem; }
+    .form-card h3 { font-family: 'Sora', sans-serif; font-size: 0.97rem; font-weight: 700; margin-bottom: 1.1rem; }
 
     .form-card input,
     .form-card select {
@@ -465,16 +649,63 @@
   </header>
 
   <main>
+    <!-- 🎬 NEW LOOPING ANIMATION HERO SECTION -->
+    <section class="hero-anim" id="hero-anim">
+      <!-- Backgrounds -->
+      <div class="hero-bgs">
+        <div class="hero-bg bg-1 active"></div>
+        <div class="hero-bg bg-2"></div>
+        <div class="hero-bg bg-3"></div>
+      </div>
+      
+      <!-- Content Wrapper -->
+      <div class="hero-anim-inner">
+        <!-- Top Persistent Elements -->
+        <div class="hero-top">
+          <span class="hero-eyebrow">● Now in development · Launching Q4 2026</span>
+        </div>
 
-    <section class="hero fade-in">
-      <p class="hero-eyebrow">Now in development &nbsp;·&nbsp; Launching soon</p>
-      <h1>The next step<br/>after chat.</h1>
-      <p class="hero-sub">
-        Genesora AI lets you video call a real AI human you designed — face to face, in real time. Intelligent conversation, emotional presence, and structured understanding. This is not a chatbot. This is what AI should have always felt like.
-      </p>
-      <div class="hero-ctas">
-        <a href="#ai-video-call" class="hero-btn btn-primary">🎥 See AI Video Call</a>
-        <a href="#how-it-works" class="hero-btn btn-secondary">Explore the platform</a>
+        <!-- Middle Dynamic Slides -->
+        <div class="hero-middle">
+          
+          <!-- Slide 1: Sunita -->
+          <div class="hero-slide active" id="slide-1">
+            <h1 class="hero-big-headline">This is not a video call.<br>This is the future.</h1>
+            <div class="hero-pill-badge"><span class="live-dot-hero"></span> LIVE — AI Persona Call</div>
+            <p class="hero-subtext">Generate your own AI human character.<br>Talk face to face in real time.</p>
+          </div>
+          
+          <!-- Slide 2: Job Seeker -->
+          <div class="hero-slide" id="slide-2">
+            <h1 class="hero-big-headline">Practice your interview.<br>Get hired.</h1>
+            <div class="hero-pill-badge">💼 Workspace — Find a Job</div>
+            <p class="hero-subtext">Upload your resume. Let AI interview you.<br>Get matched to the right company worldwide.</p>
+          </div>
+          
+          <!-- Slide 3: Company -->
+          <div class="hero-slide" id="slide-3">
+            <h1 class="hero-big-headline">Post a job.<br>AI interviews everyone.<br>You just choose who to hire.</h1>
+            <div class="hero-pill-badge">🏢 Workspace — Enterprise</div>
+            <p class="hero-subtext">AI screens every applicant. AI conducts every interview.<br>You receive the full report. Zero manual work.</p>
+          </div>
+
+        </div>
+
+        <!-- Bottom Persistent Elements -->
+        <div class="hero-bottom">
+          <div class="ready-to-connect">READY TO CONNECT</div>
+          <div class="hero-buttons">
+            <a href="#recruitment" class="cta-btn-hero" onclick="document.querySelector('[data-tab=\'seeker\']').click();">💼 I'm Looking for a Job</a>
+            <a href="#recruitment" class="cta-btn-hero" onclick="document.querySelector('[data-tab=\'company\']').click();">🏢 I'm Hiring</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Story Dots -->
+      <div class="hero-dots">
+        <span class="h-dot active" id="dot-1"></span>
+        <span class="h-dot" id="dot-2"></span>
+        <span class="h-dot" id="dot-3"></span>
       </div>
     </section>
 
@@ -675,6 +906,42 @@
   </footer>
 
   <script>
+    // 🎬 HERO SLIDER LOGIC
+    let currentSlide = 1;
+    const totalSlides = 3;
+
+    function showSlide(index) {
+      // Remove active class from all
+      document.querySelectorAll('.hero-bg, .hero-slide, .h-dot').forEach(el => el.classList.remove('active'));
+      
+      // Add active class to target index
+      document.querySelector(`.hero-bg.bg-${index}`).classList.add('active');
+      document.querySelector(`#slide-${index}`).classList.add('active');
+      document.querySelector(`#dot-${index}`).classList.add('active');
+      
+      currentSlide = index;
+    }
+
+    // 6 seconds display + 500ms transition = 6500 interval
+    let sliderInterval = setInterval(() => {
+      let next = currentSlide >= totalSlides ? 1 : currentSlide + 1;
+      showSlide(next);
+    }, 6500); 
+
+    // Allow manual dot clicking
+    document.querySelectorAll('.h-dot').forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        clearInterval(sliderInterval); // Pause auto-rotation if user clicks manually
+        showSlide(index + 1);
+        sliderInterval = setInterval(() => {
+          let next = currentSlide >= totalSlides ? 1 : currentSlide + 1;
+          showSlide(next);
+        }, 6500);
+      });
+    });
+
+
+    // ── GENERAL LOGIC ──
     document.getElementById('hamburger').addEventListener('click', function() {
       document.getElementById('mobileMenu').classList.toggle('open');
     });
