@@ -152,10 +152,31 @@
     }
     .hero-bg.active { opacity: 1; }
     
-    /* Cinematic Background Placeholders (Replace with real video elements/URLs when ready) */
-    .hero-bg.bg-1 { background: radial-gradient(circle at 70% 50%, rgba(100,60,220,0.15) 0%, rgba(8,8,18,0.9) 60%), linear-gradient(to right, #080812 30%, transparent); }
-    .hero-bg.bg-2 { background: radial-gradient(circle at 70% 50%, rgba(39,174,96,0.15) 0%, rgba(8,8,18,0.9) 60%), linear-gradient(to right, #080812 30%, transparent); }
-    .hero-bg.bg-3 { background: radial-gradient(circle at 70% 50%, rgba(41,128,185,0.15) 0%, rgba(8,8,18,0.9) 60%), linear-gradient(to right, #080812 30%, transparent); }
+    /* ── SLIDE BACKGROUNDS ── */
+    /* Slide 1: Sunita image as full background with dark overlay for text readability */
+    .hero-bg.bg-1 {
+      background-image: linear-gradient(to right, rgba(8,8,18,0.75) 0%, rgba(8,8,18,0.3) 100%), url('sunita.png');
+      background-size: cover;
+      background-position: center top;
+    }
+
+    /* Slide 2: Job seeker — uses slide2-bg.png if available, fallback to gradient */
+    .hero-bg.bg-2 {
+      background-image: linear-gradient(to right, rgba(8,8,18,0.75) 0%, rgba(8,8,18,0.3) 100%), url('slide2-bg.png');
+      background-size: cover;
+      background-position: center top;
+      /* Fallback gradient shown if image not found */
+      background-color: #080812;
+    }
+
+    /* Slide 3: Enterprise — uses slide3-bg.png if available, fallback to gradient */
+    .hero-bg.bg-3 {
+      background-image: linear-gradient(to right, rgba(8,8,18,0.75) 0%, rgba(8,8,18,0.3) 100%), url('slide3-bg.png');
+      background-size: cover;
+      background-position: center top;
+      /* Fallback gradient shown if image not found */
+      background-color: #080812;
+    }
 
     /* Content Wrapper */
     .hero-anim-inner {
@@ -308,7 +329,7 @@
       .hero-anim-inner {
         padding-left: 24px;
         padding-right: 24px;
-        justify-content: flex-end; /* Move content down */
+        justify-content: flex-end;
         padding-bottom: 140px;
         text-align: center;
       }
@@ -327,10 +348,10 @@
         align-items: center;
       }
       .hero-big-headline {
-        font-size: 28px; /* Precise scale down per spec */
+        font-size: 28px;
       }
       .hero-subtext {
-        font-size: 14px; /* Precise scale down per spec */
+        font-size: 14px;
       }
       .hero-bottom {
         position: relative;
@@ -649,7 +670,7 @@
   </header>
 
   <main>
-    <!-- 🎬 NEW LOOPING ANIMATION HERO SECTION -->
+    <!-- HERO SECTION -->
     <section class="hero-anim" id="hero-anim">
       <!-- Backgrounds -->
       <div class="hero-bgs">
@@ -906,32 +927,26 @@
   </footer>
 
   <script>
-    // 🎬 HERO SLIDER LOGIC
+    // HERO SLIDER LOGIC
     let currentSlide = 1;
     const totalSlides = 3;
 
     function showSlide(index) {
-      // Remove active class from all
       document.querySelectorAll('.hero-bg, .hero-slide, .h-dot').forEach(el => el.classList.remove('active'));
-      
-      // Add active class to target index
       document.querySelector(`.hero-bg.bg-${index}`).classList.add('active');
       document.querySelector(`#slide-${index}`).classList.add('active');
       document.querySelector(`#dot-${index}`).classList.add('active');
-      
       currentSlide = index;
     }
 
-    // 6 seconds display + 500ms transition = 6500 interval
     let sliderInterval = setInterval(() => {
       let next = currentSlide >= totalSlides ? 1 : currentSlide + 1;
       showSlide(next);
     }, 6500); 
 
-    // Allow manual dot clicking
     document.querySelectorAll('.h-dot').forEach((dot, index) => {
       dot.addEventListener('click', () => {
-        clearInterval(sliderInterval); // Pause auto-rotation if user clicks manually
+        clearInterval(sliderInterval);
         showSlide(index + 1);
         sliderInterval = setInterval(() => {
           let next = currentSlide >= totalSlides ? 1 : currentSlide + 1;
@@ -940,8 +955,6 @@
       });
     });
 
-
-    // ── GENERAL LOGIC ──
     document.getElementById('hamburger').addEventListener('click', function() {
       document.getElementById('mobileMenu').classList.toggle('open');
     });
