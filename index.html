@@ -1,4 +1,3 @@
-Index.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,7 +15,7 @@ Index.html
   <meta property="og:url" content="https://genesoraai.com" />
   <meta property="og:type" content="website" />
 
-  <meta name="twitter:card" content="summary\_large\_image" />
+  <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Genesora AI — Talk to AI. Practice Interviews. Get Hired." />
 <meta name="twitter:description" content="Video call a real AI human, practice interviews with AI HR characters, and get recruited through AI-powered hiring." />
   <meta name="twitter:image" content="https://genesoraai.com/favicon.png" />
@@ -42,7 +41,7 @@ Index.html
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700\&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400\&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet" />
 
   <style>
     /* ── NAV ── */
@@ -650,40 +649,32 @@ Index.html
   </header>
 
   <main>
-    <!-- 🎬 NEW LOOPING ANIMATION HERO SECTION -->
     <section class="hero-anim" id="hero-anim">
-      <!-- Backgrounds -->
       <div class="hero-bgs">
         <div class="hero-bg bg-1 active"></div>
         <div class="hero-bg bg-2"></div>
         <div class="hero-bg bg-3"></div>
       </div>
  
-      <!-- Content Wrapper -->
       <div class="hero-anim-inner">
-        <!-- Top Persistent Elements -->
         <div class="hero-top">
           <span class="hero-eyebrow">● Now in development · Launching Q4 2026</span>
         </div>
 
-        <!-- Middle Dynamic Slides -->
         <div class="hero-middle">
  
-          <!-- Slide 1: Sunita -->
           <div class="hero-slide active" id="slide-1">
             <h1 class="hero-big-headline">This is not a video call.<br>This is the future.</h1>
             <div class="hero-pill-badge"><span class="live-dot-hero"></span> LIVE — AI Persona Call</div>
             <p class="hero-subtext">Generate your own AI human character.<br>Talk face to face in real time.</p>
           </div>
  
-          <!-- Slide 2: Job Seeker -->
           <div class="hero-slide" id="slide-2">
             <h1 class="hero-big-headline">Practice your interview.<br>Get hired.</h1>
             <div class="hero-pill-badge">💼 Workspace — Find a Job</div>
             <p class="hero-subtext">Upload your resume. Let AI interview you.<br>Get matched to the right company worldwide.</p>
           </div>
  
-          <!-- Slide 3: Company -->
           <div class="hero-slide" id="slide-3">
             <h1 class="hero-big-headline">Post a job.<br>AI interviews everyone.<br>You just choose who to hire.</h1>
             <div class="hero-pill-badge">🏢 Workspace — Enterprise</div>
@@ -692,17 +683,15 @@ Index.html
 
         </div>
 
-        <!-- Bottom Persistent Elements -->
         <div class="hero-bottom">
           <div class="ready-to-connect">READY TO CONNECT</div>
           <div class="hero-buttons">
-            <a href="#recruitment" class="cta-btn-hero" onclick="document.querySelector('\[data-tab=\\'seeker\\']').click();">💼 I'm Looking for a Job</a>
-            <a href="#recruitment" class="cta-btn-hero" onclick="document.querySelector('\[data-tab=\\'company\\']').click();">🏢 I'm Hiring</a>
+            <a href="#recruitment" class="cta-btn-hero" onclick="document.querySelector('[data-tab=\'seeker\']').click();">💼 I'm Looking for a Job</a>
+            <a href="#recruitment" class="cta-btn-hero" onclick="document.querySelector('[data-tab=\'company\']').click();">🏢 I'm Hiring</a>
           </div>
         </div>
       </div>
 
-      <!-- Story Dots -->
       <div class="hero-dots">
         <span class="h-dot active" id="dot-1"></span>
         <span class="h-dot" id="dot-2"></span>
@@ -848,17 +837,17 @@ Index.html
           <div class="form-tag">For Users &amp; Job Seekers</div>
           <h3>Join as a User</h3>
           <form id="userForm">
-            <input type="text" placeholder="Full name" required />
-            <input type="email" id="userEmail" placeholder="Email address" required />
-            <select>
+            <input type="text" id="u_name" placeholder="Full name" required />
+            <input type="email" id="u_email" placeholder="Email address" required />
+            <select id="u_intent">
               <option value="" disabled selected>I want to use Genesora for…</option>
               <option>AI video call</option>
               <option>Find a job</option>
               <option>Practice interviews</option>
               <option>All of the above</option>
             </select>
-            <input type="text" placeholder="Industry / field of work" />
-            <input type="text" placeholder="Country" />
+            <input type="text" id="u_industry" placeholder="Industry / field of work" />
+            <input type="text" id="u_country" placeholder="Country" />
             <button type="submit" class="submit-user">Join as a User — Get Early Access</button>
           </form>
           <p class="form-msg" id="userMsg"></p>
@@ -867,11 +856,11 @@ Index.html
           <div class="form-tag">For Companies &amp; Enterprises</div>
           <h3>Join as an Enterprise</h3>
           <form id="entForm">
-            <input type="text" placeholder="Your full name" required />
-            <input type="text" placeholder="Company name" required />
-            <input type="tel" placeholder="Company registered mobile number (incl. country code)" required />
-            <input type="email" id="entEmail" placeholder="Work email address" required />
-            <input type="text" placeholder="Country" />
+            <input type="text" id="e_name" placeholder="Your full name" required />
+            <input type="text" id="e_company" placeholder="Company name" required />
+            <input type="tel" id="e_phone" placeholder="Company registered mobile number (incl. country code)" required />
+            <input type="email" id="e_email" placeholder="Work email address" required />
+            <input type="text" id="e_country" placeholder="Country" />
             <button type="submit" class="submit-ent">Join as an Enterprise — Get Early Access</button>
           </form>
           <p class="form-msg" id="entMsg"></p>
@@ -893,13 +882,13 @@ Index.html
       <p class="footer-contact"><a href="mailto:genesoraai@outlook.com">genesoraai@outlook.com</a></p>
       <p>© 2026 Genesora AI. All rights reserved.</p>
       <div class="socials">
-        <a href="https://instagram.com/genesora\_ai" target="\_blank" aria-label="Instagram">
+        <a href="https://instagram.com/genesora_ai" target="_blank" aria-label="Instagram">
           <svg class="icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17" cy="7" r="1" fill="currentColor"/></svg>
         </a>
-        <a href="https://threads.net/@genesora\_ai" target="\_blank" aria-label="Threads">
+        <a href="https://threads.net/@genesora_ai" target="_blank" aria-label="Threads">
           <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c5.5 0 10 4.5 10 10s-4.5 10-10 10S2 17.5 2 12 6.5 2 12 2zm0 4c-3.3 0-6 2.7-6 6 0 3 2.2 5.5 5.1 5.9v-2.1c-1.8-.3-3.1-1.8-3.1-3.8 0-2.2 1.8-4 4-4 2.1 0 3.8 1.6 4 3.6-.6-.2-1.2-.3-1.9-.3v1.9c1.2 0 2 .3 2.6.8-.3 1.5-1.5 2.7-3 3.1v2.1c2.2-.4 4-2 4.7-4.1.4-1.2.3-2.6-.3-3.8C17.2 7.3 14.8 6 12 6z"/></svg>
         </a>
-        <a href="https://x.com/Genesora\_ai" target="\_blank" aria-label="Twitter / X">
+        <a href="https://x.com/Genesora_ai" target="_blank" aria-label="Twitter / X">
           <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.25 2H21l-6.56 7.51L22 22h-6.53l-4.37-5.87L6 22H3.25l7.03-8.06L2 2h6.62l3.9 5.33L18.25 2zm-2.24 17.52h1.37L8.21 4.41H6.77l9.24 15.11z"/></svg>
         </a>
       </div>
@@ -956,27 +945,6 @@ Index.html
       });
     });
 
-    var GFORM = "https://docs.google.com/forms/d/e/1FAIpQLSdsg6qqhrPeUYr_52btUnwqI_4TGtOc7Dfh3v5FYW9L5VIorg/formResponse";
-    var EMAIL_FIELD = "entry.174128988";
-
-    document.getElementById('userForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      var fd = new FormData();
-      fd.append(EMAIL_FIELD, document.getElementById('userEmail').value);
-      fetch(GFORM, { method: 'POST', mode: 'no-cors', body: fd });
-      document.getElementById('userMsg').textContent = "✓ You're on the early access list!";
-      this.reset();
-    });
-
-    document.getElementById('entForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      var fd = new FormData();
-      fd.append(EMAIL_FIELD, document.getElementById('entEmail').value);
-      fetch(GFORM, { method: 'POST', mode: 'no-cors', body: fd });
-      document.getElementById('entMsg').textContent = "✓ Enterprise request received — we'll be in touch!";
-      this.reset();
-    });
-
     document.querySelectorAll('a[href^="#"]').forEach(function(a) {
       a.addEventListener('click', function(e) {
         var t = document.querySelector(this.getAttribute('href'));
@@ -986,6 +954,67 @@ Index.html
           document.getElementById('mobileMenu').classList.remove('open');
         }
       });
+    });
+
+    // ── NEW GOOGLE APPS SCRIPT LOGIC ──
+
+    // Paste your Google Apps Script Web App URL here!
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLTkJ-ZcTb5xeJE4pDw871xmofPkFKxalz1yyAOejSEgnWh5JXmxEAm8FuU07EkTftpA/exec";
+
+    // --- USER FORM LOGIC ---
+    document.getElementById('userForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const btn = this.querySelector('.submit-user');
+      btn.textContent = "Sending...";
+
+      const fd = new FormData();
+      fd.append("type", "User / Job Seeker");
+      fd.append("name", document.getElementById('u_name').value);
+      fd.append("email", document.getElementById('u_email').value);
+      
+      const intentSelect = document.getElementById('u_intent');
+      fd.append("detail2", intentSelect.options[intentSelect.selectedIndex].value); // Intent
+      fd.append("detail1", document.getElementById('u_industry').value); // Industry
+      fd.append("country", document.getElementById('u_country').value);
+
+      fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: fd })
+        .then(() => {
+          document.getElementById('userMsg').textContent = "✓ You're on the early access list!";
+          this.reset();
+          btn.textContent = "Join as a User — Get Early Access";
+        })
+        .catch(error => {
+          console.error('Error!', error.message);
+          btn.textContent = "Join as a User — Get Early Access";
+        });
+    });
+
+    // --- ENTERPRISE FORM LOGIC ---
+    document.getElementById('entForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const btn = this.querySelector('.submit-ent');
+      btn.textContent = "Sending...";
+
+      const fd = new FormData();
+      fd.append("type", "Enterprise");
+      fd.append("name", document.getElementById('e_name').value);
+      fd.append("email", document.getElementById('e_email').value);
+      fd.append("detail1", document.getElementById('e_company').value); // Company
+      fd.append("detail2", document.getElementById('e_phone').value); // Phone
+      fd.append("country", document.getElementById('e_country').value);
+
+      fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: fd })
+        .then(() => {
+          document.getElementById('entMsg').textContent = "✓ Enterprise request received — we'll be in touch!";
+          this.reset();
+          btn.textContent = "Join as an Enterprise — Get Early Access";
+        })
+        .catch(error => {
+          console.error('Error!', error.message);
+          btn.textContent = "Join as an Enterprise — Get Early Access";
+        });
     });
   </script>
 </body>
