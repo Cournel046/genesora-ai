@@ -183,6 +183,78 @@
       cursor: not-allowed;
     }
 
+    /* ── CUSTOM COOKIE BANNER UI ── */
+    .cookie-banner {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      max-width: 420px;
+      width: calc(100% - 48px);
+      background: rgba(17, 24, 39, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(16px);
+      z-index: 9999;
+      transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+    }
+
+    .cookie-banner.hidden {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      pointer-events: none;
+    }
+
+    .cookie-content p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .cookie-content a {
+      color: #5b9bd5;
+      text-decoration: underline;
+    }
+
+    .cookie-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .cookie-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-accept {
+      background: linear-gradient(135deg, #2563EB, #7C3AED);
+      color: white;
+    }
+
+    .btn-accept:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn-decline {
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-decline:hover {
+      background: rgba(255, 255, 255, 0.14);
+      color: white;
+    }
+
     /* ── NAV ── */
     .nav {
       max-width: 1300px;
@@ -1028,6 +1100,20 @@
 
     </main>
 
+    <!-- 🍪 CUSTOM FLOATING COOKIE BANNER UI -->
+    <div id="cookie-banner" class="cookie-banner">
+      <div class="cookie-content">
+        <p>
+          We use cookies to improve your experience on Genesora AI. By continuing, you agree to our 
+          <a href="cookie-policy.html" target="_blank">Cookie Policy</a>.
+        </p>
+        <div class="cookie-buttons">
+          <button class="cookie-btn btn-accept" onclick="acceptCookies()">Accept All</button>
+          <button class="cookie-btn btn-decline" onclick="declineCookies()">Decline</button>
+        </div>
+      </div>
+    </div>
+
     <footer class="site-footer">
       <div class="footer-inner">
         <p class="brand">Genesora AI</p>
@@ -1059,6 +1145,17 @@
   </div> <!-- END SITE WRAPPER -->
 
   <script>
+    // 🍪 COOKIE BANNER LOGIC
+    function acceptCookies() {
+      localStorage.setItem('genesora_cookies_consent', 'accepted');
+      document.getElementById('cookie-banner').classList.add('hidden');
+    }
+
+    function declineCookies() {
+      localStorage.setItem('genesora_cookies_consent', 'declined');
+      document.getElementById('cookie-banner').classList.add('hidden');
+    }
+
     // 🎬 WELCOME & TERMS ONBOARDING OVERLAY LOGIC
     function goToStep2() {
       document.getElementById('step-1').classList.remove('active');
@@ -1086,12 +1183,22 @@
       localStorage.setItem('genesora_terms_accepted', 'true');
     }
 
-    if (localStorage.getItem('genesora_terms_accepted') === 'true') {
-      const overlay = document.getElementById('splash-overlay');
-      const wrapper = document.getElementById('site-wrapper');
-      if (overlay) overlay.style.display = 'none';
-      if (wrapper) wrapper.classList.remove('blurred');
-    }
+    window.addEventListener('DOMContentLoaded', () => {
+      // Auto-hide terms overlay if already accepted
+      if (localStorage.getItem('genesora_terms_accepted') === 'true') {
+        const overlay = document.getElementById('splash-overlay');
+        const wrapper = document.getElementById('site-wrapper');
+        if (overlay) overlay.style.display = 'none';
+        if (wrapper) wrapper.classList.remove('blurred');
+      }
+
+      // Auto-hide cookie banner if already chosen
+      const cookieConsent = localStorage.getItem('genesora_cookies_consent');
+      if (cookieConsent === 'accepted' || cookieConsent === 'declined') {
+        const banner = document.getElementById('cookie-banner');
+        if (banner) banner.classList.add('hidden');
+      }
+    });
 
     // 🎬 HERO SLIDER LOGIC
     let currentSlide = 1;
