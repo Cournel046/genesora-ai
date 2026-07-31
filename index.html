@@ -9,15 +9,15 @@
   <meta name="keywords" content="AI video call human, talk to AI human, AI character video call, AI conversation platform, AI video call, interview practice AI, AI recruitment platform, Genesora AI" />
   <link rel="canonical" href="https://genesoraai.com" />
 
- <meta property="og:title" content="Genesora AI — Talk to AI. Practice Interviews. Get Hired." />
- <meta property="og:description" content="Video call a real AI human, practice interviews with AI HR characters, and get recruited through AI-powered hiring." />
+  <meta property="og:title" content="Genesora AI — Talk to AI. Practice Interviews. Get Hired." />
+  <meta property="og:description" content="Video call a real AI human, practice interviews with AI HR characters, and get recruited through AI-powered hiring." />
   <meta property="og:image" content="https://genesoraai.com/favicon.png" />
   <meta property="og:url" content="https://genesoraai.com" />
   <meta property="og:type" content="website" />
 
   <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Genesora AI — Talk to AI. Practice Interviews. Get Hired." />
-<meta name="twitter:description" content="Video call a real AI human, practice interviews with AI HR characters, and get recruited through AI-powered hiring." />
+  <meta name="twitter:title" content="Genesora AI — Talk to AI. Practice Interviews. Get Hired." />
+  <meta name="twitter:description" content="Video call a real AI human, practice interviews with AI HR characters, and get recruited through AI-powered hiring." />
   <meta name="twitter:image" content="https://genesoraai.com/favicon.png" />
 
   <script type="application/ld+json">
@@ -44,6 +44,145 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet" />
 
   <style>
+    /* ── WELCOME & TERMS OVERLAY ── */
+    #site-wrapper {
+      transition: filter 0.6s ease, opacity 0.6s ease;
+    }
+    #site-wrapper.blurred {
+      filter: blur(20px) brightness(0.5);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .splash-overlay {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(8, 8, 18, 0.85);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+      padding: 20px;
+    }
+
+    .splash-overlay.fade-out {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .splash-card {
+      background: rgba(17, 24, 39, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 440px;
+      text-align: center;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(20px);
+    }
+
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .spinning-logo {
+      width: 72px;
+      height: 72px;
+      filter: drop-shadow(0 0 20px rgba(37, 99, 235, 0.5)) drop-shadow(0 0 30px rgba(124, 58, 237, 0.4));
+      animation: spinIntro 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    @keyframes spinIntro {
+      0% { transform: rotate(0deg) scale(0.95); }
+      50% { transform: rotate(180deg) scale(1.1); }
+      100% { transform: rotate(360deg) scale(0.95); }
+    }
+
+    .step-content {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .step-content.active {
+      display: block;
+      opacity: 1;
+    }
+
+    .step-content h2 {
+      font-family: 'Sora', sans-serif;
+      font-size: 1.6rem;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .step-content p {
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 0.92rem;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .legal-box {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      text-align: left;
+      font-size: 0.88rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .legal-box a {
+      color: #5b9bd5;
+      text-decoration: underline;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .checkbox-label input {
+      width: 18px;
+      height: 18px;
+      accent-color: #2563EB;
+      cursor: pointer;
+    }
+
+    .splash-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #2563EB, #7C3AED);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .splash-btn:hover:not(:disabled) {
+      transform: translateY(-2deg);
+      opacity: 0.95;
+    }
+
+    .splash-btn:disabled {
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.3);
+      cursor: not-allowed;
+    }
+
     /* ── NAV ── */
     .nav {
       max-width: 1300px;
@@ -136,7 +275,6 @@
       flex-direction: column;
     }
 
-    /* Dynamic Backgrounds */
     .hero-bgs {
       position: absolute;
       inset: 0;
@@ -152,12 +290,10 @@
     }
     .hero-bg.active { opacity: 1; }
  
-    /* Cinematic Background Placeholders (Replace with real video elements/URLs when ready) */
     .hero-bg.bg-1 { background: radial-gradient(circle at 70% 50%, rgba(100,60,220,0.15) 0%, rgba(8,8,18,0.9) 60%), linear-gradient(to right, #080812 30%, transparent); }
     .hero-bg.bg-2 { background: radial-gradient(circle at 70% 50%, rgba(39,174,96,0.15) 0%, rgba(8,8,18,0.9) 60%), linear-gradient(to right, #080812 30%, transparent); }
     .hero-bg.bg-3 { background: radial-gradient(circle at 70% 50%, rgba(41,128,185,0.15) 0%, rgba(8,8,18,0.9) 60%), linear-gradient(to right, #080812 30%, transparent); }
 
-    /* Content Wrapper */
     .hero-anim-inner {
       position: relative;
       z-index: 2;
@@ -171,7 +307,6 @@
       padding-left: 80px;
     }
 
-    /* Top Elements */
     .hero-top {
       position: absolute;
       top: 120px;
@@ -182,7 +317,6 @@
       letter-spacing: 0.05em;
     }
 
-    /* Middle Slides */
     .hero-middle {
       position: relative;
       width: 100%;
@@ -243,7 +377,6 @@
       line-height: 1.6;
     }
 
-    /* Bottom Elements */
     .hero-bottom {
       position: absolute;
       bottom: 80px;
@@ -303,12 +436,11 @@
       transform: scale(1.2);
     }
 
-    /* Hero Mobile Overrides */
     @media(max-width: 768px) {
       .hero-anim-inner {
         padding-left: 24px;
         padding-right: 24px;
-        justify-content: flex-end; /* Move content down */
+        justify-content: flex-end;
         padding-bottom: 140px;
         text-align: center;
       }
@@ -327,10 +459,10 @@
         align-items: center;
       }
       .hero-big-headline {
-        font-size: 28px; /* Precise scale down per spec */
+        font-size: 28px;
       }
       .hero-subtext {
-        font-size: 14px; /* Precise scale down per spec */
+        font-size: 14px;
       }
       .hero-bottom {
         position: relative;
@@ -351,7 +483,6 @@
       }
     }
 
-
     /* ── REST OF GENERAL STYLES ── */
     .section-divider {
       border: none;
@@ -360,7 +491,6 @@
       margin: 0 auto;
     }
 
-    /* ── THREE PILLARS ── */
     .pillars-section {
       padding: 4.5rem 1.5rem;
       max-width: 980px;
@@ -401,7 +531,6 @@
     .pillar-link { font-size: 0.8rem; color: rgba(255,255,255,0.38); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.13); padding-bottom: 1px; transition: color 0.2s; }
     .pillar-link:hover { color: rgba(255,255,255,0.75); }
 
-    /* ── VIDEO CALL FEATURE ── */
     .video-section {
       padding: 4.5rem 1.5rem;
       max-width: 880px;
@@ -478,7 +607,6 @@
     .uc-card h4 { font-family: 'Sora', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 0.3rem; }
     .uc-card p { font-size: 0.8rem; color: rgba(255,255,255,0.45); line-height: 1.55; }
 
-    /* ── RECRUITMENT SECTION ── */
     .recruit-section {
       padding: 4.5rem 1.5rem;
       max-width: 780px;
@@ -531,7 +659,6 @@
     .s-body p { font-size: 0.81rem; color: rgba(255,255,255,0.48); line-height: 1.55; }
     .s-tag { font-size: 0.7rem; color: rgba(255,255,255,0.28); text-transform: uppercase; letter-spacing: 0.05em; flex-shrink: 0; align-self: center; }
 
-    /* ── PRE-REGISTER ── */
     .prereg-section {
       padding: 4.5rem 1.5rem;
       max-width: 820px;
@@ -611,7 +738,6 @@
 
     .form-msg { font-size: 0.82rem; color: #90EE90; margin-top: 0.6rem; min-height: 1.1rem; }
 
-    /* ── FOOTER ── */
     .footer-nav { display: flex; gap: 1.2rem; flex-wrap: wrap; justify-content: center; margin-bottom: 0.8rem; }
     .footer-nav a { color: rgba(255,255,255,0.4); text-decoration: none; font-size: 0.8rem; transition: color 0.2s; }
     .footer-nav a:hover { color: rgba(255,255,255,0.75); }
@@ -623,288 +749,357 @@
 <body>
   <div class="background-layer"></div>
 
-  <header class="site-header">
-    <div class="nav">
-      <a href="index.html" class="logo">
-        <img src="favicon.png" alt="Genesora AI logo" class="logo" />
-      </a>
-      <nav class="nav-center">
+  <!-- 🎬 WELCOME & TERMS ONBOARDING OVERLAY MODAL -->
+  <div id="splash-overlay" class="splash-overlay">
+    <div class="splash-card">
+      <div class="logo-container">
+        <img src="favicon.png" alt="Genesora AI Logo" class="spinning-logo" />
+      </div>
+
+      <!-- STEP 1: WELCOME SCREEN -->
+      <div id="step-1" class="step-content active">
+        <h2>Welcome to Genesora AI</h2>
+        <p>Experience real-time AI video calls, persona interactions, and smart recruitment.</p>
+        <button class="splash-btn" onclick="goToStep2()">Next &rarr;</button>
+      </div>
+
+      <!-- STEP 2: TERMS & PRIVACY SCREEN -->
+      <div id="step-2" class="step-content">
+        <h2>Terms & Privacy</h2>
+        <p>Please accept our legal terms to enter the platform:</p>
+        <div class="legal-box">
+          <label class="checkbox-label">
+            <input type="checkbox" id="terms-check" onchange="toggleAcceptButton()" />
+            <span>I accept the <a href="terms.html" target="_blank">Terms & Conditions</a> and <a href="privacy-policy.html" target="_blank">Privacy Policy</a>.</span>
+          </label>
+        </div>
+        <button id="accept-btn" class="splash-btn" disabled onclick="completeOnboarding()">Accept & Enter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🌐 SITE CONTENT WRAPPER (BLURRED UNTIL ACCEPTED) -->
+  <div id="site-wrapper" class="blurred">
+
+    <header class="site-header">
+      <div class="nav">
+        <a href="index.html" class="logo">
+          <img src="favicon.png" alt="Genesora AI logo" class="logo" />
+        </a>
+        <nav class="nav-center">
+          <a href="index.html#how-it-works">How it works</a>
+          <a href="index.html#ai-video-call">AI Video Call</a>
+          <a href="index.html#recruitment">Recruitment</a>
+          <a href="roadmap.html">Roadmap</a>
+          <a href="about.html">About</a>
+        </nav>
+        <a href="#pre-register" class="nav-cta">Get early access</a>
+        <button class="hamburger" id="hamburger" aria-label="Menu">&#9776;</button>
+      </div>
+      <div class="mobile-menu" id="mobileMenu">
         <a href="index.html#how-it-works">How it works</a>
         <a href="index.html#ai-video-call">AI Video Call</a>
         <a href="index.html#recruitment">Recruitment</a>
         <a href="roadmap.html">Roadmap</a>
         <a href="about.html">About</a>
-      </nav>
-      <a href="#pre-register" class="nav-cta">Get early access</a>
-      <button class="hamburger" id="hamburger" aria-label="Menu">&#9776;</button>
-    </div>
-    <div class="mobile-menu" id="mobileMenu">
-      <a href="index.html#how-it-works">How it works</a>
-      <a href="index.html#ai-video-call">AI Video Call</a>
-      <a href="index.html#recruitment">Recruitment</a>
-      <a href="roadmap.html">Roadmap</a>
-      <a href="about.html">About</a>
-      <a href="#pre-register">Get early access</a>
-    </div>
-  </header>
-
-  <main>
-    <section class="hero-anim" id="hero-anim">
-      <div class="hero-bgs">
-        <div class="hero-bg bg-1 active"></div>
-        <div class="hero-bg bg-2"></div>
-        <div class="hero-bg bg-3"></div>
+        <a href="#pre-register">Get early access</a>
       </div>
- 
-      <div class="hero-anim-inner">
-        <div class="hero-top">
-          <span class="hero-eyebrow">● Now in development · Launching Q4 2026</span>
-        </div>
+    </header>
 
-        <div class="hero-middle">
- 
-          <div class="hero-slide active" id="slide-1">
-            <h1 class="hero-big-headline">This is not a video call.<br>This is the future.</h1>
-            <div class="hero-pill-badge"><span class="live-dot-hero"></span> LIVE — AI Persona Call</div>
-            <p class="hero-subtext">Generate your own AI human character.<br>Talk face to face in real time.</p>
-          </div>
- 
-          <div class="hero-slide" id="slide-2">
-            <h1 class="hero-big-headline">Practice your interview.<br>Get hired.</h1>
-            <div class="hero-pill-badge">💼 Workspace — Find a Job</div>
-            <p class="hero-subtext">Upload your resume. Let AI interview you.<br>Get matched to the right company worldwide.</p>
-          </div>
- 
-          <div class="hero-slide" id="slide-3">
-            <h1 class="hero-big-headline">Post a job.<br>AI interviews everyone.<br>You just choose who to hire.</h1>
-            <div class="hero-pill-badge">🏢 Workspace — Enterprise</div>
-            <p class="hero-subtext">AI screens every applicant. AI conducts every interview.<br>You receive the full report. Zero manual work.</p>
+    <main>
+      <section class="hero-anim" id="hero-anim">
+        <div class="hero-bgs">
+          <div class="hero-bg bg-1 active"></div>
+          <div class="hero-bg bg-2"></div>
+          <div class="hero-bg bg-3"></div>
+        </div>
+   
+        <div class="hero-anim-inner">
+          <div class="hero-top">
+            <span class="hero-eyebrow">● Now in development · Launching Q4 2026</span>
           </div>
 
-        </div>
+          <div class="hero-middle">
+   
+            <div class="hero-slide active" id="slide-1">
+              <h1 class="hero-big-headline">This is not a video call.<br>This is the future.</h1>
+              <div class="hero-pill-badge"><span class="live-dot-hero"></span> LIVE — AI Persona Call</div>
+              <p class="hero-subtext">Generate your own AI human character.<br>Talk face to face in real time.</p>
+            </div>
+   
+            <div class="hero-slide" id="slide-2">
+              <h1 class="hero-big-headline">Practice your interview.<br>Get hired.</h1>
+              <div class="hero-pill-badge">💼 Workspace — Find a Job</div>
+              <p class="hero-subtext">Upload your resume. Let AI interview you.<br>Get matched to the right company worldwide.</p>
+            </div>
+   
+            <div class="hero-slide" id="slide-3">
+              <h1 class="hero-big-headline">Post a job.<br>AI interviews everyone.<br>You just choose who to hire.</h1>
+              <div class="hero-pill-badge">🏢 Workspace — Enterprise</div>
+              <p class="hero-subtext">AI screens every applicant. AI conducts every interview.<br>You receive the full report. Zero manual work.</p>
+            </div>
 
-        <div class="hero-bottom">
-          <div class="ready-to-connect">READY TO CONNECT</div>
-          <div class="hero-buttons">
-            <a href="#recruitment" class="cta-btn-hero" onclick="document.querySelector('[data-tab=\'seeker\']').click();">💼 I'm Looking for a Job</a>
-            <a href="#recruitment" class="cta-btn-hero" onclick="document.querySelector('[data-tab=\'company\']').click();">🏢 I'm Hiring</a>
+          </div>
+
+          <div class="hero-bottom">
+            <div class="ready-to-connect">READY TO CONNECT</div>
+            <div class="hero-buttons">
+              <a href="#recruitment" class="cta-btn-hero" onclick="document.querySelector('[data-tab=\'seeker\']').click();">💼 I'm Looking for a Job</a>
+              <a href="#recruitment" class="cta-btn-hero" onclick="document.querySelector('[data-tab=\'company\']').click();">🏢 I'm Hiring</a>
+            </div>
           </div>
         </div>
+
+        <div class="hero-dots">
+          <span class="h-dot active" id="dot-1"></span>
+          <span class="h-dot" id="dot-2"></span>
+          <span class="h-dot" id="dot-3"></span>
+        </div>
+      </section>
+
+      <hr class="section-divider" />
+
+      <section class="pillars-section fade-in" id="how-it-works">
+        <h2>One platform. Built for everyone.</h2>
+        <p class="section-sub">Whether you are hiring or looking for work — Genesora AI handles everything in between. Worldwide.</p>
+        <div class="pillars-grid">
+          <div class="pillar-card recruit">
+            <div class="pillar-icon">🎯</div>
+            <h3>AI Recruitment</h3>
+            <p>Post your job and let Genesora do everything. AI screens every applicant, conducts the full video interview on your behalf, and sends you a complete performance report. You only show up for the final approval. That is it.</p>
+            <a href="#recruitment" class="pillar-link">Post a job →</a>
+          </div>
+          <div class="pillar-card chat">
+            <div class="pillar-icon">💼</div>
+            <h3>Find Your Job</h3>
+            <p>Upload your CV, browse open roles, and give your interview right here on Genesora — with an AI interviewer on video. No awkward calls. No waiting weeks. Get matched to the right company and get hired — all in one place.</p>
+            <a href="#recruitment" class="pillar-link">Start your job search →</a>
+          </div>
+          <div class="pillar-card video">
+            <div class="pillar-icon">🎥</div>
+            <h3>AI Video Call</h3>
+            <p>Generate your own AI human character and video call them live — face to face, in real time. Practice your interview, build your confidence, or just have a real conversation with AI. This is not a chatbot. This is presence.</p>
+            <a href="#ai-video-call" class="pillar-link">Learn more →</a>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider" />
+
+      <section class="video-section fade-in" id="ai-video-call">
+        <h2>Talk face-to-face with an AI human you design.</h2>
+        <p>
+          Choose your AI character's appearance, voice, and personality. Then start a live video call — your AI sees you, hears you, and responds in real time. This is not a chatbot window. This is a conversation.
+        </p>
+        <div class="split-mockup">
+          <div class="split-pane">
+            <div class="p-icon">📷</div>
+            <span>Your webcam</span>
+          </div>
+          <div class="split-divider">⇄</div>
+          <div class="split-pane ai-side">
+            <div class="p-icon">🤖</div>
+            <span>Your AI character</span>
+          </div>
+          <div class="live-pill"><div class="live-dot"></div>LIVE</div>
+        </div>
+        <div class="use-cases">
+          <div class="uc-card">
+            <div class="uc-num">1</div>
+            <h4>Casual conversation</h4>
+            <p>Talk to your AI companion anytime, about anything.</p>
+          </div>
+          <div class="uc-card">
+            <div class="uc-num">2</div>
+            <h4>Interview practice</h4>
+            <p>Prepare for real interviews with your AI HR character — completely private.</p>
+          </div>
+          <div class="uc-card">
+            <div class="uc-num">3</div>
+            <h4>AI job interview</h4>
+            <p>Let Genesora AI interview you on behalf of a real company.</p>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider" />
+
+      <section class="recruit-section fade-in" id="recruitment">
+        <h2>AI Recruitment — built into the platform.</h2>
+        <p class="section-sub">Genesora is the AI middleman between people and companies. No recruiters. No waiting rooms.</p>
+
+        <div class="tabs-row">
+          <button class="tab-btn active" data-tab="seeker">For Job Seekers</button>
+          <button class="tab-btn" data-tab="company">For Companies</button>
+        </div>
+
+        <div class="steps-list active" id="tab-seeker">
+          <div class="step-row">
+            <div class="s-num">1</div>
+            <div class="s-body"><h4>Create your profile &amp; upload resume</h4><p>Tell Genesora who you are, your skills, experience, and what kind of role you want.</p></div>
+            <div class="s-tag">Profile setup</div>
+          </div>
+          <div class="step-row">
+            <div class="s-num">2</div>
+            <div class="s-body"><h4>Browse &amp; apply to posted jobs</h4><p>See jobs that match your profile. Apply with one click — your info is already there.</p></div>
+            <div class="s-tag">Job matching</div>
+          </div>
+          <div class="step-row">
+            <div class="s-num">3</div>
+            <div class="s-body"><h4>Practice with AI HR character (optional)</h4><p>Generate your own AI HR character. Practice interview questions until you feel confident. Completely private.</p></div>
+            <div class="s-tag">Prep mode</div>
+          </div>
+          <div class="step-row">
+            <div class="s-num">4</div>
+            <div class="s-body"><h4>AI conducts your official video interview</h4><p>Genesora's AI HR asks you real job-specific questions on video. You can choose a generated character or a standard interface.</p></div>
+            <div class="s-tag">Live interview</div>
+          </div>
+          <div class="step-row">
+            <div class="s-num">5</div>
+            <div class="s-body"><h4>Get matched &amp; recruited</h4><p>Your performance report goes to the company. If you're a match, they reach out. You choose who to talk to.</p></div>
+            <div class="s-tag">Hired</div>
+          </div>
+        </div>
+
+        <div class="steps-list" id="tab-company">
+          <div class="step-row">
+            <div class="s-num blue">1</div>
+            <div class="s-body"><h4>Post your job with requirements</h4><p>Describe the role, required skills, experience level, and company culture.</p></div>
+            <div class="s-tag">Job posting</div>
+          </div>
+          <div class="step-row">
+            <div class="s-num blue">2</div>
+            <div class="s-body"><h4>Genesora AI screens all applicants automatically</h4><p>AI reviews every resume and profile against your job requirements. No manual screening needed.</p></div>
+            <div class="s-tag">Auto-screen</div>
+          </div>
+          <div class="step-row">
+            <div class="s-num blue">3</div>
+            <div class="s-body"><h4>AI conducts video interviews on your behalf</h4><p>Genesora's AI HR interviews every shortlisted candidate with job-specific questions. No HR time required.</p></div>
+            <div class="s-tag">AI interviews</div>
+          </div>
+          <div class="step-row">
+            <div class="s-num blue">4</div>
+            <div class="s-body"><h4>Receive full candidate report by email</h4><p>Get a detailed performance report for each candidate — strengths, weaknesses, interview score, and recommendation. You just choose who to hire.</p></div>
+            <div class="s-tag">Hire</div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider" />
+
+      <section class="prereg-section fade-in" id="pre-register">
+        <h2>Get early access to Genesora AI</h2>
+        <p>Launching soon. Be first in line — tell us who you are.</p>
+        <div class="forms-row">
+          <div class="form-card user-card">
+            <div class="form-tag">For Users &amp; Job Seekers</div>
+            <h3>Join as a User</h3>
+            <form id="userForm">
+              <input type="text" id="u_name" placeholder="Full name" required />
+              <input type="email" id="u_email" placeholder="Email address" required />
+              <select id="u_intent">
+                <option value="" disabled selected>I want to use Genesora for…</option>
+                <option>AI video call</option>
+                <option>Find a job</option>
+                <option>Practice interviews</option>
+                <option>All of the above</option>
+              </select>
+              <input type="text" id="u_industry" placeholder="Industry / field of work" />
+              <input type="text" id="u_country" placeholder="Country" />
+              <button type="submit" class="submit-user">Join as a User — Get Early Access</button>
+            </form>
+            <p class="form-msg" id="userMsg"></p>
+          </div>
+          <div class="form-card ent-card" id="pre-register-enterprise">
+            <div class="form-tag">For Companies &amp; Enterprises</div>
+            <h3>Join as an Enterprise</h3>
+            <form id="entForm">
+              <input type="text" id="e_name" placeholder="Your full name" required />
+              <input type="text" id="e_company" placeholder="Company name" required />
+              <input type="tel" id="e_phone" placeholder="Company registered mobile number (incl. country code)" required />
+              <input type="email" id="e_email" placeholder="Work email address" required />
+              <input type="text" id="e_country" placeholder="Country" />
+              <button type="submit" class="submit-ent">Join as an Enterprise — Get Early Access</button>
+            </form>
+            <p class="form-msg" id="entMsg"></p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <p class="brand">Genesora AI</p>
+        <nav class="footer-nav">
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="roadmap.html">Roadmap</a>
+          <a href="index.html#how-it-works">How it works</a>
+          <a href="privacy-policy.html">Privacy Policy</a>
+          <a href="terms.html">Terms & Conditions</a>
+          <a href="cookie-policy.html">Cookie Policy</a>
+        </nav>
+        <p class="footer-contact"><a href="mailto:genesoraai@outlook.com">genesoraai@outlook.com</a></p>
+        <p>© 2026 Genesora AI. All rights reserved.</p>
+        <div class="socials">
+          <a href="https://instagram.com/genesora_ai" target="_blank" aria-label="Instagram">
+            <svg class="icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17" cy="7" r="1" fill="currentColor"/></svg>
+          </a>
+          <a href="https://threads.net/@genesora_ai" target="_blank" aria-label="Threads">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c5.5 0 10 4.5 10 10s-4.5 10-10 10S2 17.5 2 12 6.5 2 12 2zm0 4c-3.3 0-6 2.7-6 6 0 3 2.2 5.5 5.1 5.9v-2.1c-1.8-.3-3.1-1.8-3.1-3.8 0-2.2 1.8-4 4-4 2.1 0 3.8 1.6 4 3.6-.6-.2-1.2-.3-1.9-.3v1.9c1.2 0 2 .3 2.6.8-.3 1.5-1.5 2.7-3 3.1v2.1c2.2-.4 4-2 4.7-4.1.4-1.2.3-2.6-.3-3.8C17.2 7.3 14.8 6 12 6z"/></svg>
+          </a>
+          <a href="https://x.com/Genesora_ai" target="_blank" aria-label="Twitter / X">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.25 2H21l-6.56 7.51L22 22h-6.53l-4.37-5.87L6 22H3.25l7.03-8.06L2 2h6.62l3.9 5.33L18.25 2zm-2.24 17.52h1.37L8.21 4.41H6.77l9.24 15.11z"/></svg>
+          </a>
+        </div>
       </div>
+    </footer>
 
-      <div class="hero-dots">
-        <span class="h-dot active" id="dot-1"></span>
-        <span class="h-dot" id="dot-2"></span>
-        <span class="h-dot" id="dot-3"></span>
-      </div>
-    </section>
-
-    <hr class="section-divider" />
-
-    <section class="pillars-section fade-in" id="how-it-works">
-  <h2>One platform. Built for everyone.</h2>
-  <p class="section-sub">Whether you are hiring or looking for work — Genesora AI handles everything in between. Worldwide.</p>
-  <div class="pillars-grid">
-    <div class="pillar-card recruit">
-      <div class="pillar-icon">🎯</div>
-      <h3>AI Recruitment</h3>
-      <p>Post your job and let Genesora do everything. AI screens every applicant, conducts the full video interview on your behalf, and sends you a complete performance report. You only show up for the final approval. That is it.</p>
-      <a href="#recruitment" class="pillar-link">Post a job →</a>
-    </div>
-    <div class="pillar-card chat">
-      <div class="pillar-icon">💼</div>
-      <h3>Find Your Job</h3>
-      <p>Upload your CV, browse open roles, and give your interview right here on Genesora — with an AI interviewer on video. No awkward calls. No waiting weeks. Get matched to the right company and get hired — all in one place.</p>
-      <a href="#recruitment" class="pillar-link">Start your job search →</a>
-    </div>
-    <div class="pillar-card video">
-      <div class="pillar-icon">🎥</div>
-      <h3>AI Video Call</h3>
-      <p>Generate your own AI human character and video call them live — face to face, in real time. Practice your interview, build your confidence, or just have a real conversation with AI. This is not a chatbot. This is presence.</p>
-      <a href="#ai-video-call" class="pillar-link">Learn more →</a>
-    </div>
-  </div>
-</section>
-
-    <hr class="section-divider" />
-
-    <section class="video-section fade-in" id="ai-video-call">
-      <h2>Talk face-to-face with an AI human you design.</h2>
-      <p>
-        Choose your AI character's appearance, voice, and personality. Then start a live video call — your AI sees you, hears you, and responds in real time. This is not a chatbot window. This is a conversation.
-      </p>
-      <div class="split-mockup">
-        <div class="split-pane">
-          <div class="p-icon">📷</div>
-          <span>Your webcam</span>
-        </div>
-        <div class="split-divider">⇄</div>
-        <div class="split-pane ai-side">
-          <div class="p-icon">🤖</div>
-          <span>Your AI character</span>
-        </div>
-        <div class="live-pill"><div class="live-dot"></div>LIVE</div>
-      </div>
-      <div class="use-cases">
-        <div class="uc-card">
-          <div class="uc-num">1</div>
-          <h4>Casual conversation</h4>
-          <p>Talk to your AI companion anytime, about anything.</p>
-        </div>
-        <div class="uc-card">
-          <div class="uc-num">2</div>
-          <h4>Interview practice</h4>
-          <p>Prepare for real interviews with your AI HR character — completely private.</p>
-        </div>
-        <div class="uc-card">
-          <div class="uc-num">3</div>
-          <h4>AI job interview</h4>
-          <p>Let Genesora AI interview you on behalf of a real company.</p>
-        </div>
-      </div>
-    </section>
-
-    <hr class="section-divider" />
-
-    <section class="recruit-section fade-in" id="recruitment">
-      <h2>AI Recruitment — built into the platform.</h2>
-      <p class="section-sub">Genesora is the AI middleman between people and companies. No recruiters. No waiting rooms.</p>
-
-      <div class="tabs-row">
-        <button class="tab-btn active" data-tab="seeker">For Job Seekers</button>
-        <button class="tab-btn" data-tab="company">For Companies</button>
-      </div>
-
-      <div class="steps-list active" id="tab-seeker">
-        <div class="step-row">
-          <div class="s-num">1</div>
-          <div class="s-body"><h4>Create your profile &amp; upload resume</h4><p>Tell Genesora who you are, your skills, experience, and what kind of role you want.</p></div>
-          <div class="s-tag">Profile setup</div>
-        </div>
-        <div class="step-row">
-          <div class="s-num">2</div>
-          <div class="s-body"><h4>Browse &amp; apply to posted jobs</h4><p>See jobs that match your profile. Apply with one click — your info is already there.</p></div>
-          <div class="s-tag">Job matching</div>
-        </div>
-        <div class="step-row">
-          <div class="s-num">3</div>
-          <div class="s-body"><h4>Practice with AI HR character (optional)</h4><p>Generate your own AI HR character. Practice interview questions until you feel confident. Completely private.</p></div>
-          <div class="s-tag">Prep mode</div>
-        </div>
-        <div class="step-row">
-          <div class="s-num">4</div>
-          <div class="s-body"><h4>AI conducts your official video interview</h4><p>Genesora's AI HR asks you real job-specific questions on video. You can choose a generated character or a standard interface.</p></div>
-          <div class="s-tag">Live interview</div>
-        </div>
-        <div class="step-row">
-          <div class="s-num">5</div>
-          <div class="s-body"><h4>Get matched &amp; recruited</h4><p>Your performance report goes to the company. If you're a match, they reach out. You choose who to talk to.</p></div>
-          <div class="s-tag">Hired</div>
-        </div>
-      </div>
-
-      <div class="steps-list" id="tab-company">
-        <div class="step-row">
-          <div class="s-num blue">1</div>
-          <div class="s-body"><h4>Post your job with requirements</h4><p>Describe the role, required skills, experience level, and company culture.</p></div>
-          <div class="s-tag">Job posting</div>
-        </div>
-        <div class="step-row">
-          <div class="s-num blue">2</div>
-          <div class="s-body"><h4>Genesora AI screens all applicants automatically</h4><p>AI reviews every resume and profile against your job requirements. No manual screening needed.</p></div>
-          <div class="s-tag">Auto-screen</div>
-        </div>
-        <div class="step-row">
-          <div class="s-num blue">3</div>
-          <div class="s-body"><h4>AI conducts video interviews on your behalf</h4><p>Genesora's AI HR interviews every shortlisted candidate with job-specific questions. No HR time required.</p></div>
-          <div class="s-tag">AI interviews</div>
-        </div>
-        <div class="step-row">
-          <div class="s-num blue">4</div>
-          <div class="s-body"><h4>Receive full candidate report by email</h4><p>Get a detailed performance report for each candidate — strengths, weaknesses, interview score, and recommendation. You just choose who to hire.</p></div>
-          <div class="s-tag">Hire</div>
-        </div>
-      </div>
-    </section>
-
-    <hr class="section-divider" />
-
-    <section class="prereg-section fade-in" id="pre-register">
-      <h2>Get early access to Genesora AI</h2>
-      <p>Launching soon. Be first in line — tell us who you are.</p>
-      <div class="forms-row">
-        <div class="form-card user-card">
-          <div class="form-tag">For Users &amp; Job Seekers</div>
-          <h3>Join as a User</h3>
-          <form id="userForm">
-            <input type="text" id="u_name" placeholder="Full name" required />
-            <input type="email" id="u_email" placeholder="Email address" required />
-            <select id="u_intent">
-              <option value="" disabled selected>I want to use Genesora for…</option>
-              <option>AI video call</option>
-              <option>Find a job</option>
-              <option>Practice interviews</option>
-              <option>All of the above</option>
-            </select>
-            <input type="text" id="u_industry" placeholder="Industry / field of work" />
-            <input type="text" id="u_country" placeholder="Country" />
-            <button type="submit" class="submit-user">Join as a User — Get Early Access</button>
-          </form>
-          <p class="form-msg" id="userMsg"></p>
-        </div>
-        <div class="form-card ent-card" id="pre-register-enterprise">
-          <div class="form-tag">For Companies &amp; Enterprises</div>
-          <h3>Join as an Enterprise</h3>
-          <form id="entForm">
-            <input type="text" id="e_name" placeholder="Your full name" required />
-            <input type="text" id="e_company" placeholder="Company name" required />
-            <input type="tel" id="e_phone" placeholder="Company registered mobile number (incl. country code)" required />
-            <input type="email" id="e_email" placeholder="Work email address" required />
-            <input type="text" id="e_country" placeholder="Country" />
-            <button type="submit" class="submit-ent">Join as an Enterprise — Get Early Access</button>
-          </form>
-          <p class="form-msg" id="entMsg"></p>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <p class="brand">Genesora AI</p>
-      <nav class="footer-nav">
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-        <a href="roadmap.html">Roadmap</a>
-        <a href="index.html#how-it-works">How it works</a>
-      </nav>
-      <p class="footer-contact"><a href="mailto:genesoraai@outlook.com">genesoraai@outlook.com</a></p>
-      <p>© 2026 Genesora AI. All rights reserved.</p>
-      <div class="socials">
-        <a href="https://instagram.com/genesora_ai" target="_blank" aria-label="Instagram">
-          <svg class="icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17" cy="7" r="1" fill="currentColor"/></svg>
-        </a>
-        <a href="https://threads.net/@genesora_ai" target="_blank" aria-label="Threads">
-          <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c5.5 0 10 4.5 10 10s-4.5 10-10 10S2 17.5 2 12 6.5 2 12 2zm0 4c-3.3 0-6 2.7-6 6 0 3 2.2 5.5 5.1 5.9v-2.1c-1.8-.3-3.1-1.8-3.1-3.8 0-2.2 1.8-4 4-4 2.1 0 3.8 1.6 4 3.6-.6-.2-1.2-.3-1.9-.3v1.9c1.2 0 2 .3 2.6.8-.3 1.5-1.5 2.7-3 3.1v2.1c2.2-.4 4-2 4.7-4.1.4-1.2.3-2.6-.3-3.8C17.2 7.3 14.8 6 12 6z"/></svg>
-        </a>
-        <a href="https://x.com/Genesora_ai" target="_blank" aria-label="Twitter / X">
-          <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.25 2H21l-6.56 7.51L22 22h-6.53l-4.37-5.87L6 22H3.25l7.03-8.06L2 2h6.62l3.9 5.33L18.25 2zm-2.24 17.52h1.37L8.21 4.41H6.77l9.24 15.11z"/></svg>
-        </a>
-      </div>
-    </div>
-  </footer>
+  </div> <!-- END SITE WRAPPER -->
 
   <script>
+    // 🎬 WELCOME & TERMS ONBOARDING OVERLAY LOGIC
+    function goToStep2() {
+      document.getElementById('step-1').classList.remove('active');
+      setTimeout(() => {
+        document.getElementById('step-2').classList.add('active');
+      }, 150);
+    }
+
+    function toggleAcceptButton() {
+      const isChecked = document.getElementById('terms-check').checked;
+      document.getElementById('accept-btn').disabled = !isChecked;
+    }
+
+    function completeOnboarding() {
+      const overlay = document.getElementById('splash-overlay');
+      const wrapper = document.getElementById('site-wrapper');
+
+      overlay.classList.add('fade-out');
+      wrapper.classList.remove('blurred');
+
+      setTimeout(() => {
+        overlay.style.display = 'none';
+      }, 500);
+
+      localStorage.setItem('genesora_terms_accepted', 'true');
+    }
+
+    if (localStorage.getItem('genesora_terms_accepted') === 'true') {
+      const overlay = document.getElementById('splash-overlay');
+      const wrapper = document.getElementById('site-wrapper');
+      if (overlay) overlay.style.display = 'none';
+      if (wrapper) wrapper.classList.remove('blurred');
+    }
+
     // 🎬 HERO SLIDER LOGIC
     let currentSlide = 1;
     const totalSlides = 3;
 
     function showSlide(index) {
-      // Remove active class from all
       document.querySelectorAll('.hero-bg, .hero-slide, .h-dot').forEach(el => el.classList.remove('active'));
  
-      // Add active class to target index
       document.querySelector(`.hero-bg.bg-${index}`).classList.add('active');
       document.querySelector(`#slide-${index}`).classList.add('active');
       document.querySelector(`#dot-${index}`).classList.add('active');
@@ -912,16 +1107,14 @@
       currentSlide = index;
     }
 
-    // 6 seconds display + 500ms transition = 6500 interval
     let sliderInterval = setInterval(() => {
       let next = currentSlide >= totalSlides ? 1 : currentSlide + 1;
       showSlide(next);
     }, 6500);
 
-    // Allow manual dot clicking
     document.querySelectorAll('.h-dot').forEach((dot, index) => {
       dot.addEventListener('click', () => {
-        clearInterval(sliderInterval); // Pause auto-rotation if user clicks manually
+        clearInterval(sliderInterval);
         showSlide(index + 1);
         sliderInterval = setInterval(() => {
           let next = currentSlide >= totalSlides ? 1 : currentSlide + 1;
@@ -929,7 +1122,6 @@
         }, 6500);
       });
     });
-
 
     // ── GENERAL LOGIC ──
     document.getElementById('hamburger').addEventListener('click', function() {
@@ -956,9 +1148,7 @@
       });
     });
 
-    // ── NEW GOOGLE APPS SCRIPT LOGIC ──
-
-    // Paste your Google Apps Script Web App URL here!
+    // ── GOOGLE APPS SCRIPT LOGIC ──
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLTkJ-ZcTb5xeJE4pDw871xmofPkFKxalz1yyAOejSEgnWh5JXmxEAm8FuU07EkTftpA/exec";
 
     // --- USER FORM LOGIC ---
@@ -974,8 +1164,8 @@
       fd.append("email", document.getElementById('u_email').value);
       
       const intentSelect = document.getElementById('u_intent');
-      fd.append("detail2", intentSelect.options[intentSelect.selectedIndex].value); // Intent
-      fd.append("detail1", document.getElementById('u_industry').value); // Industry
+      fd.append("detail2", intentSelect.options[intentSelect.selectedIndex].value);
+      fd.append("detail1", document.getElementById('u_industry').value);
       fd.append("country", document.getElementById('u_country').value);
 
       fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: fd })
@@ -1001,8 +1191,8 @@
       fd.append("type", "Enterprise");
       fd.append("name", document.getElementById('e_name').value);
       fd.append("email", document.getElementById('e_email').value);
-      fd.append("detail1", document.getElementById('e_company').value); // Company
-      fd.append("detail2", document.getElementById('e_phone').value); // Phone
+      fd.append("detail1", document.getElementById('e_company').value);
+      fd.append("detail2", document.getElementById('e_phone').value);
       fd.append("country", document.getElementById('e_country').value);
 
       fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: fd })
