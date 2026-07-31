@@ -720,3 +720,74 @@ h2 {
   color: rgba(255, 255, 255, 0.3);
   cursor: not-allowed;
 }
+/* ================= CUSTOM COOKIE BANNER ================= */
+.cookie-banner {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  max-width: 420px;
+  width: calc(100% - 48px);
+  background: rgba(17, 24, 39, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(16px);
+  z-index: 9999;
+  transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+}
+
+.cookie-banner.hidden {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  pointer-events: none;
+}
+
+.cookie-content p {
+  color: #94A3B8;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.cookie-content a {
+  color: #5b9bd5;
+  text-decoration: underline;
+}
+
+.cookie-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.cookie-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-accept {
+  background: linear-gradient(135deg, #2563EB, #7C3AED);
+  color: white;
+}
+
+.btn-accept:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-decline {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.btn-decline:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: white;
+}
