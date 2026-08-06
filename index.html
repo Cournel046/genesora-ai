@@ -91,24 +91,20 @@
       margin-bottom: 24px;
     }
 
- .spinning-logo {
+.spinning-logo {
   width: 72px;
   height: 72px;
   border-radius: 50%;
   aspect-ratio: 1 / 1;
   object-fit: contain;
-  animation: pulseGlow 2.5s ease-in-out infinite;
+  transform-origin: 50% 50%; /* Locks rotational axis */
+  filter: drop-shadow(0 0 20px rgba(37, 99, 235, 0.5));
+  animation: spinInPlace 8s linear infinite; /* Smooth 8-second rotation */
 }
 
-@keyframes pulseGlow {
-  0%, 100% {
-    filter: drop-shadow(0 0 15px rgba(37, 99, 235, 0.4)) drop-shadow(0 0 25px rgba(124, 58, 237, 0.3));
-    transform: scale(1);
-  }
-  50% {
-    filter: drop-shadow(0 0 30px rgba(37, 99, 235, 0.85)) drop-shadow(0 0 45px rgba(124, 58, 237, 0.7));
-    transform: scale(1.03);
-  }
+@keyframes spinInPlace {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
     .step-content {
       display: none;
