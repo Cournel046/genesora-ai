@@ -1072,14 +1072,19 @@
     });
 
     // ── GOOGLE APPS SCRIPT LOGIC ──
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzLTkJ-ZcTb5xeJE4pDw871xmofPkFKxalz1yyAOejSEgnWh5JXmxEAm8FuU07EkTftpA/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwR-0fEIcrX7NXXIgsBlme-cqoPdiOMS0qKFsxahDarWsvGnDwfQx9dPyoJ4jRJL2ub-w/exec";
 
     // --- USER FORM LOGIC ---
     document.getElementById('userForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
       const btn = this.querySelector('.submit-user');
-      btn.textContent = "Sending...";
+      const msg = document.getElementById('userMsg');
+      const originalText = "Join as a User — Get Early Access";
+      
+      btn.textContent = "Securing Spot...";
+      btn.disabled = true;
+      msg.textContent = "";
 
       const fd = new FormData();
       fd.append("type", "User / Job Seeker");
@@ -1087,20 +1092,34 @@
       fd.append("email", document.getElementById('u_email').value);
       
       const intentSelect = document.getElementById('u_intent');
-      fd.append("detail2", intentSelect.options[intentSelect.selectedIndex].value);
+      fd.append("detail2", intentSelect.value || "");
       fd.append("detail1", document.getElementById('u_industry').value);
       fd.append("country", document.getElementById('u_country').value);
 
-      fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: fd })
-        .then(() => {
-          document.getElementById('userMsg').textContent = "✓ You're on the early access list!";
-          this.reset();
-          btn.textContent = "Join as a User — Get Early Access";
+      fetch(SCRIPT_URL, { 
+        method: 'POST', 
+        body: fd
+      })
+        .then(response => {
+          if (!response.ok) throw new Error('Network error');
+          return response.json();
+        })
+        .then(data => {
+          if (data && data.status === 'success') {
+            msg.style.color = "#90EE90";
+            msg.textContent = "✓ You're on the early access list!";
+            this.reset();
+            btn.textContent = "Joined Successfully";
+          } else {
+            throw new Error(data ? data.message : 'Unknown response');
+          }
         })
         .catch(error => {
-          console.error('Error!', error.message);
-          document.getElementById('userMsg').textContent = "Connection issue. Please try again.";
-          btn.textContent = "Join as a User — Get Early Access";
+          console.error('Waitlist Error:', error);
+          msg.style.color = "#ef4444";
+          msg.textContent = "Could not save spot. Please check your connection and try again.";
+          btn.disabled = false;
+          btn.textContent = originalText;
         });
     });
 
@@ -1109,7 +1128,12 @@
       e.preventDefault();
 
       const btn = this.querySelector('.submit-ent');
-      btn.textContent = "Sending...";
+      const msg = document.getElementById('entMsg');
+      const originalText = "Join as an Enterprise — Get Early Access";
+
+      btn.textContent = "Registering...";
+      btn.disabled = true;
+      msg.textContent = "";
 
       const fd = new FormData();
       fd.append("type", "Enterprise");
@@ -1119,16 +1143,30 @@
       fd.append("detail2", document.getElementById('e_phone').value);
       fd.append("country", document.getElementById('e_country').value);
 
-      fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: fd })
-        .then(() => {
-          document.getElementById('entMsg').textContent = "✓ Enterprise request received — we'll be in touch!";
-          this.reset();
-          btn.textContent = "Join as an Enterprise — Get Early Access";
+      fetch(SCRIPT_URL, { 
+        method: 'POST', 
+        body: fd
+      })
+        .then(response => {
+          if (!response.ok) throw new Error('Network error');
+          return response.json();
+        })
+        .then(data => {
+          if (data && data.status === 'success') {
+            msg.style.color = "#90EE90";
+            msg.textContent = "✓ Enterprise request received — we'll be in touch!";
+            this.reset();
+            btn.textContent = "Registered Successfully";
+          } else {
+            throw new Error(data ? data.message : 'Unknown response');
+          }
         })
         .catch(error => {
-          console.error('Error!', error.message);
-          document.getElementById('entMsg').textContent = "Connection issue. Please try again.";
-          btn.textContent = "Join as an Enterprise — Get Early Access";
+          console.error('Enterprise Error:', error);
+          msg.style.color = "#ef4444";
+          msg.textContent = "Could not register. Please try again.";
+          btn.disabled = false;
+          btn.textContent = originalText;
         });
     });
   </script>
