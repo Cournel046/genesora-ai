@@ -11,14 +11,16 @@
 
   <meta property="og:title" content="Genesora AI — Talk to AI. Practice Interviews. Get Hired." />
   <meta property="og:description" content="Video call a real AI human, practice interviews with AI HR characters, and get recruited through AI-powered hiring." />
-  <meta property="og:image" content="https://genesoraai.com/favicon.png" />
+  <meta property="og:image" content="https://genesoraai.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <meta property="og:url" content="https://genesoraai.com" />
   <meta property="og:type" content="website" />
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Genesora AI — Talk to AI. Practice Interviews. Get Hired." />
   <meta name="twitter:description" content="Video call a real AI human, practice interviews with AI HR characters, and get recruited through AI-powered hiring." />
-  <meta name="twitter:image" content="https://genesoraai.com/favicon.png" />
+  <meta name="twitter:image" content="https://genesoraai.com/og-image.png" />
 
   <script type="application/ld+json">
   {
@@ -44,145 +46,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet" />
 
   <style>
-    /* ── WELCOME & TERMS OVERLAY ── */
+    /* ── BASE WRAPPER ── */
     #site-wrapper {
-      transition: filter 0.6s ease, opacity 0.6s ease;
-    }
-    #site-wrapper.blurred {
-      filter: blur(20px) brightness(0.5);
-      pointer-events: none;
-      user-select: none;
-    }
-
-    .splash-overlay {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(8, 8, 18, 0.85);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 10000;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
-      padding: 20px;
-    }
-
-    .splash-overlay.fade-out {
-      opacity: 0;
-      visibility: hidden;
-    }
-
-    .splash-card {
-      background: rgba(17, 24, 39, 0.88);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 24px;
-      padding: 40px 32px;
+      position: relative;
       width: 100%;
-      max-width: 440px;
-      text-align: center;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(20px);
-    }
-
-    .logo-container {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 24px;
-    }
-
-.spinning-logo {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  aspect-ratio: 1 / 1;
-  object-fit: contain;
-  transform-origin: 50% 50%; /* Locks rotational axis */
-  filter: drop-shadow(0 0 20px rgba(37, 99, 235, 0.5));
-  animation: spinInPlace 8s linear infinite; /* Smooth 8-second rotation */
-}
-
-@keyframes spinInPlace {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-    .step-content {
-      display: none;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-
-    .step-content.active {
-      display: block;
-      opacity: 1;
-    }
-
-    .step-content h2 {
-      font-family: 'Sora', sans-serif;
-      font-size: 1.6rem;
-      color: #ffffff;
-      margin-bottom: 10px;
-    }
-
-    .step-content p {
-      color: rgba(255, 255, 255, 0.65);
-      font-size: 0.92rem;
-      margin-bottom: 24px;
-      line-height: 1.6;
-    }
-
-    .legal-box {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 16px;
-      border-radius: 12px;
-      margin-bottom: 24px;
-      text-align: left;
-      font-size: 0.88rem;
-      color: rgba(255, 255, 255, 0.8);
-    }
-
-    .legal-box a {
-      color: #5b9bd5;
-      text-decoration: underline;
-    }
-
-    .checkbox-label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-    }
-
-    .checkbox-label input {
-      width: 18px;
-      height: 18px;
-      accent-color: #2563EB;
-      cursor: pointer;
-    }
-
-    .splash-btn {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, #2563EB, #7C3AED);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s ease, opacity 0.2s ease;
-    }
-
-    .splash-btn:hover:not(:disabled) {
-      transform: translateY(-2deg);
-      opacity: 0.95;
-    }
-
-    .splash-btn:disabled {
-      background: rgba(255, 255, 255, 0.1);
-      color: rgba(255, 255, 255, 0.3);
-      cursor: not-allowed;
     }
 
     /* ── CUSTOM COOKIE BANNER UI ── */
@@ -792,6 +659,17 @@
     .form-card input:focus,
     .form-card select:focus { border-color: rgba(255,255,255,0.25); }
 
+    .legal-consent {
+      font-size: 0.76rem;
+      color: rgba(255, 255, 255, 0.45);
+      line-height: 1.4;
+      margin-bottom: 0.85rem;
+    }
+    .legal-consent a {
+      color: #5b9bd5;
+      text-decoration: underline;
+    }
+
     .submit-user {
       width: 100%; background: #27ae60; color: #fff;
       border: none; padding: 0.72rem;
@@ -823,37 +701,8 @@
 <body>
   <div class="background-layer"></div>
 
-  <!-- 🎬 WELCOME & TERMS ONBOARDING OVERLAY MODAL -->
-  <div id="splash-overlay" class="splash-overlay">
-    <div class="splash-card">
-      <div class="logo-container">
-        <img src="favicon.png" alt="Genesora AI Logo" class="spinning-logo" />
-      </div>
-
-      <!-- STEP 1: WELCOME SCREEN -->
-      <div id="step-1" class="step-content active">
-        <h2>Welcome to Genesora AI</h2>
-        <p>Experience real-time AI video calls, persona interactions, and smart recruitment.</p>
-        <button class="splash-btn" onclick="goToStep2()">Next &rarr;</button>
-      </div>
-
-      <!-- STEP 2: TERMS & PRIVACY SCREEN -->
-      <div id="step-2" class="step-content">
-        <h2>Terms & Privacy</h2>
-        <p>Please accept our legal terms to enter the platform:</p>
-        <div class="legal-box">
-          <label class="checkbox-label">
-            <input type="checkbox" id="terms-check" onchange="toggleAcceptButton()" />
-            <span>I accept the <a href="terms.html" target="_blank">Terms & Conditions</a> and <a href="privacy-policy.html" target="_blank">Privacy Policy</a>.</span>
-          </label>
-        </div>
-        <button id="accept-btn" class="splash-btn" disabled onclick="completeOnboarding()">Accept & Enter</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 🌐 SITE CONTENT WRAPPER (BLURRED UNTIL ACCEPTED) -->
-  <div id="site-wrapper" class="blurred">
+  <!-- 🌐 SITE CONTENT WRAPPER -->
+  <div id="site-wrapper">
 
     <header class="site-header">
       <div class="nav">
@@ -1080,6 +929,7 @@
               </select>
               <input type="text" id="u_industry" placeholder="Industry / field of work" />
               <input type="text" id="u_country" placeholder="Country" />
+              <p class="legal-consent">By joining, you agree to our <a href="terms.html" target="_blank">Terms &amp; Conditions</a> and <a href="privacy-policy.html" target="_blank">Privacy Policy</a>.</p>
               <button type="submit" class="submit-user">Join as a User — Get Early Access</button>
             </form>
             <p class="form-msg" id="userMsg"></p>
@@ -1093,6 +943,7 @@
               <input type="tel" id="e_phone" placeholder="Company registered mobile number (incl. country code)" required />
               <input type="email" id="e_email" placeholder="Work email address" required />
               <input type="text" id="e_country" placeholder="Country" />
+              <p class="legal-consent">By joining, you agree to our <a href="terms.html" target="_blank">Terms &amp; Conditions</a> and <a href="privacy-policy.html" target="_blank">Privacy Policy</a>.</p>
               <button type="submit" class="submit-ent">Join as an Enterprise — Get Early Access</button>
             </form>
             <p class="form-msg" id="entMsg"></p>
@@ -1125,10 +976,10 @@
           <a href="roadmap.html">Roadmap</a>
           <a href="index.html#how-it-works">How it works</a>
           <a href="privacy-policy.html">Privacy Policy</a>
-          <a href="terms.html">Terms & Conditions</a>
+          <a href="terms.html">Terms &amp; Conditions</a>
           <a href="cookie-policy.html">Cookie Policy</a>
         </nav>
-        <p class="footer-contact"><a href="mailto:genesoraai@outlook.com">genesoraai@outlook.com</a></p>
+        <p class="footer-contact"><a href="mailto:contact@genesoraai.com">contact@genesoraai.com</a></p>
         <p>© 2026 Genesora AI. All rights reserved.</p>
         <div class="socials">
           <a href="https://instagram.com/genesora_ai" target="_blank" aria-label="Instagram">
@@ -1158,43 +1009,7 @@
       document.getElementById('cookie-banner').classList.add('hidden');
     }
 
-    // 🎬 WELCOME & TERMS ONBOARDING OVERLAY LOGIC
-    function goToStep2() {
-      document.getElementById('step-1').classList.remove('active');
-      setTimeout(() => {
-        document.getElementById('step-2').classList.add('active');
-      }, 150);
-    }
-
-    function toggleAcceptButton() {
-      const isChecked = document.getElementById('terms-check').checked;
-      document.getElementById('accept-btn').disabled = !isChecked;
-    }
-
-    function completeOnboarding() {
-      const overlay = document.getElementById('splash-overlay');
-      const wrapper = document.getElementById('site-wrapper');
-
-      overlay.classList.add('fade-out');
-      wrapper.classList.remove('blurred');
-
-      setTimeout(() => {
-        overlay.style.display = 'none';
-      }, 500);
-
-      localStorage.setItem('genesora_terms_accepted', 'true');
-    }
-
     window.addEventListener('DOMContentLoaded', () => {
-      // Auto-hide terms overlay if already accepted
-      if (localStorage.getItem('genesora_terms_accepted') === 'true') {
-        const overlay = document.getElementById('splash-overlay');
-        const wrapper = document.getElementById('site-wrapper');
-        if (overlay) overlay.style.display = 'none';
-        if (wrapper) wrapper.classList.remove('blurred');
-      }
-
-      // Auto-hide cookie banner if already chosen
       const cookieConsent = localStorage.getItem('genesora_cookies_consent');
       if (cookieConsent === 'accepted' || cookieConsent === 'declined') {
         const banner = document.getElementById('cookie-banner');
@@ -1285,6 +1100,7 @@
         })
         .catch(error => {
           console.error('Error!', error.message);
+          document.getElementById('userMsg').textContent = "Connection issue. Please try again.";
           btn.textContent = "Join as a User — Get Early Access";
         });
     });
@@ -1312,6 +1128,7 @@
         })
         .catch(error => {
           console.error('Error!', error.message);
+          document.getElementById('entMsg').textContent = "Connection issue. Please try again.";
           btn.textContent = "Join as an Enterprise — Get Early Access";
         });
     });
