@@ -696,6 +696,9 @@
     .footer-contact { font-size: 0.8rem; color: rgba(255,255,255,0.32); margin-bottom: 0.75rem; }
     .footer-contact a { color: rgba(255,255,255,0.42); text-decoration: none; }
   </style>
+
+  <!-- ✨ NEW: styles for the fun extras (loads last so it can override) -->
+  <link rel="stylesheet" href="genesora-extras.css" />
 </head>
 
 <body>
@@ -712,6 +715,7 @@
         <nav class="nav-center">
           <a href="index.html#how-it-works">How it works</a>
           <a href="index.html#ai-video-call">AI Video Call</a>
+          <a href="index.html#challenge">Try it live</a>
           <a href="index.html#recruitment">Recruitment</a>
           <a href="roadmap.html">Roadmap</a>
           <a href="about.html">About</a>
@@ -722,6 +726,7 @@
       <div class="mobile-menu" id="mobileMenu">
         <a href="index.html#how-it-works">How it works</a>
         <a href="index.html#ai-video-call">AI Video Call</a>
+        <a href="index.html#challenge">Try it live</a>
         <a href="index.html#recruitment">Recruitment</a>
         <a href="roadmap.html">Roadmap</a>
         <a href="about.html">About</a>
@@ -769,8 +774,18 @@
             <div class="hero-buttons">
               <a href="#recruitment" class="cta-btn-hero" onclick="document.querySelector('[data-tab=\'seeker\']').click();">💼 I'm Looking for a Job</a>
               <a href="#recruitment" class="cta-btn-hero" onclick="document.querySelector('[data-tab=\'company\']').click();">🏢 I'm Hiring</a>
+              <a href="#challenge" class="cta-btn-hero cta-primary">🎤 Try the 60-sec challenge</a>
             </div>
           </div>
+        </div>
+
+        <!-- ✨ NEW: Maya, the cursor-following AI face (desktop only) -->
+        <div class="hero-face" id="heroFace">
+          <div class="hero-face-float">
+            <div class="hero-face-bubble" id="heroFaceBubble" role="status"></div>
+            <div id="heroFaceMount"></div>
+          </div>
+          <div class="hero-face-cap"><span class="cap-dot"></span>Maya · your AI HR — say hi 👋</div>
         </div>
 
         <div class="hero-dots">
@@ -814,18 +829,33 @@
         <p>
           Choose your AI character's appearance, voice, and personality. Then start a live video call — your AI sees you, hears you, and responds in real time. This is not a chatbot window. This is a conversation.
         </p>
-        <div class="split-mockup">
-          <div class="split-pane">
-            <div class="p-icon">📷</div>
-            <span>Your webcam</span>
+
+        <!-- ✨ NEW: living demo (replaces the old two-emoji mockup) -->
+        <div class="live-demo" id="liveDemo" role="img" aria-label="Simulated preview of a video call between a candidate and Maya, an AI interviewer">
+          <div class="ld-bar">
+            <span class="ld-dots"><i></i><i></i><i></i></span>
+            <span class="ld-title">Genesora · Interview practice with Maya</span>
+            <span class="ld-live"><span class="dot"></span>LIVE <b id="ldTimer">00:00</b></span>
           </div>
-          <div class="split-divider">⇄</div>
-          <div class="split-pane ai-side">
-            <div class="p-icon">🤖</div>
-            <span>Your AI character</span>
+          <div class="ld-stage">
+            <div class="ld-pane ld-you" id="ldYou">
+              <svg class="ld-you-art" viewBox="0 0 120 120" aria-hidden="true">
+                <circle cx="60" cy="42" r="22" fill="rgba(255,255,255,0.32)"/>
+                <path d="M16 112 C16 80 38 70 60 70 C82 70 104 80 104 112 Z" fill="rgba(255,255,255,0.22)"/>
+              </svg>
+              <span class="ld-name">You · camera on</span>
+              <div class="ld-wave" data-wave="you"></div>
+            </div>
+            <div class="ld-pane ld-ai" id="ldAi">
+              <div class="ld-face" id="ldFaceMount"></div>
+              <span class="ld-name">Maya · AI HR</span>
+              <div class="ld-wave" data-wave="ai"></div>
+            </div>
           </div>
-          <div class="live-pill"><div class="live-dot"></div>LIVE</div>
+          <div class="ld-captions" aria-live="off"><span class="ld-speaker ai" id="ldSpeaker">Maya</span><span id="ldText"></span><span class="ld-caret"></span></div>
+          <div class="ld-note">Simulated preview. Real AI video calls arrive with the beta.</div>
         </div>
+
         <div class="use-cases">
           <div class="uc-card">
             <div class="uc-num">1</div>
@@ -843,6 +873,89 @@
             <p>Let Genesora AI interview you on behalf of a real company.</p>
           </div>
         </div>
+      </section>
+
+      <hr class="section-divider" />
+
+      <!-- ✨ NEW: 60-Second Interview Challenge -->
+      <section class="challenge-section" id="challenge">
+        <span class="ch-badge">New · Try it live</span>
+        <h2>The 60-Second Interview Challenge</h2>
+        <p class="section-sub">One question. One minute. Maya gives you instant feedback, then you can brag about it.</p>
+
+        <div class="ch-card" id="chCard">
+          <div class="ch-maya">
+            <div id="chFaceMount"></div>
+            <div class="ch-maya-name">Maya<small>AI HR · demo mode</small></div>
+          </div>
+
+          <div class="ch-body">
+
+            <div class="ch-stage active" data-stage="intro">
+              <div class="ch-bubble" id="chIntro">Hi! I'm Maya. I'll ask you one interview question and you get 60 seconds to answer. No résumé, no pressure. Ready?</div>
+              <button type="button" class="ch-btn primary" id="chStart">Start the clock ⏱</button>
+            </div>
+
+            <div class="ch-stage" data-stage="question">
+              <div class="ch-timer-row">
+                <div class="ch-timer" id="chTimerBox">
+                  <svg viewBox="0 0 64 64" aria-hidden="true">
+                    <circle class="bg" cx="32" cy="32" r="26"/>
+                    <circle class="fg" id="chTimerRing" cx="32" cy="32" r="26"/>
+                  </svg>
+                  <span id="chTime">60</span>
+                </div>
+                <div class="ch-bubble" id="chQuestion"></div>
+              </div>
+              <textarea id="chAnswer" rows="6" maxlength="1500" placeholder="Type your answer… or tap the mic and talk" aria-label="Your answer"></textarea>
+              <div class="ch-actions">
+                <button type="button" class="ch-btn ghost" id="chMic" hidden>🎤 Speak</button>
+                <button type="button" class="ch-btn ghost" id="chSkip">New question ↻</button>
+                <span class="spacer"></span>
+                <button type="button" class="ch-btn primary" id="chSubmit">Submit answer →</button>
+              </div>
+              <p class="ch-hint" id="chHint" aria-live="polite"></p>
+            </div>
+
+            <div class="ch-stage" data-stage="result" aria-live="polite">
+              <div class="ch-score">
+                <div class="ch-ring">
+                  <svg viewBox="0 0 110 110" aria-hidden="true">
+                    <defs><linearGradient id="chGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2563EB"/><stop offset="1" stop-color="#10B981"/></linearGradient></defs>
+                    <circle class="bg" cx="55" cy="55" r="42"/>
+                    <circle class="fg" id="chScoreRing" cx="55" cy="55" r="42" stroke="url(#chGrad)"/>
+                  </svg>
+                  <b><span id="chScoreNum">0</span><small>/ 100</small></b>
+                </div>
+                <div>
+                  <div class="ch-title" id="chTitle"></div>
+                  <p id="chComment"></p>
+                </div>
+              </div>
+
+              <div class="ch-metrics">
+                <div class="ch-metric"><span>Interview energy</span><b>Score above</b><div class="ch-bar"><i id="chEnergyBar"></i></div></div>
+                <div class="ch-metric"><span>Confidence</span><b id="chConf">—</b></div>
+                <div class="ch-metric"><span>Buzzword count</span><b id="chBuzz">0</b></div>
+                <div class="ch-metric"><span>Story structure</span><b id="chStarVal">0/4</b><div class="ch-pips" id="chPips"><i></i><i></i><i></i><i></i></div></div>
+              </div>
+
+              <div class="ch-actions">
+                <a class="ch-btn ghost" id="chShareX" target="_blank" rel="noopener">Post on X</a>
+                <a class="ch-btn ghost" id="chShareWA" target="_blank" rel="noopener">WhatsApp</a>
+                <button type="button" class="ch-btn ghost" id="chShareNative" hidden>Share…</button>
+                <button type="button" class="ch-btn ghost" id="chCopy">Copy brag text</button>
+              </div>
+              <div class="ch-actions">
+                <button type="button" class="ch-btn ghost" id="chRetry">Try another question ↻</button>
+                <span class="spacer"></span>
+                <a href="#pre-register" class="ch-btn primary">Join the waitlist →</a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <p class="ch-fine">A fun preview with simple scoring that runs in your browser. Typed answers are never sent to us. If you use the mic, your browser's own speech service handles the audio. The real interview AI launches with the beta.</p>
       </section>
 
       <hr class="section-divider" />
@@ -916,7 +1029,8 @@
         <div class="forms-row">
           <div class="form-card user-card">
             <div class="form-tag">For Users &amp; Job Seekers</div>
-            <h3>Join as a User</h3>
+            <h3 id="userCardTitle">Join as a User</h3>
+            <p class="ref-note" id="refNote" hidden>🎁 You were invited by a friend. They'll move up the line when you join.</p>
             <form id="userForm">
               <input type="text" id="u_name" placeholder="Full name" required />
               <input type="email" id="u_email" placeholder="Email address" required />
@@ -932,6 +1046,8 @@
               <p class="legal-consent">By joining, you agree to our <a href="privacy-policy.html" target="_blank">Privacy Policy</a>.</p>
               <button type="submit" class="submit-user">Join as a User — Get Early Access</button>
             </form>
+            <!-- ✨ NEW: referral card (filled in by genesora-extras.js after signup) -->
+            <div class="referral-card" id="referralCard" hidden></div>
             <p class="form-msg" id="userMsg"></p>
           </div>
           <div class="form-card ent-card" id="pre-register-enterprise">
@@ -1086,15 +1202,23 @@
       btn.disabled = true;
       msg.textContent = "";
 
+      const joinName = document.getElementById('u_name').value;
+
       const fd = new FormData();
       fd.append("type", "User / Job Seeker");
-      fd.append("name", document.getElementById('u_name').value);
+      fd.append("name", joinName);
       fd.append("email", document.getElementById('u_email').value);
       
       const intentSelect = document.getElementById('u_intent');
       fd.append("detail2", intentSelect.value || "");
       fd.append("detail1", document.getElementById('u_industry').value);
       fd.append("country", document.getElementById('u_country').value);
+
+      // ✨ NEW: referral game fields (ignored by the sheet until you update the Apps Script)
+      if (window.GenesoraWaitlist) {
+        fd.append("ref", window.GenesoraWaitlist.getRef());
+        fd.append("refCode", window.GenesoraWaitlist.prepareCode(joinName));
+      }
 
       fetch(SCRIPT_URL, { 
         method: 'POST', 
@@ -1110,6 +1234,8 @@
             msg.textContent = "✓ You're on the early access list!";
             this.reset();
             btn.textContent = "Joined Successfully";
+            // ✨ NEW: show the referral card
+            if (window.GenesoraWaitlist) window.GenesoraWaitlist.onJoined(data, { name: joinName });
           } else {
             throw new Error(data ? data.message : 'Unknown response');
           }
@@ -1170,5 +1296,8 @@
         });
     });
   </script>
+
+  <!-- ✨ NEW: interview challenge, living demo, hero face, referral game, easter eggs -->
+  <script src="genesora-extras.js"></script>
 </body>
 </html>
