@@ -357,7 +357,7 @@ html.party { animation: gHue 2.4s linear infinite; }
 }
 
 /* ── Demo clarity: "In this demo" vs "At launch" ── */
-.vision-compare { max-width: 720px; margin: 1.6rem auto 0; padding: 1.1rem 1.2rem; border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; background: rgba(255,255,255,0.03); text-align: left; }
+.vision-compare { max-width: 720px; margin: 1.6rem auto 2.8rem; padding: 1.1rem 1.2rem; border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; background: rgba(255,255,255,0.03); text-align: left; }
 .vision-compare h3 { font-size: 1rem; margin: 0 0 0.8rem; text-align: center; }
 .vc-grid { display: grid; gap: 0.4rem; }
 .vc-head, .vc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; align-items: center; }
