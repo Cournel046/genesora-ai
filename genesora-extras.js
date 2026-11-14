@@ -50,7 +50,7 @@
   function pageUrl() { return location.href.split('#')[0].split('?')[0]; }
 
   /* ──────────────────────────────────────────────
-     SHARED: the animated AI face ("Maya")
+     SHARED: the animated AI face ("Gena")
      ────────────────────────────────────────────── */
   var MOUTH = {
     neutral: 'M84 140 Q100 147 116 140',
@@ -66,7 +66,7 @@
         '<g class="pupil"><circle cx="' + x + '" cy="93" r="8" fill="#0b1020"/><circle cx="' + (x + 3) + '" cy="89" r="2.6" fill="#fff"/></g>' +
         '<ellipse class="lid" cx="' + x + '" cy="92" rx="16.5" ry="18.5" fill="url(#fg-' + id + ')"/>';
     }).join('');
-    return '<svg class="ai-face" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Maya, an animated AI character">' +
+    return '<svg class="ai-face" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gena, an animated AI character">' +
       '<defs>' +
         '<linearGradient id="fg-' + id + '" gradientUnits="userSpaceOnUse" x1="30" y1="20" x2="170" y2="180"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#2563eb"/></linearGradient>' +
         '<radialGradient id="fh-' + id + '" cx="35%" cy="25%" r="70%"><stop offset="0" stop-color="#fff" stop-opacity=".32"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>' +
@@ -444,7 +444,7 @@
     }
 
     // Poke it
-    var lines = ['Hey! Eyes up here 👀', 'Psst… try the 60-second challenge below ↓', "I'm Maya. I don't bite. Much.", 'Stop poking me, I\'m interviewing! 😳'];
+    var lines = ['Hey! Eyes up here 👀', 'Psst… try the 60-second challenge below ↓', "I'm Gena. I don't bite. Much.", 'Stop poking me, I\'m interviewing! 😳'];
     var li = 0;
     face.svg.addEventListener('click', function () {
       heroApi.wow(lines[li++ % lines.length]);
@@ -452,11 +452,11 @@
 
     // Say hi once per session
     var seen = null;
-    try { seen = sessionStorage.getItem('genesora_maya_hi'); } catch (e) { /* ignore */ }
+    try { seen = sessionStorage.getItem('genesora_gena_hi'); } catch (e) { /* ignore */ }
     if (!seen) {
       setTimeout(function () {
-        if (wrap.offsetParent && !st.shy) say("Hi, I'm Maya 👋", 3500);
-        try { sessionStorage.setItem('genesora_maya_hi', '1'); } catch (e) { /* ignore */ }
+        if (wrap.offsetParent && !st.shy) say("Hi, I'm Gena 👋", 3500);
+        try { sessionStorage.setItem('genesora_gena_hi', '1'); } catch (e) { /* ignore */ }
       }, 2200);
     }
   }
@@ -487,7 +487,7 @@
     }
 
     var script = [
-      { who: 'ai',  text: "Hi Priya! I'm Maya. Ready to warm up? Tell me about yourself in thirty seconds." },
+      { who: 'ai',  text: "Hi Priya! I'm Gena. Ready to warm up? Tell me about yourself in thirty seconds." },
       { who: 'you', text: "Sure! I'm a product designer with three years of experience, mostly in fintech." },
       { who: 'ai',  text: "Love that. What's one project you're proudest of, and what was your exact role?" },
       { who: 'you', text: "I redesigned our onboarding flow and cut drop-off by 28 percent." },
@@ -499,7 +499,7 @@
 
     function startLine() {
       var l = script[idx];
-      elSpk.textContent = l.who === 'ai' ? 'Maya' : 'You';
+      elSpk.textContent = l.who === 'ai' ? 'Gena' : 'You';
       elSpk.className = 'ld-speaker ' + l.who;
       paneAi.classList.toggle('speaking', l.who === 'ai');
       paneYou.classList.toggle('speaking', l.who === 'you');
@@ -593,15 +593,15 @@
     var title = energy >= 85 ? 'Hire-ready ⭐' : energy >= 70 ? 'Smooth Operator 😎' : energy >= 55 ? 'Solid Contender 💪' : energy >= 40 ? 'Warming Up 🔥' : 'Needs a Second Take 🔁';
 
     var notes = [];
-    if (words < 30) notes.push('Short and sweet, but Maya wants a bit more story. Aim for 60–100 words.');
+    if (words < 30) notes.push('Short and sweet, but Gena wants a bit more story. Aim for 60–100 words.');
     if (words > 180) notes.push('A little long. Tighten it to under 120 words.');
     if (star <= 1 && words >= 30) notes.push('You gave the what, but not the story. Try: situation, then what you did, then the result.');
     if (buzz >= 3) notes.push('Buzzword alert: ' + buzz + ' of them. Swap the adjectives for one real example.');
     if (filler >= 3) notes.push("Trim the filler words and you'll sound a lot sharper.");
     if (hedge >= 3) notes.push('Lots of “I think / maybe”. Say it like you mean it.');
-    if (weCount > iCount * 2 && weCount >= 3) notes.push('Lots of “we”. Maya wants to hear what you did.');
+    if (weCount > iCount * 2 && weCount >= 3) notes.push('Lots of “we”. Gena wants to hear what you did.');
     if (!hasNum && star >= 3) notes.push('Great structure! Add one number (a %, a time, a count) to make it stick.');
-    if (energy >= 80) notes.unshift('Specific, owned and structured. Maya would send you straight to round two.');
+    if (energy >= 80) notes.unshift('Specific, owned and structured. Gena would send you straight to round two.');
     if (!notes.length) notes.push('Solid answer. Add a concrete result and it becomes a great one.');
 
     return { words: words, energy: energy, confidence: confidence, confEmoji: confEmoji, buzz: buzz, star: star, title: title, comment: notes.slice(0, 2).join(' ') };
@@ -662,7 +662,7 @@
           startBtn.textContent = 'Try again ⏱';
           face.talk(false); face.setMood('shy'); face.look(-3, 5);
         } else {
-          hint.textContent = 'Say a little more. Maya needs at least 5 words 🙂';
+          hint.textContent = 'Say a little more. Gena needs at least 5 words 🙂';
         }
         return;
       }
@@ -781,14 +781,14 @@
         if (/hired$/.test(buf)) {
           buf = '';
           confetti({ count: 190 });
-          toast("Congrats, you're hired! 🎉", 'Salary: bragging rights. Start date: whenever you like. – Maya, AI HR');
+          toast("Congrats, you're hired! 🎉", 'Salary: bragging rights. Start date: whenever you like. – Gena, AI HR');
         } else if (/fired$/.test(buf)) {
           buf = '';
-          toast('Whoa, wrong platform! 😅', 'We only do hiring here. – Maya, AI HR', { mood: 'wow' });
-        } else if (/maya$/.test(buf)) {
+          toast('Whoa, wrong platform! 😅', 'We only do hiring here. – Gena, AI HR', { mood: 'wow' });
+        } else if (/gena$/.test(buf)) {
           buf = '';
           if (heroApi) heroApi.wow('You called? 👋');
-          toast('You called? 👋', "I'm Maya, your AI HR. Try the 60-second challenge!");
+          toast('You called? 👋', "I'm Gena, your AI HR. Try the 60-second challenge!");
         }
       }
     });
@@ -811,7 +811,7 @@
         if (clicks >= 5) {
           clicks = 0;
           confetti({ count: 90 });
-          toast('You found a secret! 🕵️', "Maya added you to the 'very curious candidates' shortlist. Not legally binding.");
+          toast('You found a secret! 🕵️', "Gena added you to the 'very curious candidates' shortlist. Not legally binding.");
         }
       });
     }

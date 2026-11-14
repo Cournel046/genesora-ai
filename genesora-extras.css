@@ -215,10 +215,10 @@ section[id] { scroll-margin-top: 90px; }
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(10px);
 }
-.ch-maya { text-align: center; }
-.ch-maya .ai-face { max-width: 170px; margin: 0 auto; filter: drop-shadow(0 12px 30px rgba(124, 58, 237, 0.4)); }
-.ch-maya-name { margin-top: 0.6rem; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 0.95rem; }
-.ch-maya-name small { display: block; font-family: 'DM Sans', sans-serif; font-weight: 400; font-size: 0.72rem; color: rgba(255, 255, 255, 0.45); margin-top: 2px; }
+.ch-gena { text-align: center; }
+.ch-gena .ai-face { max-width: 170px; margin: 0 auto; filter: drop-shadow(0 12px 30px rgba(124, 58, 237, 0.4)); }
+.ch-gena-name { margin-top: 0.6rem; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 0.95rem; }
+.ch-gena-name small { display: block; font-family: 'DM Sans', sans-serif; font-weight: 400; font-size: 0.72rem; color: rgba(255, 255, 255, 0.45); margin-top: 2px; }
 .ch-stage { display: none; }
 .ch-stage.active { display: block; animation: chIn 0.35s ease; }
 @keyframes chIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
@@ -285,9 +285,9 @@ section[id] { scroll-margin-top: 90px; }
 .ch-fine { margin-top: 1.1rem; font-size: 0.74rem; color: rgba(255, 255, 255, 0.35); }
 @media (max-width: 760px) {
   .ch-card { grid-template-columns: 1fr; padding: 1.3rem; gap: 1rem; }
-  .ch-maya { display: flex; align-items: center; gap: 1rem; text-align: left; }
-  .ch-maya .ai-face { max-width: 84px; margin: 0; }
-  .ch-maya-name { margin-top: 0; }
+  .ch-gena { display: flex; align-items: center; gap: 1rem; text-align: left; }
+  .ch-gena .ai-face { max-width: 84px; margin: 0; }
+  .ch-gena-name { margin-top: 0; }
   .ch-score { flex-direction: column; text-align: center; }
   .ch-metrics { grid-template-columns: 1fr 1fr; }
 }
