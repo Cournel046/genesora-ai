@@ -49,6 +49,9 @@
   }
   function pageUrl() { return location.href.split('#')[0].split('?')[0]; }
 
+  // Challenge: ask one follow-up question before scoring. Off for now; set to true to enable.
+  var ENABLE_FOLLOWUP = false;
+
   /* ──────────────────────────────────────────────
      SHARED: the animated AI face ("Gena")
      ────────────────────────────────────────────── */
@@ -89,30 +92,84 @@
     '</svg>';
   }
 
-  function mountFace(host) {
+  // Which look to use for Gena: 'cartoon' (the SVG face) or 'photo' (the AI persona photo, parked for later).
+  // To try the photo again, set this to 'photo' and add sunita-face.jpg and sunita-tile.jpg next to index.html.
+  var FACE_MODE = 'cartoon';
+  var PHOTO_SQUARE = 'sunita-face.jpg';
+  var PHOTO_TILE = 'sunita-tile.jpg';
+
+  function photoMarkup(shape) {
+    var src = shape === 'tile' ? PHOTO_TILE : PHOTO_SQUARE;
+    return '<div class="ai-face ai-photo' + (shape === 'tile' ? ' ai-photo-tile' : '') + '" role="img" aria-label="Gena, an AI character (demo preview)">' +
+      '<span class="ap-ring"></span>' +
+      '<span class="ap-clip"><span class="ap-move"><img class="ap-img" src="' + src + '" alt="" draggable="false" decoding="async"></span></span>' +
+      '<span class="ap-bars"><i></i><i></i><i></i><i></i><i></i></span>' +
+    '</div>';
+  }
+
+  function mountFace(host, opts) {
     if (!host) return null;
-    var id = 'f' + (++uidCounter);
-    host.innerHTML = faceMarkup(id);
-    var svg = host.querySelector('svg');
-    var pupils = $$('.pupil', svg);
-    var mouth = $('.mouth', svg);
+    var shape = (opts && opts.shape === 'tile') ? 'tile' : 'circle';
+    var el = null, pupils = [], mouth = null, move = null;
     var api = {
-      svg: svg,
+      svg: null,           // the face element (an <svg> for the cartoon, a <div> for the photo)
       mood: 'neutral',
       setMood: function (m) {
         if (MOODS.indexOf(m) < 0) m = 'neutral';
-        MOODS.forEach(function (x) { svg.classList.remove('mood-' + x); });
-        svg.classList.add('mood-' + m);
-        mouth.setAttribute('d', MOUTH[m]);
+        MOODS.forEach(function (x) { el.classList.remove('mood-' + x); });
+        el.classList.add('mood-' + m);
+        if (mouth) mouth.setAttribute('d', MOUTH[m]);
         api.mood = m;
       },
       look: function (x, y) {
+        if (move) { move.style.transform = 'translate(' + x + 'px,' + y + 'px)'; return; }
         pupils.forEach(function (p) { p.style.transform = 'translate(' + x + 'px,' + y + 'px)'; });
       },
       talk: function (on) {
-        if (on) svg.classList.add('talking'); else svg.classList.remove('talking');
+        if (on) el.classList.add('talking'); else el.classList.remove('talking');
+      },
+      // Lip-sync: open (0 closed .. 1 wide open) and wide (0.6 narrow .. 1.2 wide), set every frame by GenesoraVoice.
+      lip: function (open, wide) {
+        if (mouth) {                                   // cartoon face
+          if (!el.classList.contains('lipsync')) el.classList.add('lipsync', 'talking');
+          var mo = el.querySelector('.mouth-open');
+          mo.style.transform = 'scale(' + (wide || 1).toFixed(3) + ',' + Math.max(0, open).toFixed(3) + ')';
+          mo.style.opacity = open > 0.06 ? '1' : '0';
+          mouth.style.opacity = open > 0.06 ? '0' : '1';
+        } else {                                       // photo face: just pulse the "speaking" ring
+          el.classList.toggle('talking', open > 0.22);
+        }
+      },
+      lipEnd: function () {
+        el.classList.remove('lipsync', 'talking');
+        if (mouth) {
+          var mo = el.querySelector('.mouth-open');
+          mo.style.transform = ''; mo.style.opacity = ''; mouth.style.opacity = '';
+        }
       }
     };
+
+    function buildCartoon() {
+      host.classList.remove('has-photo');
+      host.innerHTML = faceMarkup('f' + (++uidCounter));
+      el = host.querySelector('svg');
+      pupils = $$('.pupil', el); mouth = $('.mouth', el); move = null;
+      api.svg = el;
+    }
+    function buildPhoto() {
+      host.innerHTML = photoMarkup(shape);
+      host.classList.add('has-photo');
+      el = host.querySelector('.ai-photo');
+      move = $('.ap-move', el); pupils = []; mouth = null;
+      api.svg = el;
+      // If the photo file is missing, quietly fall back to the cartoon face.
+      $('.ap-img', el).addEventListener('error', function () {
+        var m = api.mood, t = el.classList.contains('talking');
+        buildCartoon(); api.setMood(m); api.talk(t);
+      });
+    }
+
+    if (FACE_MODE === 'photo') buildPhoto(); else buildCartoon();
     api.setMood('neutral');
     return api;
   }
@@ -446,7 +503,7 @@
     // Poke it
     var lines = ['Hey! Eyes up here 👀', 'Psst… try the 60-second challenge below ↓', "I'm Gena. I don't bite. Much.", 'Stop poking me, I\'m interviewing! 😳'];
     var li = 0;
-    face.svg.addEventListener('click', function () {
+    host.addEventListener('click', function () {
       heroApi.wow(lines[li++ % lines.length]);
     });
 
@@ -467,7 +524,7 @@
   function initLiveDemo() {
     var root = $('#liveDemo');
     if (!root) return;
-    var face = mountFace($('#ldFaceMount'));
+    var face = mountFace($('#ldFaceMount'), { shape: 'tile' });
     var elText = $('#ldText'), elSpk = $('#ldSpeaker'), elTimer = $('#ldTimer');
     var paneYou = $('#ldYou'), paneAi = $('#ldAi');
 
@@ -495,42 +552,62 @@
       { who: 'you', text: "I ran a quick prototype test and shared the results in a one-page summary." },
       { who: 'ai',  text: "Interview score so far: 86 out of 100. Want to polish that answer, or move on?" }
     ];
-    var idx = 0, pos = 0, phase = 'type', hold = 0, ticks = 0, secs = 0, visible = false, started = false;
+    var idx = 0, phase = 'idle', hold = 0, ticks = 0, secs = 0, visible = false, speaker = null, lineNo = 0;
+    var Voice = window.GenesoraVoice;
+
+    // Sound button (only shown where the browser can speak)
+    if (Voice && Voice.supported) Voice.mountToggle($('.ld-bar', root), { before: $('.ld-live', root) });
 
     function startLine() {
-      var l = script[idx];
+      var l = script[idx], myLine = ++lineNo;
       elSpk.textContent = l.who === 'ai' ? 'Gena' : 'You';
       elSpk.className = 'ld-speaker ' + l.who;
       paneAi.classList.toggle('speaking', l.who === 'ai');
       paneYou.classList.toggle('speaking', l.who === 'you');
       face.setMood('neutral');
       face.look(l.who === 'ai' ? 0 : -5, l.who === 'ai' ? 0 : 1);
-      face.talk(l.who === 'ai' && !reduceMotion);
-      if (reduceMotion) { pos = l.text.length; elText.textContent = l.text; phase = 'hold'; hold = 100; face.talk(false); }
-      else { pos = 0; elText.textContent = ''; phase = 'type'; }
+      elText.textContent = '';
+      phase = 'speak';
+      // The voice engine drives BOTH the mouth and the caption, so words appear exactly as Gena says them.
+      // Gena's lines are spoken aloud when Sound is on; the candidate's lines are only typed.
+      var run = function () {
+        speaker = Voice ? Voice.say(l.text, {
+          face: l.who === 'ai' ? face : null,
+          silent: l.who !== 'ai',
+          tag: 'demo',
+          onCancel: function () { if (myLine === lineNo) { phase = 'idle'; } },
+          msPerUnit: l.who === 'ai' ? 44 : 34,
+          onProgress: function (end) { if (myLine === lineNo) elText.textContent = l.text.slice(0, end); },
+          onEnd: function () {
+            if (myLine !== lineNo) return;
+            elText.textContent = l.text;
+            phase = 'hold'; hold = 42;
+            if (l.who === 'ai') face.setMood('smile');
+          }
+        }) : null;
+        if (!Voice) { elText.textContent = l.text; phase = 'hold'; hold = 60; }
+      };
+      run();
     }
     function tick() {
       if (!visible) return;
-      if (!started) { started = true; startLine(); }
       ticks++;
       if (ticks % 25 === 0) { secs++; elTimer.textContent = pad(Math.floor(secs / 60) % 60) + ':' + pad(secs % 60); }
+      if (Voice && (Voice.activeTag() === 'chat' || Voice.activeTag() === 'challenge')) return;             // let the chat assistant finish talking
+      if (phase === 'idle') { startLine(); return; }
       var l = script[idx];
-      if (phase === 'type') {
-        pos = Math.min(pos + 1, l.text.length);
-        elText.textContent = l.text.slice(0, pos);
-        if (pos >= l.text.length) {
-          phase = 'hold'; hold = 42; face.talk(false);
-          if (l.who === 'ai') face.setMood('smile');
-        }
-      } else if (--hold <= 0) {
+      if (phase === 'hold' && --hold <= 0) {
         idx = (idx + 1) % script.length;
         startLine();
       }
-      if (ticks % 2 === 0) animateWaves(phase === 'type' ? l.who : null);
+      if (ticks % 2 === 0) animateWaves(phase === 'speak' ? l.who : null);
+    }
+    function pauseOffscreen() {          // scrolled away: stop talking, pick the line up again when back
+      if (phase === 'speak') { if (speaker) speaker.cancel(); phase = 'idle'; lineNo++; paneAi.classList.remove('speaking'); paneYou.classList.remove('speaking'); face.lipEnd && face.lipEnd(); }
     }
 
     if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function (e) { visible = e[0].isIntersecting; }, { threshold: 0.2 }).observe(root);
+      new IntersectionObserver(function (e) { visible = e[0].isIntersecting; if (!visible) pauseOffscreen(); }, { threshold: 0.2 }).observe(root);
     } else { visible = true; }
     animateWaves(null);
     setInterval(tick, 40);
@@ -539,14 +616,102 @@
   /* ──────────────────────────────────────────────
      3. 60-SECOND INTERVIEW CHALLENGE
      ────────────────────────────────────────────── */
+  // A big pool of story-style questions. The challenge deals them like a shuffled deck, so you never see a repeat
+  // until every question has been asked (and the order is remembered between visits in this browser).
   var QUESTIONS = [
-    'Tell me about a time you failed, and what you learned from it.',
-    'Describe a moment when you had to learn something fast. What did you do?',
-    'Tell me about a time you disagreed with someone. How did it end?',
+    "Tell me about a time you failed, and what you learned from it.",
+    "Describe a moment when you had to learn something fast. What did you do?",
+    "Tell me about a time you disagreed with someone. How did it end?",
     "What's the achievement you're proudest of, and what was your exact part in it?",
-    'Tell me about a time you had to work under real pressure.',
-    'Describe a time you helped someone else succeed.'
-  ];
+    "Tell me about a time you had to work under real pressure.",
+    "Describe a time you helped someone else succeed.",
+    "Tell me about a time you took the lead when nobody asked you to.",
+    "Describe a mistake you made at work or school. How did you fix it?",
+    "Tell me about a time you had to persuade someone who disagreed with you.",
+    "Describe a project you owned from start to finish. What was the result?",
+    "Tell me about a time you missed a deadline, or nearly did. What happened?",
+    "Describe a time you received tough feedback. What did you do with it?",
+    "Tell me about a time you had to deal with a difficult teammate.",
+    "What's a problem you solved that nobody else could? Walk me through it.",
+    "Tell me about a time you changed your mind after hearing someone else's view.",
+    "Describe a situation where you had too much to do. How did you prioritise?",
+    "Tell me about a time you went above and beyond for a customer, client or user.",
+    "Describe the hardest decision you've made at work or school. How did you decide?",
+    "Tell me about a time you had to adapt to a big change.",
+    "Describe a time you spotted a problem early and prevented it from growing.",
+    "Tell me about a time you had to explain something complicated to someone new.",
+    "Describe a time you worked with someone very different from you.",
+    "Tell me about a goal you set for yourself and how you reached it.",
+    "Describe a time you were asked to do something you had never done before.",
+    "Tell me about a time you made something better that nobody asked you to improve.",
+    "Describe a time you had to make a decision without all the information.",
+    "Tell me about a time you let someone down. What did you do afterwards?",
+    "Describe a moment you felt proud of your team. What was your part in it?",
+    "Tell me about a time you had to say no. How did you handle it?",
+    "Describe a time you had to motivate other people.",
+    "Tell me about a time you worked under a very tight budget or very few resources.",
+    "Describe a time you handled a conflict between two other people.",
+    "Tell me about a time you had to learn from someone younger or less experienced than you.",
+    "Describe a time you disagreed with your manager or teacher. What did you do?",
+    "Tell me about a time you juggled several tasks at once. How did you stay on top of them?",
+    "Describe a time you had to deliver bad news. How did you do it?",
+    "Tell me about the most creative solution you've come up with.",
+    "Describe a time your first plan did not work. What did you do next?",
+    "Tell me about a time you had to build trust with someone quickly.",
+    "Describe a time you took a risk. How did it turn out?",
+    "Tell me about a time you noticed something that others missed.",
+    "Describe a time you had to work with a tight, unclear brief. How did you get clarity?",
+    "Tell me about a time you helped a team get unstuck.",
+    "Describe a time you stayed calm when everyone else was stressed.",
+    "Tell me about a time you were new somewhere and had to find your feet fast.",
+    "Describe a time you taught yourself a skill. How did you go about it?",
+    "Tell me about a time you made a quick decision that turned out right, or wrong.",
+    "Describe a time you had to manage your own time with no one checking on you.",
+    "Tell me about a time you improved a process or a way of working.",
+    "Describe a time you were asked to take on more than your role. What did you do?",
+    "Tell me about a time you had to follow a rule you did not agree with.",
+    "Describe a time you had to give someone honest feedback.",
+    "Tell me about a time you recovered from a setback.",
+    "Describe a time you worked on a team that did not get along. What did you do?",
+    "Tell me about a time you made sure everyone's voice was heard.",
+    "Describe a time you were proud of something you made or built.",
+    "Tell me about a time your work was criticised in front of others.",
+    "Describe a moment you had to choose between speed and quality. What did you pick?",
+    "Tell me about a time you took ownership of a mistake that was not entirely yours.",
+    "Describe a time you had to learn a new tool or technology quickly.",
+    "Tell me about a time you balanced work or study with something difficult in life.",
+    "Describe the best team you have worked in. What did you contribute?",
+    "Tell me about a time you did not know the answer. What did you do?",
+    "Describe a time you had to compromise. What did you give up and what did you gain?",
+    "Tell me about a time you mentored or supported someone.",
+    "Describe a time you used data or facts to make a decision.",
+    "Tell me about a time you had to handle an angry or upset person.",
+    "Describe a time you started something from scratch.",
+    "Tell me about a time you had to cope with a lot of uncertainty.",
+    "Describe a time you made a long-term sacrifice for a better outcome.",
+    "Tell me about a time you challenged the usual way of doing things.",
+    "Describe a time you had to work a very long stretch to finish something. What kept you going?",
+    "Tell me about a time you got a result you were not expecting.",
+    "Describe a time you asked for help. Why and what happened?",
+    "Tell me about a time you had to rebuild something that fell apart.",
+    "Describe a time you were responsible for other people's work or success.",
+    "Tell me about a time you did something that was outside your comfort zone.",
+    "Describe a time you had two good options and had to choose one.",
+    "Tell me about a time you changed how a team or a friend group did something.",
+    "Describe a time you were told something could not be done, and what you did about it.",
+    "Tell me about a time you wished you had acted sooner. What did you learn?",
+    "Describe a time you went back and improved something that was already good enough.",
+    "Tell me about a time you had to be patient to get a good result.",
+    "Describe a time you kept a promise even though it was hard.",
+    "Tell me about a time you found a smarter way to do something repetitive.",
+    "What's something you've learned recently, and how did you learn it?",
+    "Describe a time you were really curious about something at work or school. What did you do about it?",
+    "Tell me about an idea of yours that other people liked. How did it start?",
+    "Describe a moment when you felt out of your depth. What did you do?",
+    "Tell me about a time you had to keep something confidential or handle it with care.",
+    "Describe a time you celebrated someone else's win.",
+    "Tell me about a time you stood up for something you believed in."
+];
   var FILLERS = ['um', 'umm', 'uh', 'uhh', 'basically', 'literally', 'you know', 'kind of', 'sort of', 'whatever', 'stuff'];
   var BUZZ = ['synergy', 'passionate', 'passion', 'team player', 'hard-working', 'hard working', 'hardworking', 'go-getter', 'self-starter', 'detail-oriented', 'results-driven', 'think outside the box', 'out of the box', 'fast learner', 'dynamic', 'leverage', 'proactive', 'rockstar', 'ninja', 'guru', 'game-changer', 'game changer', 'thought leader', 'value add', 'move the needle', 'circle back', 'win-win', 'best practices', 'strong communication', 'multitask'];
   var HEDGES = ['maybe', 'i think', 'i guess', 'probably', 'hopefully', 'sort of', 'kind of', 'i suppose', 'not sure', 'a little bit'];
@@ -561,6 +726,20 @@
     return n;
   }
   function countWords(t) { return t.trim() ? t.trim().split(/\s+/).length : 0; }
+
+  // Picks a follow-up question based on what was weakest in the first answer (only used when ENABLE_FOLLOWUP is true).
+  function pickFollowUp(text) {
+    var hasNum = /\d/.test(text);
+    var hedge = countMatches(text, HEDGES), buzz = countMatches(text, BUZZ);
+    var iCount = (text.match(/\b(i|i'm|i've|i'd|i'll|my)\b/gi) || []).length;
+    var weCount = (text.match(/\b(we|our|us)\b/gi) || []).length;
+    if (countWords(text) < 35) return 'Can you give me a bit more detail? Walk me through what actually happened.';
+    if (weCount > iCount * 1.5 && weCount >= 3) return 'You said "we" a lot. What was your own part in it?';
+    if (buzz >= 2) return 'Skip the buzzwords for a moment. What is one concrete thing you actually did?';
+    if (hedge >= 2) return 'You sounded a little unsure. What is the one thing you are most certain you did well?';
+    if (!hasNum) return 'Can you put a number on the result? A percentage, a time saved, a count, anything measurable.';
+    return 'If you could do it all again, what is the one thing you would change?';
+  }
 
   // Simple, on-device scoring. It's for fun, not a real assessment.
   function scoreAnswer(text) {
@@ -614,37 +793,64 @@
     var ta = $('#chAnswer'), hint = $('#chHint'), micBtn = $('#chMic');
     var introBubble = $('#chIntro'), startBtn = $('#chStart');
     var timerBox = $('#chTimerBox'), timeEl = $('#chTime'), ring = $('#chTimerRing');
-    var C = 163.36, endAt = 0, timerId = null, qIndex = -1, faceTimer = null;
+    var C = 163.36, endAt = 0, timerId = null, qIndex = -1;
+    var Voice = window.GenesoraVoice;
+    if (Voice && Voice.supported) Voice.mountToggle($('.ch-gena', card), { className: 'ch-sound' });
+    var limit = 60000, round = 1, firstAnswer = '';
 
     function show(name) {
       $$('.ch-stage', card).forEach(function (s) { s.classList.toggle('active', s.getAttribute('data-stage') === name); });
     }
-    function stopTimer() { clearInterval(timerId); timerId = null; clearTimeout(faceTimer); }
+    function stopTimer() { clearInterval(timerId); timerId = null; }
+    function stopSpeak() { if (Voice && Voice.activeTag() === 'challenge') Voice.stop(); face.lipEnd(); }
 
+    // Deals questions from a shuffled deck so none repeats until all have been asked. The deck is
+    // remembered in this browser, so a new visit carries on where the last one stopped.
+    function dealQuestion() {
+      var deck = [], saved = null;
+      try { saved = JSON.parse(store('gen-qdeck') || 'null'); } catch (e) { saved = null; }
+      if (saved && saved.n === QUESTIONS.length && Array.isArray(saved.d)) {
+        deck = saved.d.filter(function (i) { return typeof i === 'number' && i >= 0 && i < QUESTIONS.length; });
+      }
+      if (!deck.length) {
+        for (var i = 0; i < QUESTIONS.length; i++) deck.push(i);
+        for (var j = deck.length - 1; j > 0; j--) {          // Fisher-Yates shuffle
+          var k = Math.floor(Math.random() * (j + 1)), tmp = deck[j]; deck[j] = deck[k]; deck[k] = tmp;
+        }
+        if (deck[deck.length - 1] === qIndex && deck.length > 1) { var s = deck.shift(); deck.push(s); }   // never repeat the one just asked
+      }
+      var n = deck.pop();
+      store('gen-qdeck', JSON.stringify({ n: QUESTIONS.length, d: deck }));
+      return n;
+    }
     function pickQuestion() {
-      var n;
-      do { n = Math.floor(Math.random() * QUESTIONS.length); } while (n === qIndex && QUESTIONS.length > 1);
-      qIndex = n;
-      $('#chQuestion').textContent = QUESTIONS[n];
+      qIndex = dealQuestion();
+      $('#chQuestion').textContent = QUESTIONS[qIndex];
     }
     function tickTimer() {
       var leftMs = endAt - Date.now();
       var left = Math.max(0, Math.ceil(leftMs / 1000));
       timeEl.textContent = left;
-      ring.style.strokeDashoffset = String(C * (1 - clamp(leftMs / 60000, 0, 1)));
+      ring.style.strokeDashoffset = String(C * (1 - clamp(leftMs / limit, 0, 1)));
       timerBox.classList.toggle('low', left <= 10);
       if (left <= 10 && left > 0 && face.mood !== 'wow') face.setMood('wow');
       if (left <= 0) { submit(true); }
     }
+    // Gena "asks" the question: mouth and (if Sound is on) voice follow the question text.
+    function sayQuestion() {
+      var q = $('#chQuestion').textContent;
+      if (!Voice) return;
+      Voice.say(q, { face: face, tag: 'challenge', msPerUnit: 40, onEnd: function () { face.look(0, 5); } });
+    }
     function start() {
+      round = 1; firstAnswer = ''; limit = 60000;
       pickQuestion();
       show('question');
       ta.value = ''; hint.textContent = '';
-      stopMic();
-      face.setMood('neutral'); face.look(0, 0); face.talk(!reduceMotion);
-      faceTimer = setTimeout(function () { face.talk(false); face.look(0, 5); }, 2400);
-      stopTimer();
-      endAt = Date.now() + 60000;
+      stopMic(); stopTimer(); stopSpeak();
+      face.setMood('neutral'); face.look(0, 0);
+      sayQuestion();
+      endAt = Date.now() + limit;
       timerId = setInterval(tickTimer, 250);
       tickTimer();
       try { ta.focus({ preventScroll: true }); } catch (e) { ta.focus(); }
@@ -653,21 +859,44 @@
     $('#chSkip').addEventListener('click', start);
     ta.addEventListener('input', function () { hint.textContent = ''; });
 
+    function finish(first, second) {
+      stopTimer(); stopMic(); stopSpeak();
+      var r = scoreAnswer((first + ' ' + (second || '')).trim());
+      if (second) r.comment = 'You handled the follow-up, which is what a real interview does. ' + r.comment;
+      showResult(r);
+    }
     function submit(auto) {
       var text = ta.value.trim();
+      if (round === 2) {                       // answering the follow-up
+        if (countWords(text) >= 5) { finish(firstAnswer, text); }
+        else if (auto) { finish(firstAnswer, ''); }
+        else { hint.textContent = 'Say a little more. Gena needs at least 5 words 🙂'; }
+        return;
+      }
       if (countWords(text) < 5) {
         if (auto) {
-          stopTimer(); stopMic(); show('intro');
+          stopTimer(); stopMic(); stopSpeak(); show('intro');
           introBubble.textContent = "Time's up, and I didn't catch an answer 😅 Want another go?";
           startBtn.textContent = 'Try again ⏱';
-          face.talk(false); face.setMood('shy'); face.look(-3, 5);
+          face.setMood('shy'); face.look(-3, 5);
         } else {
           hint.textContent = 'Say a little more. Gena needs at least 5 words 🙂';
         }
         return;
       }
-      stopTimer(); stopMic();
-      showResult(scoreAnswer(text));
+      if (ENABLE_FOLLOWUP) {                   // ask one follow-up before scoring
+        firstAnswer = text; round = 2;
+        stopMic(); stopTimer(); stopSpeak();
+        $('#chQuestion').textContent = 'Follow-up: ' + pickFollowUp(text);
+        ta.value = ''; hint.textContent = '';
+        limit = 30000; endAt = Date.now() + limit;
+        timerId = setInterval(tickTimer, 250); tickTimer();
+        face.setMood('neutral'); face.look(0, 0);
+        sayQuestion();
+        try { ta.focus({ preventScroll: true }); } catch (e) { ta.focus(); }
+        return;
+      }
+      finish(text, '');
     }
     $('#chSubmit').addEventListener('click', function () { submit(false); });
     ta.addEventListener('keydown', function (e) {
@@ -735,8 +964,10 @@
         if (p < 1) requestAnimationFrame(step);
       })(t0);
 
-      face.talk(false); face.look(0, 0);
+      face.look(0, 0);
       face.setMood(r.energy >= 70 ? 'smile' : r.energy < 45 ? 'shy' : 'neutral');
+      // With Sound on, Gena says her verdict out loud (mouth follows the words).
+      if (Voice && Voice.isOn()) Voice.say(r.title.replace(/\s*[^\w\s]+$/, '') + '. ' + r.comment, { face: face, tag: 'challenge', msPerUnit: 40 });
       if (r.energy >= 85) confetti({ count: 110 });
 
       var s = shareText(r);
@@ -758,6 +989,38 @@
       copyText(shareText(lastResult).text).then(function () { b.textContent = 'Copied ✓'; setTimeout(function () { b.textContent = 'Copy brag text'; }, 1600); });
     });
     $('#chRetry').addEventListener('click', start);
+  }
+
+  /* ──────────────────────────────────────────────
+     6. CURSOR GLOW + SCROLL PROGRESS
+     ────────────────────────────────────────────── */
+  function initGlow() {
+    if (reduceMotion) return;
+    var glow = document.createElement('div');
+    glow.className = 'gen-glow'; glow.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(glow);
+    var raf = 0, x = 0, y = 0;
+    document.addEventListener('mousemove', function (e) {
+      x = e.clientX; y = e.clientY;
+      if (!raf) raf = requestAnimationFrame(function () {
+        raf = 0; glow.style.setProperty('--mx', x + 'px'); glow.style.setProperty('--my', y + 'px');
+      });
+    }, { passive: true });
+  }
+  function initProgress() {
+    var bar = document.createElement('div');
+    bar.className = 'gen-progress'; bar.setAttribute('aria-hidden', 'true');
+    bar.innerHTML = '<i></i>';
+    document.body.appendChild(bar);
+    var fill = bar.firstChild, raf = 0;
+    function update() {
+      raf = 0;
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      fill.style.transform = 'scaleX(' + (h > 0 ? clamp(window.scrollY / h, 0, 1) : 0) + ')';
+    }
+    window.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+    window.addEventListener('resize', update);
+    update();
   }
 
   /* ──────────────────────────────────────────────
@@ -817,9 +1080,9 @@
     }
   }
 
-  window.GenesoraFun = { confetti: confetti, toast: toast };
+  window.GenesoraFun = { confetti: confetti, toast: toast, mountFace: mountFace };
 
-  [WL.init, initHeroFace, initLiveDemo, initChallenge, initEggs].forEach(function (fn) {
+  [WL.init, initHeroFace, initLiveDemo, initChallenge, initEggs, initGlow, initProgress].forEach(function (fn) {
     try { fn(); } catch (err) { console.error('[Genesora extras]', err); }
   });
 })();

@@ -1,0 +1,84 @@
+/* Ask Gena chat window (genesora-chat.js) */
+.gc-fab {
+  position: fixed; left: 20px; bottom: 20px; z-index: 9000;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px 6px 6px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, #7c3aed, #2563eb); color: #fff;
+  font: 700 0.9rem 'DM Sans', sans-serif; cursor: pointer;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.45);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.gc-fab:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(124, 58, 237, 0.55); }
+.gc-fab:focus-visible, .gc-chip:focus-visible, .gc-tool:focus-visible, .gc-send:focus-visible { outline: 2px solid #c4b5fd; outline-offset: 2px; }
+.gc-fab-face { width: 40px; height: 40px; border-radius: 50%; background: #0b1020; display: block; overflow: hidden; flex-shrink: 0; }
+.gc-fab-face .ai-face { width: 100%; height: 100%; display: block; }
+.gc-fab.nudge { animation: gcNudge 1.1s ease; }
+@keyframes gcNudge { 0%, 100% { transform: none; } 20% { transform: translateY(-6px) rotate(-3deg); } 40% { transform: translateY(0); } 60% { transform: translateY(-4px) rotate(3deg); } 80% { transform: translateY(0); } }
+html.gc-open .gc-fab { opacity: 0; pointer-events: none; }
+
+.gc-panel {
+  position: fixed; left: 20px; bottom: 20px; z-index: 9001;
+  width: min(380px, calc(100vw - 32px)); height: min(580px, calc(100vh - 96px));
+  display: flex; flex-direction: column;
+  background: #0f1424; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 18px; overflow: hidden;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6);
+  color: #e8ecf8; font-family: 'DM Sans', sans-serif;
+  opacity: 0; transform: translateY(14px) scale(0.98); transition: opacity 0.2s, transform 0.2s;
+}
+.gc-panel[hidden] { display: none; }
+.gc-panel.in { opacity: 1; transform: none; }
+
+.gc-head { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: linear-gradient(135deg, rgba(124, 58, 237, 0.35), rgba(37, 99, 235, 0.3)); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.gc-face { width: 44px; height: 44px; border-radius: 50%; background: #0b1020; overflow: hidden; flex-shrink: 0; }
+.gc-face .ai-face { width: 100%; height: 100%; display: block; }
+.gc-title { flex: 1; min-width: 0; font: 700 0.98rem 'Sora', 'DM Sans', sans-serif; }
+.gc-title small { display: block; font: 400 0.68rem 'DM Sans', sans-serif; color: rgba(255, 255, 255, 0.6); margin-top: 1px; line-height: 1.25; }
+.gc-tools { display: flex; align-items: center; gap: 4px; }
+.gc-tool { width: 30px; height: 30px; border-radius: 50%; border: 0; background: rgba(255, 255, 255, 0.08); color: #fff; font-size: 0.95rem; cursor: pointer; }
+.gc-tool:hover { background: rgba(255, 255, 255, 0.18); }
+.gc-tools .gen-sound { padding: 0; width: 30px; height: 30px; justify-content: center; font-size: 0.9rem; }
+
+.gc-log { flex: 1; overflow-y: auto; padding: 14px 12px 6px; display: flex; flex-direction: column; gap: 8px; scroll-behavior: smooth; overscroll-behavior: contain; }
+.gc-msg { display: flex; max-width: 100%; }
+.gc-msg.gc-user { justify-content: flex-end; }
+.gc-bubble { max-width: 86%; padding: 9px 13px; border-radius: 16px; font-size: 0.88rem; line-height: 1.45; overflow-wrap: anywhere; white-space: pre-wrap; }
+.gc-bot .gc-bubble { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.08); border-bottom-left-radius: 5px; }
+.gc-user .gc-bubble { background: linear-gradient(135deg, #7c3aed, #2563eb); color: #fff; border-bottom-right-radius: 5px; }
+.gc-bubble a { color: #c4b5fd; text-decoration: underline; }
+.gc-typing .gc-bubble { display: inline-flex; gap: 4px; padding: 12px 14px; }
+.gc-typing i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.6); animation: gcDot 1s infinite; }
+.gc-typing i:nth-child(2) { animation-delay: 0.15s; }
+.gc-typing i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes gcDot { 0%, 60%, 100% { opacity: 0.3; transform: none; } 30% { opacity: 1; transform: translateY(-3px); } }
+
+.gc-hint { padding: 2px 14px 0; font-size: 0.72rem; color: rgba(255, 255, 255, 0.5); }
+.gc-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px 12px 8px; max-height: 132px; overflow-y: auto; }
+.gc-chips:empty { display: none; }
+.gc-chip { font: 500 0.78rem 'DM Sans', sans-serif; text-align: left; color: #ddd6fe; background: rgba(124, 58, 237, 0.16); border: 1px solid rgba(167, 139, 250, 0.4); border-radius: 14px; padding: 6px 11px; cursor: pointer; transition: background 0.15s; }
+.gc-chip:hover { background: rgba(124, 58, 237, 0.34); }
+
+.gc-form { display: flex; gap: 8px; padding: 8px 12px 6px; border-top: 1px solid rgba(255, 255, 255, 0.08); }
+.gc-input { flex: 1; min-width: 0; background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 22px; color: #fff; padding: 9px 14px; font: 0.88rem 'DM Sans', sans-serif; }
+.gc-input::placeholder { color: rgba(255, 255, 255, 0.45); }
+.gc-input:focus { outline: 2px solid #a78bfa; outline-offset: 0; border-color: transparent; }
+.gc-send { width: 38px; height: 38px; border-radius: 50%; border: 0; background: linear-gradient(135deg, #7c3aed, #2563eb); color: #fff; font-size: 0.95rem; cursor: pointer; flex-shrink: 0; }
+.gc-note { margin: 0; padding: 2px 14px 10px; font-size: 0.64rem; line-height: 1.35; color: rgba(255, 255, 255, 0.42); }
+.gc-note a { color: #a78bfa; }
+
+/* keep clear of the cookie banner (bottom right) on small screens */
+@media (max-width: 700px) {
+  html.gc-cookie .gc-fab { bottom: 128px; }
+  html.gc-cookie .gc-panel { height: min(560px, calc(100vh - 150px)); bottom: 128px; }
+}
+@media (max-width: 480px) {
+  .gc-fab { left: 12px; bottom: 12px; }
+  .gc-fab-txt { display: none; }
+  .gc-fab { padding: 6px; }
+  .gc-panel { left: 8px; right: 8px; bottom: 8px; width: auto; height: min(600px, calc(100vh - 16px)); }
+  html.gc-cookie .gc-panel { bottom: 8px; height: calc(100vh - 140px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gc-panel, .gc-fab { transition: none; }
+  .gc-fab.nudge, .gc-typing i { animation: none !important; }
+  .gc-log { scroll-behavior: auto; }
+}
