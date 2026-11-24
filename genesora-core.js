@@ -114,86 +114,156 @@
     // reset leaves selects grey again
     document.querySelectorAll('.form-card form').forEach(f => f.addEventListener('reset', () => setTimeout(() => f.querySelectorAll('select').forEach(s => s.classList.remove('has-val')), 0)));
 
+    // ── CLOUDFLARE TURNSTILE MODAL LOGIC ──
+    const TURNSTILE_SITE_KEY = "0x4AAAAAAGQL3hSBAvFDGzEj";
+    let turnstileWidgetId = null;
+    let onTurnstileSuccess = null;
+
+    function closeHumanModal() {
+      const modal = document.getElementById('humanModal');
+      if (modal) modal.hidden = true;
+      onTurnstileSuccess = null;
+    }
+
+    function openHumanCheck(callback) {
+      const modal = document.getElementById('humanModal');
+      const errEl = document.getElementById('humanModalErr');
+      if (!modal) { callback(""); return; }
+
+      errEl.textContent = "";
+      onTurnstileSuccess = callback;
+      modal.hidden = false;
+
+      if (!window.turnstile) {
+        errEl.textContent = "Verification widget is still loading. Close and try again in a second.";
+        return;
+      }
+
+      if (turnstileWidgetId !== null) {
+        window.turnstile.reset(turnstileWidgetId);
+        return;
+      }
+
+      turnstileWidgetId = window.turnstile.render('#turnstile-container', {
+        sitekey: TURNSTILE_SITE_KEY,
+        theme: 'dark',
+        callback: function(token) {
+          const cb = onTurnstileSuccess;
+          closeHumanModal();
+          if (cb) cb(token);
+        },
+        'error-callback': function() {
+          errEl.textContent = "Verification failed. Please try again.";
+        },
+        'expired-callback': function() {
+          errEl.textContent = "Check expired. Please verify again.";
+        }
+      });
+    }
+
+    (function() {
+      const modal = document.getElementById('humanModal');
+      const closeBtn = document.getElementById('closeHumanModal');
+      if (closeBtn) closeBtn.addEventListener('click', closeHumanModal);
+      if (modal) {
+        modal.addEventListener('click', function(e) {
+          if (e.target === modal) closeHumanModal();
+        });
+      }
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal && !modal.hidden) closeHumanModal();
+      });
+    })();
+
     // --- USER FORM LOGIC ---
     document.getElementById('userForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
-      const btn = this.querySelector('.submit-user');
+      const form = this;
+      const btn = form.querySelector('.submit-user');
       const msg = document.getElementById('userMsg');
       const originalText = "Join as a User — Get Early Access";
 
       const un = document.getElementById('u_name'), ue = document.getElementById('u_email'), uc = document.getElementById('u_country');
       un.value = un.value.trim().replace(/\s+/g, ' '); ue.value = ue.value.trim();
-      if (!wlCheck(this, msg, [
+      if (!wlCheck(form, msg, [
         [un, wlNameOk(un.value), 'Please enter your real full name.'],
         [ue, wlEmailOk(ue.value), 'Please enter a valid email address.'],
         [uc, uc.value !== '', 'Please choose your country.']
       ])) return;
-      if (wlBot(this)) { msg.style.color = "#90EE90"; msg.textContent = "✓ You're on the early access list!"; return; }
-      
-      btn.textContent = "Securing Spot...";
-      btn.disabled = true;
-      msg.textContent = "";
+      if (wlBot(form)) { msg.style.color = "#90EE90"; msg.textContent = "✓ You're on the early access list!"; return; }
 
-      const joinName = document.getElementById('u_name').value;
+      openHumanCheck(function(token) {
+        btn.textContent = "Securing Spot...";
+        btn.disabled = true;
+        msg.textContent = "";
 
-      const fd = new FormData();
-      fd.append("type", "User / Job Seeker");
-      fd.append("name", joinName);
-      fd.append("email", document.getElementById('u_email').value);
-      
-      const intentSelect = document.getElementById('u_intent');
-      fd.append("detail2", intentSelect.value || "");
-      fd.append("detail1", document.getElementById('u_industry').value);
-      fd.append("country", document.getElementById('u_country').value);
+        const joinName = document.getElementById('u_name').value;
 
-      // ✨ NEW: referral game fields (ignored by the sheet until you update the Apps Script)
-      if (window.GenesoraWaitlist) {
-        fd.append("ref", window.GenesoraWaitlist.getRef());
-        fd.append("refCode", window.GenesoraWaitlist.prepareCode(joinName));
-      }
+        const fd = new FormData();
+        fd.append("type", "User / Job Seeker");
+        fd.append("name", joinName);
+        fd.append("email", document.getElementById('u_email').value);
+        
+        const intentSelect = document.getElementById('u_intent');
+        fd.append("detail2", intentSelect.value || "");
+        fd.append("detail1", document.getElementById('u_industry').value);
+        fd.append("country", document.getElementById('u_country').value);
+        fd.append("turnstileToken", token);
 
-      fetch(SCRIPT_URL, { 
-        method: 'POST', 
-        body: fd
-      })
-        .then(response => {
-          if (!response.ok) throw new Error('Network error');
-          return response.json();
+        // ✨ NEW: referral game fields (ignored by the sheet until you update the Apps Script)
+        if (window.GenesoraWaitlist) {
+          fd.append("ref", window.GenesoraWaitlist.getRef());
+          fd.append("refCode", window.GenesoraWaitlist.prepareCode(joinName));
+        }
+
+        fetch(SCRIPT_URL, { 
+          method: 'POST', 
+          body: fd
         })
-        .then(data => {
-          if (data && data.status === 'success') {
-            msg.style.color = "#90EE90";
-            msg.textContent = "✓ You're on the early access list!";
-            this.reset();
-            btn.textContent = "Joined Successfully";
-            // ✨ NEW: show the referral card
-            if (window.GenesoraWaitlist) window.GenesoraWaitlist.onJoined(data, { name: joinName });
-          } else {
-            throw new Error(data ? data.message : 'Unknown response');
-          }
-        })
-        .catch(error => {
-          console.error('Waitlist Error:', error);
-          msg.style.color = "#ef4444";
-          msg.textContent = /^Invalid/.test(error.message) ? "Please check your details and try again." : "Could not save spot. Please check your connection and try again.";
-          btn.disabled = false;
-          btn.textContent = originalText;
-        });
+          .then(response => {
+            if (!response.ok) throw new Error('Network error');
+            return response.json();
+          })
+          .then(data => {
+            if (data && data.status === 'success') {
+              msg.style.color = "#90EE90";
+              msg.textContent = "✓ You're on the early access list!";
+              form.reset();
+              btn.textContent = "Joined Successfully";
+              // ✨ NEW: show the referral card
+              if (window.GenesoraWaitlist) window.GenesoraWaitlist.onJoined(data, { name: joinName });
+            } else {
+              throw new Error(data ? data.message : 'Unknown response');
+            }
+          })
+          .catch(error => {
+            console.error('Waitlist Error:', error);
+            msg.style.color = "#ef4444";
+            if (/Human verification/i.test(error.message)) {
+              msg.textContent = error.message;
+            } else {
+              msg.textContent = /^Invalid/.test(error.message) ? "Please check your details and try again." : "Could not save spot. Please check your connection and try again.";
+            }
+            btn.disabled = false;
+            btn.textContent = originalText;
+          });
+      });
     });
 
     // --- ENTERPRISE FORM LOGIC ---
     document.getElementById('entForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
-      const btn = this.querySelector('.submit-ent');
+      const form = this;
+      const btn = form.querySelector('.submit-ent');
       const msg = document.getElementById('entMsg');
       const originalText = "Join as an Enterprise — Get Early Access";
 
       const en = document.getElementById('e_name'), ec = document.getElementById('e_company'), ee = document.getElementById('e_email');
       const ecode = document.getElementById('e_code'), eph = document.getElementById('e_phone'), ect = document.getElementById('e_country');
       en.value = en.value.trim().replace(/\s+/g, ' '); ec.value = ec.value.trim().replace(/\s+/g, ' '); ee.value = ee.value.trim();
-      if (!wlCheck(this, msg, [
+      if (!wlCheck(form, msg, [
         [en, wlNameOk(en.value), 'Please enter your real full name.'],
         [ec, wlCompanyOk(ec.value), 'Please enter a valid company name.'],
         [ect, ect.value !== '', 'Please choose your country.'],
@@ -201,45 +271,52 @@
         [eph, /^\d{7,15}$/.test(eph.value) && !/^(\d)\1+$/.test(eph.value), 'Please enter a valid mobile number (digits only, 7–15).'],
         [ee, wlEmailOk(ee.value), 'Please enter a valid work email address.']
       ])) return;
-      if (wlBot(this)) { msg.style.color = "#90EE90"; msg.textContent = "✓ Enterprise request received — we'll be in touch!"; return; }
+      if (wlBot(form)) { msg.style.color = "#90EE90"; msg.textContent = "✓ Enterprise request received — we'll be in touch!"; return; }
 
-      btn.textContent = "Registering...";
-      btn.disabled = true;
-      msg.textContent = "";
+      openHumanCheck(function(token) {
+        btn.textContent = "Registering...";
+        btn.disabled = true;
+        msg.textContent = "";
 
-      const fd = new FormData();
-      fd.append("type", "Enterprise");
-      fd.append("name", document.getElementById('e_name').value);
-      fd.append("email", document.getElementById('e_email').value);
-      fd.append("detail1", document.getElementById('e_company').value);
-      fd.append("detail2", ecode.value + " " + eph.value);
-      fd.append("country", document.getElementById('e_country').value);
+        const fd = new FormData();
+        fd.append("type", "Enterprise");
+        fd.append("name", document.getElementById('e_name').value);
+        fd.append("email", document.getElementById('e_email').value);
+        fd.append("detail1", document.getElementById('e_company').value);
+        fd.append("detail2", ecode.value + " " + eph.value);
+        fd.append("country", document.getElementById('e_country').value);
+        fd.append("turnstileToken", token);
 
-      fetch(SCRIPT_URL, { 
-        method: 'POST', 
-        body: fd
-      })
-        .then(response => {
-          if (!response.ok) throw new Error('Network error');
-          return response.json();
+        fetch(SCRIPT_URL, { 
+          method: 'POST', 
+          body: fd
         })
-        .then(data => {
-          if (data && data.status === 'success') {
-            msg.style.color = "#90EE90";
-            msg.textContent = "✓ Enterprise request received — we'll be in touch!";
-            this.reset();
-            btn.textContent = "Registered Successfully";
-          } else {
-            throw new Error(data ? data.message : 'Unknown response');
-          }
-        })
-        .catch(error => {
-          console.error('Enterprise Error:', error);
-          msg.style.color = "#ef4444";
-          msg.textContent = /^Invalid/.test(error.message) ? "Please check your details and try again." : "Could not register. Please try again.";
-          btn.disabled = false;
-          btn.textContent = originalText;
-        });
+          .then(response => {
+            if (!response.ok) throw new Error('Network error');
+            return response.json();
+          })
+          .then(data => {
+            if (data && data.status === 'success') {
+              msg.style.color = "#90EE90";
+              msg.textContent = "✓ Enterprise request received — we'll be in touch!";
+              form.reset();
+              btn.textContent = "Registered Successfully";
+            } else {
+              throw new Error(data ? data.message : 'Unknown response');
+            }
+          })
+          .catch(error => {
+            console.error('Enterprise Error:', error);
+            msg.style.color = "#ef4444";
+            if (/Human verification/i.test(error.message)) {
+              msg.textContent = error.message;
+            } else {
+              msg.textContent = /^Invalid/.test(error.message) ? "Please check your details and try again." : "Could not register. Please try again.";
+            }
+            btn.disabled = false;
+            btn.textContent = originalText;
+          });
+      });
     });
 
 // ── Buttons that used inline onclick= (blocked by the security policy), wired here instead ──

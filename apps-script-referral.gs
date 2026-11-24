@@ -1,20 +1,20 @@
 /**
- * Genesora AI — waitlist backend WITH referral positions (OPTIONAL)
+- Genesora AI — waitlist backend WITH referral positions (OPTIONAL)
  *
- * The website works without this. Until you add it, the live site shows
- * "Spot saved ✓" plus the referral link, but no place-in-line number.
+- The website works without this. Until you add it, the live site shows
+- "Spot saved ✓" plus the referral link, but no place-in-line number.
  *
- * IMPORTANT: if your current script does other things (emails, formatting),
- * MERGE these functions into it instead of replacing it.
+- IMPORTANT: if your current script does other things (emails, formatting),
+- MERGE these functions into it instead of replacing it.
  *
- * Sheet header row (row 1), in this exact order:
- *   Timestamp | Type | Name | Email | Detail1 | Detail2 | Country | RefCode | ReferredBy
+- Sheet header row (row 1), in this exact order:
+-   Timestamp | Type | Name | Email | Detail1 | Detail2 | Country | RefCode | ReferredBy
  *
- * How the line works: everyone is ordered by sign-up time, and each friend
- * who joins through your link moves you up SPOTS_PER_REFERRAL places.
- * Only rows whose Type starts with "User" count in the line.
+- How the line works: everyone is ordered by sign-up time, and each friend
+- who joins through your link moves you up SPOTS_PER_REFERRAL places.
+- Only rows whose Type starts with "User" count in the line.
  *
- * After editing: Deploy > Manage deployments > edit > New version.
+- After editing: Deploy > Manage deployments > edit > New version.
  */
 
 var SHEET_NAME = 'Sheet1';
@@ -30,8 +30,34 @@ function getSheet_() {
   return ss.getSheetByName(SHEET_NAME) || ss.getSheets()[0];
 }
 
+function verifyTurnstile_(token) {
+  if (!token) return false;
+  var secret = PropertiesService.getScriptProperties().getProperty('TURNSTILE_SECRET');
+  if (!secret) throw new Error('TURNSTILE_SECRET is not set in Script Properties');
+
+  var res = UrlFetchApp.fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+    method: 'post',
+    payload: {
+      secret: secret,
+      response: String(token)
+    },
+    muteHttpExceptions: true
+  });
+  var data = JSON.parse(res.getContentText());
+  return Boolean(data && data.success);
+}
+
 function doPost(e) {
   var p = (e && e.parameter) || {};
+
+  try {
+    if (!verifyTurnstile_(p.turnstileToken)) {
+      return json_({ status: 'error', message: 'Human verification failed. Please try again.' });
+    }
+  } catch (err) {
+    return json_({ status: 'error', message: String(err) });
+  }
+
   var lock = LockService.getScriptLock();
   lock.waitLock(10000);
   try {
