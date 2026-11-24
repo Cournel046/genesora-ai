@@ -1081,6 +1081,7 @@
               <p class="ch-bridge">This was a fun preview. At launch, your AI interviewer asks follow-up questions on video and gives you a full report with strengths and tips.</p>
               <div class="ch-actions">
                 <button type="button" class="ch-btn ghost" id="chRetry">Try another question ↻</button>
+                <a href="#play" class="ch-btn ghost">🎮 Play with Gena</a>
                 <span class="spacer"></span>
                 <a href="#pre-register" class="ch-btn primary">Join the waitlist →</a>
               </div>
@@ -1089,6 +1090,83 @@
           </div>
         </div>
         <p class="ch-fine">A fun preview with simple scoring that runs in your browser. Typed answers are never sent to us. If you use the mic, your browser's own speech service handles the audio. The real interview AI launches with the beta.</p>
+      </section>
+
+      <hr class="section-divider" />
+
+      <!-- 🎮 Play with Gena: Survive the Interview -->
+      <section class="challenge-section sv-section" id="play">
+        <span class="ch-badge">New · Play with Gena</span>
+        <h2>Survive the Interview</h2>
+        <p class="section-sub">Eight tricky interview moments. Pick how you respond. Keep your Hireability up and see if Gena would hire you.</p>
+
+        <div class="ch-card" id="svCard">
+          <div class="ch-gena">
+            <div id="svFaceMount"></div>
+            <div class="ch-gena-name">Gena<small>AI HR · game mode</small></div>
+          </div>
+
+          <div class="ch-body">
+
+            <div class="ch-stage active" data-stage="intro">
+              <div class="ch-bubble">I'm about to throw 8 real interview moments at you: late arrivals, tough questions, awkward surprises. Choose the best reply each time. Ready to see if you'd get hired?</div>
+              <button type="button" class="ch-btn primary" id="svStart">Start the interview 🎮</button>
+            </div>
+
+            <div class="ch-stage" data-stage="play">
+              <div class="sv-top">
+                <span id="svRound">Round 1 of 8</span>
+                <span class="sv-meter-wrap"><span class="sv-meter-label">Hireability <b id="svMeterNum">40</b></span><span class="sv-meter"><i id="svMeter"></i></span></span>
+              </div>
+              <div class="ch-bubble" id="svQ"></div>
+              <div class="sv-opts" id="svOpts"></div>
+              <div class="sv-feedback" id="svFeedback" hidden aria-live="polite">
+                <p class="sv-react" id="svReact"></p>
+                <p class="sv-tip" id="svTip"></p>
+                <button type="button" class="ch-btn primary" id="svNext">Next →</button>
+              </div>
+            </div>
+
+            <div class="ch-stage" data-stage="result" aria-live="polite">
+              <div class="ch-score">
+                <div class="ch-ring">
+                  <svg viewBox="0 0 110 110" aria-hidden="true">
+                    <defs><linearGradient id="svGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2563EB"/><stop offset="1" stop-color="#10B981"/></linearGradient></defs>
+                    <circle class="bg" cx="55" cy="55" r="42"/>
+                    <circle class="fg" id="svScoreRing" cx="55" cy="55" r="42" stroke="url(#svGrad)"/>
+                  </svg>
+                  <b><span id="svScoreNum">0</span><small>/ 100</small></b>
+                </div>
+                <div>
+                  <div class="ch-title" id="svTitle"></div>
+                  <p id="svComment"></p>
+                </div>
+              </div>
+
+              <div class="ch-metrics">
+                <div class="ch-metric"><span>Hireability</span><b>Final score</b><div class="ch-bar"><i id="svEnergyBar"></i></div></div>
+                <div class="ch-metric"><span>Best calls</span><b id="svBest">0/8</b></div>
+                <div class="ch-metric"><span>Red flags</span><b id="svFlags">0</b></div>
+              </div>
+
+              <div class="ch-actions">
+                <a class="ch-btn ghost" id="svShareX" target="_blank" rel="noopener noreferrer">Post on X</a>
+                <a class="ch-btn ghost" id="svShareWA" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                <button type="button" class="ch-btn ghost" id="svImg">📸 Score card</button>
+                <button type="button" class="ch-btn ghost" id="svShareNative" hidden>Share…</button>
+                <button type="button" class="ch-btn ghost" id="svCopy">Copy brag text</button>
+              </div>
+              <p class="ch-bridge">This is the fun version. At launch, your AI interviewer practises with you on video and gives you a full report.</p>
+              <div class="ch-actions">
+                <button type="button" class="ch-btn ghost" id="svRetry">Play again ↻</button>
+                <span class="spacer"></span>
+                <a href="#pre-register" class="ch-btn primary">Join the waitlist →</a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <p class="ch-fine">A just-for-fun game that runs in your browser. Nothing you pick is sent to us.</p>
       </section>
 
       <hr class="section-divider" />
