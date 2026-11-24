@@ -786,6 +786,112 @@
     return { words: words, energy: energy, confidence: confidence, confEmoji: confEmoji, buzz: buzz, star: star, title: title, comment: notes.slice(0, 2).join(' ') };
   }
 
+  /* ──────────────────────────────────────────────
+     SHARE CARD (a picture drawn in the browser, nothing is uploaded) — used by the challenge and the game
+     ────────────────────────────────────────────── */
+  function roundRectPath(ctx, x, y, w, h, rad) {
+    ctx.beginPath();
+    ctx.moveTo(x + rad, y); ctx.lineTo(x + w - rad, y); ctx.arcTo(x + w, y, x + w, y + rad, rad);
+    ctx.lineTo(x + w, y + h - rad); ctx.arcTo(x + w, y + h, x + w - rad, y + h, rad);
+    ctx.lineTo(x + rad, y + h); ctx.arcTo(x, y + h, x, y + h - rad, rad);
+    ctx.lineTo(x, y + rad); ctx.arcTo(x, y, x + rad, y, rad); ctx.closePath();
+  }
+  function drawGena(ctx, cx, cy, R, energy) {
+    var g = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.4, R * 0.1, cx, cy, R);
+    g.addColorStop(0, '#9aa8ff'); g.addColorStop(1, '#5b4bd6');
+    ctx.save();
+    ctx.shadowColor = 'rgba(124,92,255,0.55)'; ctx.shadowBlur = 50;
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    ctx.lineWidth = 8; ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.stroke();
+    ctx.strokeStyle = '#e8ecff'; ctx.lineWidth = 9; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.arc(cx, cy, R + 6, Math.PI * 1.08, Math.PI * 1.92); ctx.stroke();
+    ctx.fillStyle = '#e8ecff'; roundRectPath(ctx, cx - R - 14, cy - 16, 20, 44, 9); ctx.fill(); roundRectPath(ctx, cx + R - 6, cy - 16, 20, 44, 9); ctx.fill();
+    [-1, 1].forEach(function (s) {
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(cx + s * R * 0.36, cy - R * 0.1, R * 0.17, R * 0.21, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#1a1840'; ctx.beginPath(); ctx.arc(cx + s * R * 0.36, cy - R * 0.07, R * 0.09, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(cx + s * R * 0.36 + R * 0.03, cy - R * 0.11, R * 0.03, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.fillStyle = 'rgba(255,120,170,0.45)';
+    [-1, 1].forEach(function (s) { ctx.beginPath(); ctx.ellipse(cx + s * R * 0.62, cy + R * 0.2, R * 0.12, R * 0.07, 0, 0, Math.PI * 2); ctx.fill(); });
+    ctx.strokeStyle = '#1a1840'; ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.beginPath();
+    if (energy >= 70) ctx.arc(cx, cy + R * 0.18, R * 0.32, Math.PI * 0.12, Math.PI * 0.88);
+    else if (energy >= 45) { ctx.moveTo(cx - R * 0.2, cy + R * 0.42); ctx.lineTo(cx + R * 0.2, cy + R * 0.42); }
+    else ctx.arc(cx, cy + R * 0.55, R * 0.22, Math.PI * 1.15, Math.PI * 1.85);
+    ctx.stroke();
+  }
+  // o = { heading, score (0-100), title, chips: [[label, value] x3] } -> Promise<Blob>
+  function buildShareImage(o) {
+    var W = 1080, H = 1350, FONT = 'Sora, "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
+    var fontsReady = (document.fonts && document.fonts.load)
+      ? Promise.race([Promise.all([document.fonts.load('800 80px Sora'), document.fonts.load('500 30px Sora')]), new Promise(function (res) { setTimeout(res, 900); })]).catch(function () {})
+      : Promise.resolve();
+    return fontsReady.then(function () {
+      var cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+      var c = cv.getContext('2d');
+      var bg = c.createLinearGradient(0, 0, W, H);
+      bg.addColorStop(0, '#0a0f24'); bg.addColorStop(0.55, '#171a47'); bg.addColorStop(1, '#0b2a36');
+      c.fillStyle = bg; c.fillRect(0, 0, W, H);
+      var gl = c.createRadialGradient(W * 0.85, H * 0.1, 0, W * 0.85, H * 0.1, 520); gl.addColorStop(0, 'rgba(124,58,237,0.38)'); gl.addColorStop(1, 'rgba(124,58,237,0)');
+      c.fillStyle = gl; c.fillRect(0, 0, W, H);
+      var gl2 = c.createRadialGradient(W * 0.08, H * 0.92, 0, W * 0.08, H * 0.92, 560); gl2.addColorStop(0, 'rgba(16,185,129,0.28)'); gl2.addColorStop(1, 'rgba(16,185,129,0)');
+      c.fillStyle = gl2; c.fillRect(0, 0, W, H);
+
+      c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+      c.fillStyle = '#ffffff'; c.font = '800 46px ' + FONT; c.fillText('Genesora AI', W / 2, 100);
+      c.fillStyle = '#6ee7b7'; c.font = '700 26px ' + FONT; c.fillText(String(o.heading || '').toUpperCase(), W / 2, 150);
+
+      drawGena(c, W / 2, 330, 105, o.score);
+
+      var cx = W / 2, cy = 760, R = 215, a0 = -Math.PI / 2;
+      c.lineWidth = 30; c.lineCap = 'round';
+      c.strokeStyle = 'rgba(255,255,255,0.10)'; c.beginPath(); c.arc(cx, cy, R, 0, Math.PI * 2); c.stroke();
+      var rg = c.createLinearGradient(cx - R, cy - R, cx + R, cy + R); rg.addColorStop(0, '#2563eb'); rg.addColorStop(1, '#10b981');
+      c.strokeStyle = rg; c.beginPath(); c.arc(cx, cy, R, a0, a0 + Math.PI * 2 * (o.score / 100)); c.stroke();
+      c.fillStyle = '#ffffff'; c.font = '800 200px ' + FONT; c.fillText(String(o.score), cx, cy + 62);
+      c.fillStyle = 'rgba(255,255,255,0.6)'; c.font = '600 44px ' + FONT; c.fillText('/ 100', cx, cy + 128);
+
+      var title = String(o.title).replace(/\s*[^\w\s]+$/, '');
+      c.fillStyle = '#ffffff'; c.font = '800 70px ' + FONT; c.fillText(title, W / 2, 1100);
+
+      var cw = 300, gap = 30, x0 = (W - (cw * 3 + gap * 2)) / 2;
+      o.chips.forEach(function (ch, i) {
+        var x = x0 + i * (cw + gap);
+        c.fillStyle = 'rgba(255,255,255,0.08)'; roundRectPath(c, x, 1140, cw, 96, 24); c.fill();
+        c.strokeStyle = 'rgba(255,255,255,0.16)'; c.lineWidth = 2; roundRectPath(c, x, 1140, cw, 96, 24); c.stroke();
+        c.fillStyle = 'rgba(255,255,255,0.62)'; c.font = '600 22px ' + FONT; c.fillText(String(ch[0]).toUpperCase(), x + cw / 2, 1176);
+        c.fillStyle = '#ffffff'; c.font = '800 34px ' + FONT; c.fillText(String(ch[1]), x + cw / 2, 1216);
+      });
+
+      c.fillStyle = 'rgba(255,255,255,0.75)'; c.font = '600 30px ' + FONT; c.fillText('Think you can beat me?', W / 2, 1290);
+      c.fillStyle = '#6ee7b7'; c.font = '800 30px ' + FONT; c.fillText('genesoraai.com', W / 2, 1330);
+
+      return new Promise(function (resolve, reject) {
+        if (cv.toBlob) cv.toBlob(function (b) { b ? resolve(b) : reject(new Error('card')); }, 'image/png');
+        else reject(new Error('card'));
+      });
+    });
+  }
+  // Share the picture with the phone's share sheet, or download it on desktop.
+  function deliverCard(btn, blobPromise, filename, shareTitle, shareText) {
+    var label = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Making card…';
+    blobPromise.then(function (blob) {
+      var file = null;
+      try { file = new File([blob], filename, { type: 'image/png' }); } catch (e) { /* old browser */ }
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+        return navigator.share({ files: [file], title: shareTitle, text: shareText }).catch(function () {});
+      }
+      var url = URL.createObjectURL(blob), a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      toast('Score card saved 📸', 'Share the picture anywhere, and tell your friends to beat it!');
+    }).catch(function () {
+      toast("Couldn't make the card", 'Try "Copy brag text" instead.');
+    }).then(function () { btn.disabled = false; btn.textContent = label; });
+  }
+
   function initChallenge() {
     var card = $('#chCard');
     if (!card) return;
@@ -978,113 +1084,13 @@
       var rect = card.getBoundingClientRect();
       if (rect.top < 0) card.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
     }
-    /* Score card: a 1080x1350 picture drawn on a <canvas> in the browser (nothing is uploaded anywhere). */
-    function roundRectPath(ctx, x, y, w, h, rad) {
-      ctx.beginPath();
-      ctx.moveTo(x + rad, y); ctx.lineTo(x + w - rad, y); ctx.arcTo(x + w, y, x + w, y + rad, rad);
-      ctx.lineTo(x + w, y + h - rad); ctx.arcTo(x + w, y + h, x + w - rad, y + h, rad);
-      ctx.lineTo(x + rad, y + h); ctx.arcTo(x, y + h, x, y + h - rad, rad);
-      ctx.lineTo(x, y + rad); ctx.arcTo(x, y, x + rad, y, rad); ctx.closePath();
-    }
-    function drawGena(ctx, cx, cy, R, energy) {
-      var g = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.4, R * 0.1, cx, cy, R);
-      g.addColorStop(0, '#9aa8ff'); g.addColorStop(1, '#5b4bd6');
-      ctx.save();
-      ctx.shadowColor = 'rgba(124,92,255,0.55)'; ctx.shadowBlur = 50;
-      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fill();
-      ctx.restore();
-      ctx.lineWidth = 8; ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.stroke();
-      // headset
-      ctx.strokeStyle = '#e8ecff'; ctx.lineWidth = 9; ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.arc(cx, cy, R + 6, Math.PI * 1.08, Math.PI * 1.92); ctx.stroke();
-      ctx.fillStyle = '#e8ecff'; roundRectPath(ctx, cx - R - 14, cy - 16, 20, 44, 9); ctx.fill(); roundRectPath(ctx, cx + R - 6, cy - 16, 20, 44, 9); ctx.fill();
-      // eyes
-      [-1, 1].forEach(function (s) {
-        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(cx + s * R * 0.36, cy - R * 0.1, R * 0.17, R * 0.21, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#1a1840'; ctx.beginPath(); ctx.arc(cx + s * R * 0.36, cy - R * 0.07, R * 0.09, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(cx + s * R * 0.36 + R * 0.03, cy - R * 0.11, R * 0.03, 0, Math.PI * 2); ctx.fill();
-      });
-      // cheeks + mouth (mood follows the score)
-      ctx.fillStyle = 'rgba(255,120,170,0.45)';
-      [-1, 1].forEach(function (s) { ctx.beginPath(); ctx.ellipse(cx + s * R * 0.62, cy + R * 0.2, R * 0.12, R * 0.07, 0, 0, Math.PI * 2); ctx.fill(); });
-      ctx.strokeStyle = '#1a1840'; ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.beginPath();
-      if (energy >= 70) ctx.arc(cx, cy + R * 0.18, R * 0.32, Math.PI * 0.12, Math.PI * 0.88);
-      else if (energy >= 45) { ctx.moveTo(cx - R * 0.2, cy + R * 0.42); ctx.lineTo(cx + R * 0.2, cy + R * 0.42); }
-      else ctx.arc(cx, cy + R * 0.55, R * 0.22, Math.PI * 1.15, Math.PI * 1.85);
-      ctx.stroke();
-    }
-    function buildScoreCard(r) {
-      var W = 1080, H = 1350, FONT = 'Sora, "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
-      var fontsReady = (document.fonts && document.fonts.load)
-        ? Promise.race([Promise.all([document.fonts.load('800 80px Sora'), document.fonts.load('500 30px Sora')]), new Promise(function (res) { setTimeout(res, 900); })]).catch(function () {})
-        : Promise.resolve();
-      return fontsReady.then(function () {
-        var cv = document.createElement('canvas'); cv.width = W; cv.height = H;
-        var c = cv.getContext('2d');
-        var bg = c.createLinearGradient(0, 0, W, H);
-        bg.addColorStop(0, '#0a0f24'); bg.addColorStop(0.55, '#171a47'); bg.addColorStop(1, '#0b2a36');
-        c.fillStyle = bg; c.fillRect(0, 0, W, H);
-        var gl = c.createRadialGradient(W * 0.85, H * 0.1, 0, W * 0.85, H * 0.1, 520); gl.addColorStop(0, 'rgba(124,58,237,0.38)'); gl.addColorStop(1, 'rgba(124,58,237,0)');
-        c.fillStyle = gl; c.fillRect(0, 0, W, H);
-        var gl2 = c.createRadialGradient(W * 0.08, H * 0.92, 0, W * 0.08, H * 0.92, 560); gl2.addColorStop(0, 'rgba(16,185,129,0.28)'); gl2.addColorStop(1, 'rgba(16,185,129,0)');
-        c.fillStyle = gl2; c.fillRect(0, 0, W, H);
-
-        c.textAlign = 'center'; c.textBaseline = 'alphabetic';
-        c.fillStyle = '#ffffff'; c.font = '800 46px ' + FONT; c.fillText('Genesora AI', W / 2, 100);
-        c.fillStyle = '#6ee7b7'; c.font = '700 26px ' + FONT; c.fillText('60-SECOND INTERVIEW CHALLENGE', W / 2, 150);
-
-        drawGena(c, W / 2, 330, 105, r.energy);
-
-        // score ring
-        var cx = W / 2, cy = 760, R = 215, a0 = -Math.PI / 2;
-        c.lineWidth = 30; c.lineCap = 'round';
-        c.strokeStyle = 'rgba(255,255,255,0.10)'; c.beginPath(); c.arc(cx, cy, R, 0, Math.PI * 2); c.stroke();
-        var rg = c.createLinearGradient(cx - R, cy - R, cx + R, cy + R); rg.addColorStop(0, '#2563eb'); rg.addColorStop(1, '#10b981');
-        c.strokeStyle = rg; c.beginPath(); c.arc(cx, cy, R, a0, a0 + Math.PI * 2 * (r.energy / 100)); c.stroke();
-        c.fillStyle = '#ffffff'; c.font = '800 200px ' + FONT; c.fillText(String(r.energy), cx, cy + 62);
-        c.fillStyle = 'rgba(255,255,255,0.6)'; c.font = '600 44px ' + FONT; c.fillText('/ 100', cx, cy + 128);
-
-        var title = String(r.title).replace(/\s*[^\w\s]+$/, '');
-        c.fillStyle = '#ffffff'; c.font = '800 70px ' + FONT; c.fillText(title, W / 2, 1100);
-
-        // three stat chips
-        var chips = [['Confidence', r.confidence], ['Buzzwords', String(r.buzz)], ['Structure', r.star + '/4']];
-        var cw = 300, gap = 30, x0 = (W - (cw * 3 + gap * 2)) / 2;
-        chips.forEach(function (ch, i) {
-          var x = x0 + i * (cw + gap);
-          c.fillStyle = 'rgba(255,255,255,0.08)'; roundRectPath(c, x, 1140, cw, 96, 24); c.fill();
-          c.strokeStyle = 'rgba(255,255,255,0.16)'; c.lineWidth = 2; roundRectPath(c, x, 1140, cw, 96, 24); c.stroke();
-          c.fillStyle = 'rgba(255,255,255,0.62)'; c.font = '600 22px ' + FONT; c.fillText(ch[0].toUpperCase(), x + cw / 2, 1176);
-          c.fillStyle = '#ffffff'; c.font = '800 34px ' + FONT; c.fillText(ch[1], x + cw / 2, 1216);
-        });
-
-        c.fillStyle = 'rgba(255,255,255,0.75)'; c.font = '600 30px ' + FONT; c.fillText('Think you can beat me?', W / 2, 1290);
-        c.fillStyle = '#6ee7b7'; c.font = '800 30px ' + FONT; c.fillText('genesoraai.com', W / 2, 1330);
-
-        return new Promise(function (resolve, reject) {
-          if (cv.toBlob) cv.toBlob(function (b) { b ? resolve(b) : reject(new Error('card')); }, 'image/png');
-          else reject(new Error('card'));
-        });
-      });
-    }
     $('#chImg').addEventListener('click', function () {
       if (!lastResult) return;
-      var b = this, label = b.textContent, r = lastResult, s = shareText(r);
-      b.disabled = true; b.textContent = 'Making card…';
-      buildScoreCard(r).then(function (blob) {
-        var file = null;
-        try { file = new File([blob], 'genesora-score-' + r.energy + '.png', { type: 'image/png' }); } catch (e) { /* old browser */ }
-        if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
-          return navigator.share({ files: [file], title: 'My Genesora AI interview score', text: s.text }).catch(function () {});
-        }
-        var url = URL.createObjectURL(blob), a = document.createElement('a');
-        a.href = url; a.download = 'genesora-score-' + r.energy + '.png';
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
-        toast('Score card saved 📸', 'Share the picture anywhere, and tell your friends to beat it!');
-      }).catch(function () {
-        toast("Couldn't make the card", 'Try "Copy brag text" instead.');
-      }).then(function () { b.disabled = false; b.textContent = label; });
+      var r = lastResult;
+      deliverCard(this, buildShareImage({
+        heading: '60-SECOND INTERVIEW CHALLENGE', score: r.energy, title: r.title,
+        chips: [['Confidence', r.confidence], ['Buzzwords', String(r.buzz)], ['Structure', r.star + '/4']]
+      }), 'genesora-score-' + r.energy + '.png', 'My Genesora AI interview score', shareText(r).text);
     });
     $('#chShareNative').addEventListener('click', function () {
       if (!lastResult) return;
@@ -1097,6 +1103,268 @@
       copyText(shareText(lastResult).text).then(function () { b.textContent = 'Copied ✓'; setTimeout(function () { b.textContent = 'Copy brag text'; }, 1600); });
     });
     $('#chRetry').addEventListener('click', start);
+  }
+
+  /* ──────────────────────────────────────────────
+     7. SURVIVE THE INTERVIEW (the "Play with Gena" game)
+        Each moment has three replies: b = best call, k = okay, x = red flag.
+     ────────────────────────────────────────────── */
+  var SV_MOMENTS = [
+    { s: "It's 10:08. Your interview started at 10:00 and you've just joined the call.",
+      o: [['b', 'Apologise once, briefly, and jump straight in.', "Short, honest, and we're moving. I like that."],
+          ['k', 'Explain your bad internet for a few minutes.', "Okay… that ate a chunk of our time."],
+          ['x', 'Say nothing and hope she hasn\'t noticed.', "I noticed. I always notice."]],
+      tip: 'One short apology, then put your energy into the interview.' },
+    { s: '"Tell me about yourself."',
+      o: [['b', 'Give a 30-second summary: who you are, what you have built, why this role.', "Clear, short, and relevant. Great opener."],
+          ['k', 'Read your resume out loud from the top.', "I can read the resume myself. Tell me the story."],
+          ['x', 'Start with your childhood and go year by year.', "We are now in Class 4. We have 40 minutes left."]],
+      tip: 'Keep it to who you are, what you have done, and why this job.' },
+    { s: '"What is your biggest weakness?"',
+      o: [['b', 'Name a real weakness and what you are doing to improve it.', "Honest and self-aware. That's rare."],
+          ['k', 'Say "I\'m a perfectionist."', "Every candidate says that one. Try a fresher answer."],
+          ['x', 'Say "I don\'t really have any weaknesses."', "Everyone has some. This one worries me more."]],
+      tip: 'Pick a real weakness, then show the steps you take to fix it.' },
+    { s: 'A technical question comes up and you do not know the answer.',
+      o: [['b', "Say you're not sure, then explain how you'd work it out.", "Honest and logical. That's exactly how real work goes."],
+          ['k', 'Guess confidently and hope it lands.', "Bold. But I can tell it's a guess."],
+          ['x', 'Go silent for a full minute.', "I can hear the clock ticking. So can you."]],
+      tip: "Saying how you'd find the answer beats a silent pause or a bluff." },
+    { s: '"What are your salary expectations?"',
+      o: [['b', "Give a researched range and say you're open to discussing it for this role.", "Prepared and flexible. Nicely done."],
+          ['k', 'Say "Whatever you think is fair."', "Hmm. That leaves me doing your negotiating."],
+          ['x', 'Name a number far above the market with no reason.', "That's a very brave number."]],
+      tip: 'Research the market and give a range, not a guess.' },
+    { s: '"Why do you want to work here?"',
+      o: [['b', 'Mention something specific about the product and how your skills fit.', "You did your homework. I'm impressed."],
+          ['k', 'Say the company is well known and you need a job.', "Honest, but I was hoping for more."],
+          ['x', 'Say "I applied to 50 places and this was one of them."', "Thank you for the honesty. Ouch."]],
+      tip: 'One specific detail about the company beats ten general compliments.' },
+    { s: "You're a fresher with no work experience. Gena asks: \"Why should we hire you?\"",
+      o: [['b', 'Show a project you built and what you learned from it.', "A real project says more than any promise."],
+          ['k', 'Say you are a quick learner and will work hard.', "Nice, but show me proof."],
+          ['x', 'Apologise for having no experience.', "Please don't apologise. Show me what you can do."]],
+      tip: 'Freshers win with projects. Show your work.' },
+    { s: '"Tell me about a time you disagreed with a teammate."',
+      o: [['b', 'Describe a real disagreement, how you listened, and how it ended.', "Mature and balanced. Love it."],
+          ['k', 'Say you avoid conflict and just do your own part.', "Peaceful, but teamwork needs some talking."],
+          ['x', 'Complain about a former teammate in detail.', "I'm now worried about what you'll say about us."]],
+      tip: 'Focus on how you solved it, not on who was wrong.' },
+    { s: '"Tell me about a time you failed."',
+      o: [['b', 'Share a real failure, what you owned, and what changed after.', "Ownership. That's what I'm looking for."],
+          ['k', 'Pick a tiny failure that was secretly a success.', "I see what you did there. Be braver."],
+          ['x', 'Blame the team and the manager.', "So it was everyone's fault but yours?"]],
+      tip: 'Own the mistake and show what you learned.' },
+    { s: 'Your phone buzzes loudly in the middle of the interview.',
+      o: [['b', 'Silence it, say a quick sorry, and carry on.', "Smooth. These things happen."],
+          ['k', 'Check who it is first, then silence it.', "I saw that glance at the screen."],
+          ['x', 'Answer it: "One minute, it\'s important."', "More important than your job interview? Okay then."]],
+      tip: 'Silence your phone before the call, and ignore it if it rings.' },
+    { s: 'Your audio cuts out in the middle of your answer.',
+      o: [['b', 'Tell Gena, rejoin or type in chat, and offer to repeat your last point.', "Calm and practical. That's real problem solving."],
+          ['k', 'Keep talking and hope the audio comes back.', "I only heard a robot noise for 30 seconds."],
+          ['x', 'Leave the call without a word.', "Hello? …Hello? And you're gone."]],
+      tip: 'Tell them about technical problems straight away and offer a fix.' },
+    { s: 'Gena spots a skill on your resume that you have only used once. "How strong are you in it?"',
+      o: [['b', 'Be honest and describe exactly how much you have used it.', "Honest and specific. I trust you more now."],
+          ['k', 'Say "intermediate" and change the subject.', "Hmm, that was a quick subject change."],
+          ['x', 'Claim you are an expert.', "Great! Let's do a live test right now."]],
+      tip: 'Never oversell a skill. It always comes back in the next question.' },
+    { s: '"Where do you see yourself in five years?"',
+      o: [['b', 'Share a realistic growth goal connected to this role.', "A real plan that fits our team. Nice."],
+          ['k', 'Say "In your chair!" with a big smile.', "Funny. And slightly scary."],
+          ['x', 'Say you will probably start your own company and leave.', "Thanks for the heads-up. I'll plan around that."]],
+      tip: 'Show ambition that grows with the role, not away from it.' },
+    { s: '"Do you have any questions for us?"',
+      o: [['b', 'Ask about the team and what success looks like in the first six months.', "Great question. That shows you care about the work."],
+          ['k', 'Ask about leave policy and working hours first.', "Fair questions, just not the first ones I hoped for."],
+          ['x', 'Say "Nope, I\'m good."', "No questions at all? Interesting."]],
+      tip: 'Always ask something. It shows real interest.' },
+    { s: '"Why did you leave your last job?"',
+      o: [['b', 'Stay positive: you want growth and new challenges.', "Positive and forward-looking. Good."],
+          ['k', 'Say you were bored.', "Hmm. I'd like you to be excited about this role."],
+          ['x', 'Criticise your old boss.', "I'm going to remember that when you leave us."]],
+      tip: 'Never badmouth a past employer. Talk about what you want next.' },
+    { s: '"When can you join us?"',
+      o: [['b', 'Give your real notice period and say how you would hand over properly.', "Honest and professional. Thank you."],
+          ['k', 'Say "immediately" without checking your notice period.', "Great, but I think your current employer will have a say."],
+          ['x', 'Promise two weeks when you really have a three-month notice period.', "I'll be calling your HR to check that."]],
+      tip: 'Be honest about your notice period and offer a smooth handover.' },
+    { s: '"Tell me about a time you took the lead."',
+      o: [['b', 'Pick a college or work project and explain what you decided and the result.', "A clear story with a result. Perfect."],
+          ['k', 'Say "I\'m a natural leader."', "Maybe, but I need an example."],
+          ['x', 'Say you only follow instructions.', "Noted. We're not hiring for that."]],
+      tip: 'A short story beats a label like "natural leader".' },
+    { s: "You're nervous and your mind goes blank halfway through an answer.",
+      o: [['b', 'Take a breath, say "Let me gather my thoughts," then continue.', "A calm pause is totally fine. Good recovery."],
+          ['k', 'Start over from the beginning, very fast.', "Whoa, slow down. I'm still on your first sentence."],
+          ['x', 'Say "I\'m so bad at interviews, sorry" three times.', "You're not bad at it. But saying it three times isn't helping."]],
+      tip: 'A short pause looks calm. Apologising repeatedly does not.' },
+    { s: '"What do you do when you are about to miss a deadline?"',
+      o: [['b', 'Tell the team early, re-prioritise, and propose a new plan.', "Early warning and a plan. Managers love that."],
+          ['k', 'Work all night and hope it turns out fine.', "Dedicated, but please tell me earlier next time."],
+          ['x', 'Stay quiet until the deadline has passed.', "That's the one thing I can't work with."]],
+      tip: 'Raise problems early and come with a plan.' },
+    { s: '"Why should we hire you over the other candidates?"',
+      o: [['b', 'Say what you bring with one example, without putting anyone down.', "Confident and classy. Good answer."],
+          ['k', 'Say "Because I\'m the best."', "Confident! Though I'd love some evidence."],
+          ['x', 'Say the other candidates are probably not as good.', "You haven't even met them."]],
+      tip: 'Talk about your strengths, never about other candidates.' },
+    { s: 'Gena gives you some tough feedback on your last answer.',
+      o: [['b', 'Thank her, ask one clarifying question, and adjust.', "Open to feedback. That's a big green flag."],
+          ['k', 'Nod and say nothing.', "Did that land? I can't tell."],
+          ['x', 'Argue that she is wrong.', "Debate club is next door."]],
+      tip: 'How you take feedback says a lot about how you will work.' },
+    { s: "Gena says: \"That's everything from me. Anything you'd like to add?\"",
+      o: [['b', 'Give a 15-second closing: why you fit, and say thank you.', "A strong finish. I'll remember that."],
+          ['k', 'Say "No, thank you."', "Polite, but you left a free chance on the table."],
+          ['x', 'Repeat your whole first answer.', "I think I've heard this one already."]],
+      tip: 'End with a short, confident close and a thank you.' }
+  ];
+
+  function initGame() {
+    var card = $('#svCard');
+    if (!card) return;
+    var face = mountFace($('#svFaceMount'));
+    var Voice = window.GenesoraVoice;
+    if (Voice && Voice.supported) Voice.mountToggle($('.ch-gena', card), { className: 'ch-sound' });
+    var ROUNDS = 8, GAIN = { b: 11, k: 1, x: -10 };
+    var qEl = $('#svQ'), optsEl = $('#svOpts'), roundEl = $('#svRound'), meterEl = $('#svMeter'), meterNum = $('#svMeterNum');
+    var reactEl = $('#svReact'), tipEl = $('#svTip'), nextBtn = $('#svNext');
+    var deck = [], round = 0, meter = 50, stats = null, locked = false, lastResult = null;
+
+    function show(name) { $$('.ch-stage', card).forEach(function (s) { s.classList.toggle('active', s.getAttribute('data-stage') === name); }); }
+    function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+    function say(t) { if (Voice && Voice.isOn()) Voice.say(t, { face: face, tag: 'game', msPerUnit: 40 }); }
+    function stopSay() { if (Voice && Voice.activeTag() === 'game') Voice.stop(); face.lipEnd(); }
+    function setMeter(v, animate) {
+      meter = clamp(v, 0, 100);
+      meterEl.style.width = meter + '%';
+      meterEl.classList.toggle('low', meter < 35);
+      meterNum.textContent = String(Math.round(meter));
+    }
+    function titleFor(score, early) {
+      if (early) return 'Call Ended Early 📞';
+      return score >= 85 ? 'Hire-ready ⭐' : score >= 70 ? 'Smooth Operator 😎' : score >= 55 ? 'Solid Contender 💪' : score >= 40 ? 'Warming Up 🔥' : 'Needs a Second Take 🔁';
+    }
+
+    function start() {
+      stopSay();
+      deck = shuffle(SV_MOMENTS.slice()).slice(0, ROUNDS);
+      round = 0; stats = { best: 0, flags: 0 }; setMeter(40);
+      face.setMood('smile'); face.look(0, 0);
+      nextRound();
+    }
+    function nextRound() {
+      var m = deck[round];
+      locked = false;
+      roundEl.textContent = 'Round ' + (round + 1) + ' of ' + ROUNDS;
+      qEl.textContent = m.s;
+      optsEl.textContent = '';
+      shuffle(m.o.slice()).forEach(function (o) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'sv-opt'; b.textContent = o[1];
+        b.addEventListener('click', function () { choose(m, o, b); });
+        optsEl.appendChild(b);
+      });
+      show('play');
+      face.setMood('neutral');
+      say(m.s.replace(/^"|"$/g, ''));
+    }
+    function choose(m, o, btn) {
+      if (locked) return;
+      locked = true; stopSay();
+      var kind = o[0];
+      $$('.sv-opt', optsEl).forEach(function (x) { x.disabled = true; });
+      btn.classList.add('picked', 'k-' + kind);
+      // reveal the best call so the player always learns something
+      $$('.sv-opt', optsEl).forEach(function (x, i) { /* mark best */ });
+      m.o.forEach(function (oo) {
+        if (oo[0] !== 'b') return;
+        $$('.sv-opt', optsEl).forEach(function (x) { if (x.textContent === oo[1]) x.classList.add('is-best'); });
+      });
+      if (kind === 'b') stats.best++; if (kind === 'x') stats.flags++;
+      setMeter(meter + GAIN[kind], true);
+      face.setMood(kind === 'b' ? 'smile' : kind === 'x' ? 'shy' : 'neutral');
+      face.look(0, kind === 'x' ? 5 : 0);
+      reactEl.textContent = o[2];
+      tipEl.textContent = '💡 ' + m.tip;
+      reactEl.className = 'sv-react k-' + kind;
+      nextBtn.textContent = (round + 1 >= ROUNDS || meter <= 0) ? 'See my result →' : 'Next →';
+      $('#svFeedback').hidden = false;
+      say(o[2]);
+      if (kind === 'b' && !reduceMotion) card.classList.add('sv-pop'), setTimeout(function () { card.classList.remove('sv-pop'); }, 500);
+    }
+    function next() {
+      $('#svFeedback').hidden = true; stopSay();
+      round++;
+      if (round >= ROUNDS || meter <= 0) return finish();
+      nextRound();
+    }
+
+    function shareText(r) {
+      var url = pageUrl() + '#play', code = WL.getSavedCode();
+      if (code) url = pageUrl() + '?ref=' + encodeURIComponent(code) + '#play';
+      return { text: 'I scored ' + r.score + '/100 in "Survive the Interview" with Gena (Genesora AI), "' + r.title.replace(/\s*[^\w\s]+$/, '') + '". Can you beat me? 👉 ' + url, url: url };
+    }
+    function finish() {
+      var early = meter <= 0, score = Math.round(meter);
+      var r = { score: score, title: titleFor(score, early), best: stats.best, flags: stats.flags, played: Math.min(round, ROUNDS) };
+      lastResult = r;
+      $('#svTitle').textContent = r.title;
+      $('#svComment').textContent = early ? 'Too many red flags in a row and Gena politely ended the call. Want to try again?'
+        : score >= 85 ? 'Gena would send you straight to the final round. Calm, honest and well prepared.'
+        : score >= 70 ? 'Strong run. A few small slips, but you handled the pressure well.'
+        : score >= 55 ? 'A solid effort. Check the tips and you will do even better next time.'
+        : score >= 40 ? 'You survived! A couple of red flags cost you. Try again and use the tips.'
+        : 'Rough call, but now you know what to avoid. Play again and aim higher.';
+      $('#svBest').textContent = r.best + '/' + ROUNDS;
+      $('#svFlags').textContent = r.flags === 0 ? '0 ✨ clean' : String(r.flags);
+      $('#svScoreNum').textContent = '0';
+      show('result');
+      var fg = $('#svScoreRing'), bar = $('#svEnergyBar');
+      fg.style.strokeDashoffset = '263.9'; bar.style.width = '0%';
+      requestAnimationFrame(function () { requestAnimationFrame(function () {
+        fg.style.strokeDashoffset = String(263.9 * (1 - score / 100)); bar.style.width = score + '%';
+      }); });
+      var t0 = performance.now(), dur = reduceMotion ? 1 : 1000, el = $('#svScoreNum');
+      (function step(t) {
+        var p = clamp((t - t0) / dur, 0, 1);
+        el.textContent = Math.round(score * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) requestAnimationFrame(step);
+      })(t0);
+      face.setMood(score >= 70 ? 'smile' : score < 45 ? 'shy' : 'neutral'); face.look(0, 0);
+      if (Voice && Voice.isOn()) Voice.say(r.title.replace(/\s*[^\w\s]+$/, '') + '. ' + $('#svComment').textContent, { face: face, tag: 'game', msPerUnit: 40 });
+      if (score >= 85) confetti({ count: 110 });
+      var s = shareText(r);
+      $('#svShareX').href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(s.text);
+      $('#svShareWA').href = 'https://wa.me/?text=' + encodeURIComponent(s.text);
+      $('#svShareNative').hidden = !navigator.share;
+      var rect = card.getBoundingClientRect();
+      if (rect.top < 0) card.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+    }
+
+    $('#svStart').addEventListener('click', start);
+    nextBtn.addEventListener('click', next);
+    $('#svRetry').addEventListener('click', start);
+    $('#svImg').addEventListener('click', function () {
+      if (!lastResult) return;
+      var r = lastResult;
+      deliverCard(this, buildShareImage({
+        heading: 'Survive the Interview', score: r.score, title: r.title,
+        chips: [['Best calls', r.best + '/' + ROUNDS], ['Red flags', String(r.flags)], ['Rounds', r.played + '/' + ROUNDS]]
+      }), 'genesora-survive-' + r.score + '.png', 'My Genesora AI interview score', shareText(r).text);
+    });
+    $('#svShareNative').addEventListener('click', function () {
+      if (!lastResult) return;
+      var s = shareText(lastResult);
+      navigator.share({ title: 'Survive the Interview with Gena', text: s.text, url: s.url }).catch(function () {});
+    });
+    $('#svCopy').addEventListener('click', function () {
+      if (!lastResult) return;
+      var b = this;
+      copyText(shareText(lastResult).text).then(function () { b.textContent = 'Copied ✓'; setTimeout(function () { b.textContent = 'Copy brag text'; }, 1600); });
+    });
   }
 
   /* ──────────────────────────────────────────────
@@ -1190,7 +1458,7 @@
 
   window.GenesoraFun = { confetti: confetti, toast: toast, mountFace: mountFace };
 
-  [WL.init, initHeroFace, initLiveDemo, initChallenge, initEggs, initGlow, initProgress].forEach(function (fn) {
+  [WL.init, initHeroFace, initLiveDemo, initChallenge, initGame, initEggs, initGlow, initProgress].forEach(function (fn) {
     try { fn(); } catch (err) { console.error('[Genesora extras]', err); }
   });
 })();
