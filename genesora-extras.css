@@ -272,8 +272,10 @@ section[id] { scroll-margin-top: 90px; }
 .ch-ring b { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Sora', sans-serif; font-size: 2rem; line-height: 1; }
 .ch-ring b small { font-family: 'DM Sans', sans-serif; font-size: 0.65rem; font-weight: 400; color: rgba(255, 255, 255, 0.5); margin-top: 4px; }
 .ch-title { font-family: 'Sora', sans-serif; font-size: 1.35rem; font-weight: 700; margin-bottom: 0.3rem; }
-#chComment { font-size: 0.9rem; line-height: 1.6; color: rgba(255, 255, 255, 0.7); }
+#chComment, #svComment { font-size: 0.9rem; line-height: 1.6; color: rgba(255, 255, 255, 0.7); }
 .ch-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.7rem; margin-bottom: 0.4rem; }
+#svCard .ch-metrics { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 560px) { #svCard .ch-metrics { grid-template-columns: 1fr 1fr; } }
 .ch-metric { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 0.8rem 1rem; }
 .ch-metric > span { display: block; font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255, 255, 255, 0.45); margin-bottom: 0.25rem; }
 .ch-metric b { font-family: 'Sora', sans-serif; font-size: 1.05rem; }
@@ -457,3 +459,37 @@ html.party { animation: gHue 2.4s linear infinite; }
   .ch-gena .ch-sound { margin: 0 0 0 auto; }
   .ld-bar .gen-sound .gs-txt { display: none; }
 }
+
+
+/* ── Survive the Interview (game) ── */
+.sv-top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 0.9rem; font-size: 0.8rem; color: rgba(255,255,255,0.6); font-weight: 600; flex-wrap: wrap; }
+.sv-meter-wrap { display: flex; align-items: center; gap: 0.6rem; flex: 1; justify-content: flex-end; min-width: 190px; }
+.sv-meter-label { white-space: nowrap; letter-spacing: 0.04em; text-transform: uppercase; font-size: 0.68rem; }
+.sv-meter-label b { color: #fff; font-family: 'Sora', sans-serif; font-size: 0.85rem; margin-left: 0.25rem; }
+.sv-meter { width: 130px; height: 8px; border-radius: 8px; background: rgba(255,255,255,0.1); overflow: hidden; flex-shrink: 0; }
+.sv-meter i { display: block; height: 100%; width: 40%; border-radius: 8px; background: linear-gradient(90deg, #2563EB, #10B981); transition: width 0.5s cubic-bezier(0.2,0.8,0.2,1), background 0.3s; }
+.sv-meter i.low { background: linear-gradient(90deg, #ef4444, #f59e0b); }
+.sv-opts { display: grid; gap: 0.6rem; }
+.sv-opt {
+  font: inherit; font-size: 0.95rem; line-height: 1.45; text-align: left; cursor: pointer;
+  padding: 0.85rem 1.1rem; border-radius: 12px; color: rgba(255,255,255,0.92);
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+.sv-opt:hover:not(:disabled) { background: rgba(255,255,255,0.1); border-color: rgba(139,92,246,0.7); transform: translateY(-1px); }
+.sv-opt:focus-visible { outline: 2px solid #8b5cf6; outline-offset: 2px; }
+.sv-opt:disabled { cursor: default; opacity: 0.75; }
+.sv-opt.picked.k-b { background: rgba(16,185,129,0.18); border-color: #10B981; opacity: 1; }
+.sv-opt.picked.k-k { background: rgba(251,191,36,0.14); border-color: #fbbf24; opacity: 1; }
+.sv-opt.picked.k-x { background: rgba(239,68,68,0.16); border-color: #ef4444; opacity: 1; }
+.sv-opt.is-best:not(.picked) { border-color: rgba(16,185,129,0.65); opacity: 1; box-shadow: 0 0 0 1px rgba(16,185,129,0.25) inset; }
+.sv-opt.is-best:not(.picked)::after { content: '  ← best call'; font-size: 0.72rem; font-weight: 700; color: #6ee7b7; }
+.sv-feedback { margin-top: 1rem; padding: 0.95rem 1.1rem; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); animation: chIn 0.3s ease; }
+.sv-feedback[hidden] { display: none; }
+.sv-react { margin: 0 0 0.4rem; font-weight: 600; font-size: 0.98rem; }
+.sv-react.k-b { color: #6ee7b7; } .sv-react.k-k { color: #fcd34d; } .sv-react.k-x { color: #fca5a5; }
+.sv-tip { margin: 0 0 0.8rem; font-size: 0.86rem; line-height: 1.5; color: rgba(255,255,255,0.72); }
+.sv-pop { animation: svPop 0.45s ease; }
+@keyframes svPop { 0% { transform: scale(1); } 40% { transform: scale(1.012); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .sv-pop, .sv-feedback { animation: none; } .sv-meter i { transition: none; } }
+@media (max-width: 560px) { .sv-meter-wrap { justify-content: flex-start; } .sv-meter { flex: 1; width: auto; } }
