@@ -94,23 +94,11 @@
     const wlEmailOk = v => /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(v) && v.length <= 100;
     const wlCompanyOk = v => v.length >= 2 && v.length <= 80 && /\p{L}/u.test(v) && !/https?:|www\./i.test(v) && !/(.)\1{4,}/u.test(v);
     const wlBot = form => (form.querySelector('.wl-hp').value !== '') || (Date.now() - WL_LOADED_AT < 2500);
-    // show white text once a real option is picked; keep country-code in step with country
+    // show white text once a real option is picked
     document.querySelectorAll('.form-card select').forEach(sel => {
       const sync = () => sel.classList.toggle('has-val', sel.value !== '');
       sel.addEventListener('change', sync); sync();
     });
-    (function () {
-      const country = document.getElementById('e_country'), code = document.getElementById('e_code');
-      if (!country || !code) return;
-      country.addEventListener('change', () => {
-        const iso = country.options[country.selectedIndex].dataset.iso;
-        if (!iso) return;
-        const i = Array.from(code.options).findIndex(o => o.dataset.iso === iso);
-        if (i > 0) { code.selectedIndex = i; code.classList.add('has-val'); }
-      });
-      const phone = document.getElementById('e_phone');
-      phone.addEventListener('input', () => { phone.value = phone.value.replace(/\D/g, ''); });
-    })();
     // reset leaves selects grey again
     document.querySelectorAll('.form-card form').forEach(f => f.addEventListener('reset', () => setTimeout(() => f.querySelectorAll('select').forEach(s => s.classList.remove('has-val')), 0)));
 
@@ -118,20 +106,25 @@
     const TURNSTILE_SITE_KEY = "0x4AAAAAAGQL3hSBAvFDGzEj";
     let turnstileWidgetId = null;
     let onTurnstileSuccess = null;
+    let onTurnstileCancel = null;
 
-    function closeHumanModal() {
+    function closeHumanModal(wasCancelled) {
       const modal = document.getElementById('humanModal');
       if (modal) modal.hidden = true;
+      const cancelCb = onTurnstileCancel;
       onTurnstileSuccess = null;
+      onTurnstileCancel = null;
+      if (wasCancelled && cancelCb) cancelCb();
     }
 
-    function openHumanCheck(callback) {
+    function openHumanCheck(callback, cancelCallback) {
       const modal = document.getElementById('humanModal');
       const errEl = document.getElementById('humanModalErr');
       if (!modal) { callback(""); return; }
 
       errEl.textContent = "";
       onTurnstileSuccess = callback;
+      onTurnstileCancel = cancelCallback || null;
       modal.hidden = false;
 
       if (!window.turnstile) {
@@ -149,7 +142,7 @@
         theme: 'dark',
         callback: function(token) {
           const cb = onTurnstileSuccess;
-          closeHumanModal();
+          closeHumanModal(false);
           if (cb) cb(token);
         },
         'error-callback': function() {
@@ -164,14 +157,130 @@
     (function() {
       const modal = document.getElementById('humanModal');
       const closeBtn = document.getElementById('closeHumanModal');
-      if (closeBtn) closeBtn.addEventListener('click', closeHumanModal);
+      if (closeBtn) closeBtn.addEventListener('click', function() { closeHumanModal(true); });
       if (modal) {
         modal.addEventListener('click', function(e) {
-          if (e.target === modal) closeHumanModal();
+          if (e.target === modal) closeHumanModal(true);
         });
       }
       document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && modal && !modal.hidden) closeHumanModal();
+        if (e.key === 'Escape' && modal && !modal.hidden) closeHumanModal(true);
+      });
+    })();
+
+    // ── EMAIL OTP MODAL LOGIC ──
+    let otpState = null;
+
+    function closeOtpModal(wasCancelled) {
+      const modal = document.getElementById('otpModal');
+      if (modal) modal.hidden = true;
+      const st = otpState;
+      otpState = null;
+      if (wasCancelled && st && st.onCancel) st.onCancel();
+    }
+
+    function openOtpModal(opts) {
+      const modal = document.getElementById('otpModal');
+      const emailEl = document.getElementById('otpModalEmail');
+      const inputEl = document.getElementById('otpInput');
+      const errEl = document.getElementById('otpModalErr');
+      const verifyBtn = document.getElementById('otpVerifyBtn');
+      if (!modal) return;
+
+      otpState = opts;
+      emailEl.textContent = opts.email;
+      inputEl.value = "";
+      errEl.textContent = "";
+      verifyBtn.disabled = false;
+      verifyBtn.textContent = "Verify & Join";
+      modal.hidden = false;
+      setTimeout(() => inputEl.focus(), 50);
+    }
+
+    function sendEmailOtp(email, name, type, turnstileToken) {
+      const fd = new FormData();
+      fd.append("action", "send_otp");
+      fd.append("email", email);
+      fd.append("name", name);
+      fd.append("type", type);
+      fd.append("turnstileToken", turnstileToken);
+
+      return fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: fd
+      })
+        .then(response => {
+          if (!response.ok) throw new Error('Network error');
+          return response.json();
+        })
+        .then(data => {
+          if (data && data.status === 'otp_sent') return data;
+          throw new Error(data && data.message ? data.message : 'Could not send verification code.');
+        });
+    }
+
+    (function() {
+      const modal = document.getElementById('otpModal');
+      const form = document.getElementById('otpForm');
+      const inputEl = document.getElementById('otpInput');
+      const errEl = document.getElementById('otpModalErr');
+      const verifyBtn = document.getElementById('otpVerifyBtn');
+      const resendBtn = document.getElementById('otpResendBtn');
+      const closeBtn = document.getElementById('closeOtpModal');
+
+      if (inputEl) {
+        inputEl.addEventListener('input', function() {
+          this.value = this.value.replace(/\D/g, '').slice(0, 6);
+          errEl.textContent = "";
+        });
+      }
+
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          if (!otpState) return;
+
+          const code = inputEl.value.trim();
+          if (!/^\d{6}$/.test(code)) {
+            errEl.textContent = "Please enter the 6-digit code from your email.";
+            inputEl.focus();
+            return;
+          }
+
+          verifyBtn.disabled = true;
+          verifyBtn.textContent = "Verifying...";
+          errEl.textContent = "";
+
+          otpState.onVerify(code, function onDone(errMessage) {
+            if (!errMessage) {
+              closeOtpModal(false);
+            } else {
+              errEl.textContent = errMessage;
+              verifyBtn.disabled = false;
+              verifyBtn.textContent = "Verify & Join";
+              inputEl.focus();
+            }
+          });
+        });
+      }
+
+      if (resendBtn) {
+        resendBtn.addEventListener('click', function() {
+          if (!otpState || !otpState.onResend) return;
+          const resendCb = otpState.onResend;
+          closeOtpModal(false);
+          resendCb();
+        });
+      }
+
+      if (closeBtn) closeBtn.addEventListener('click', function() { closeOtpModal(true); });
+      if (modal) {
+        modal.addEventListener('click', function(e) {
+          if (e.target === modal) closeOtpModal(true);
+        });
+      }
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal && !modal.hidden) closeOtpModal(true);
       });
     })();
 
@@ -193,62 +302,85 @@
       ])) return;
       if (wlBot(form)) { msg.style.color = "#90EE90"; msg.textContent = "✓ You're on the early access list!"; return; }
 
-      openHumanCheck(function(token) {
-        btn.textContent = "Securing Spot...";
-        btn.disabled = true;
-        msg.textContent = "";
+      const joinName = un.value;
+      const joinEmail = ue.value;
 
-        const joinName = document.getElementById('u_name').value;
+      function resetBtn() {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
 
-        const fd = new FormData();
-        fd.append("type", "User / Job Seeker");
-        fd.append("name", joinName);
-        fd.append("email", document.getElementById('u_email').value);
-        
-        const intentSelect = document.getElementById('u_intent');
-        fd.append("detail2", intentSelect.value || "");
-        fd.append("detail1", document.getElementById('u_industry').value);
-        fd.append("country", document.getElementById('u_country').value);
-        fd.append("turnstileToken", token);
+      function startUserVerification() {
+        openHumanCheck(function(token) {
+          btn.textContent = "Sending Code...";
+          btn.disabled = true;
+          msg.textContent = "";
 
-        // ✨ NEW: referral game fields (ignored by the sheet until you update the Apps Script)
-        if (window.GenesoraWaitlist) {
-          fd.append("ref", window.GenesoraWaitlist.getRef());
-          fd.append("refCode", window.GenesoraWaitlist.prepareCode(joinName));
-        }
+          sendEmailOtp(joinEmail, joinName, "User / Job Seeker", token)
+            .then(() => {
+              btn.textContent = "Waiting for Verification...";
+              openOtpModal({
+                email: joinEmail,
+                onCancel: resetBtn,
+                onResend: startUserVerification,
+                onVerify: function(otpCode, done) {
+                  btn.textContent = "Securing Spot...";
 
-        fetch(SCRIPT_URL, { 
-          method: 'POST', 
-          body: fd
-        })
-          .then(response => {
-            if (!response.ok) throw new Error('Network error');
-            return response.json();
-          })
-          .then(data => {
-            if (data && data.status === 'success') {
-              msg.style.color = "#90EE90";
-              msg.textContent = "✓ You're on the early access list!";
-              form.reset();
-              btn.textContent = "Joined Successfully";
-              // ✨ NEW: show the referral card
-              if (window.GenesoraWaitlist) window.GenesoraWaitlist.onJoined(data, { name: joinName });
-            } else {
-              throw new Error(data ? data.message : 'Unknown response');
-            }
-          })
-          .catch(error => {
-            console.error('Waitlist Error:', error);
-            msg.style.color = "#ef4444";
-            if (/Human verification/i.test(error.message)) {
-              msg.textContent = error.message;
-            } else {
-              msg.textContent = /^Invalid/.test(error.message) ? "Please check your details and try again." : "Could not save spot. Please check your connection and try again.";
-            }
-            btn.disabled = false;
-            btn.textContent = originalText;
-          });
-      });
+                  const fd = new FormData();
+                  fd.append("type", "User / Job Seeker");
+                  fd.append("name", joinName);
+                  fd.append("email", joinEmail);
+                  
+                  const intentSelect = document.getElementById('u_intent');
+                  fd.append("detail2", intentSelect.value || "");
+                  fd.append("detail1", document.getElementById('u_industry').value);
+                  fd.append("country", uc.value);
+                  fd.append("otp", otpCode);
+
+                  // ✨ NEW: referral game fields (ignored by the sheet until you update the Apps Script)
+                  if (window.GenesoraWaitlist) {
+                    fd.append("ref", window.GenesoraWaitlist.getRef());
+                    fd.append("refCode", window.GenesoraWaitlist.prepareCode(joinName));
+                  }
+
+                  fetch(SCRIPT_URL, { 
+                    method: 'POST', 
+                    body: fd
+                  })
+                    .then(response => {
+                      if (!response.ok) throw new Error('Network error');
+                      return response.json();
+                    })
+                    .then(data => {
+                      if (data && data.status === 'success') {
+                        done(null);
+                        msg.style.color = "#90EE90";
+                        msg.textContent = "✓ You're on the early access list!";
+                        form.reset();
+                        btn.textContent = "Joined Successfully";
+                        // ✨ NEW: show the referral card
+                        if (window.GenesoraWaitlist) window.GenesoraWaitlist.onJoined(data, { name: joinName });
+                      } else {
+                        throw new Error(data ? data.message : 'Unknown response');
+                      }
+                    })
+                    .catch(error => {
+                      console.error('Waitlist Error:', error);
+                      done(error.message || "Could not verify code. Please try again.");
+                    });
+                }
+              });
+            })
+            .catch(error => {
+              console.error('Waitlist OTP Error:', error);
+              msg.style.color = "#ef4444";
+              msg.textContent = error.message || "Could not send verification code. Please try again.";
+              resetBtn();
+            });
+        }, resetBtn);
+      }
+
+      startUserVerification();
     });
 
     // --- ENTERPRISE FORM LOGIC ---
@@ -261,62 +393,85 @@
       const originalText = "Join as an Enterprise — Get Early Access";
 
       const en = document.getElementById('e_name'), ec = document.getElementById('e_company'), ee = document.getElementById('e_email');
-      const ecode = document.getElementById('e_code'), eph = document.getElementById('e_phone'), ect = document.getElementById('e_country');
+      const ect = document.getElementById('e_country');
       en.value = en.value.trim().replace(/\s+/g, ' '); ec.value = ec.value.trim().replace(/\s+/g, ' '); ee.value = ee.value.trim();
       if (!wlCheck(form, msg, [
         [en, wlNameOk(en.value), 'Please enter your real full name.'],
         [ec, wlCompanyOk(ec.value), 'Please enter a valid company name.'],
-        [ect, ect.value !== '', 'Please choose your country.'],
-        [ecode, ecode.value !== '', 'Please choose the country code.'],
-        [eph, /^\d{7,15}$/.test(eph.value) && !/^(\d)\1+$/.test(eph.value), 'Please enter a valid mobile number (digits only, 7–15).'],
-        [ee, wlEmailOk(ee.value), 'Please enter a valid work email address.']
+        [ee, wlEmailOk(ee.value), 'Please enter a valid work email address.'],
+        [ect, ect.value !== '', 'Please choose your country.']
       ])) return;
       if (wlBot(form)) { msg.style.color = "#90EE90"; msg.textContent = "✓ Enterprise request received — we'll be in touch!"; return; }
 
-      openHumanCheck(function(token) {
-        btn.textContent = "Registering...";
-        btn.disabled = true;
-        msg.textContent = "";
+      const entName = en.value;
+      const entEmail = ee.value;
 
-        const fd = new FormData();
-        fd.append("type", "Enterprise");
-        fd.append("name", document.getElementById('e_name').value);
-        fd.append("email", document.getElementById('e_email').value);
-        fd.append("detail1", document.getElementById('e_company').value);
-        fd.append("detail2", ecode.value + " " + eph.value);
-        fd.append("country", document.getElementById('e_country').value);
-        fd.append("turnstileToken", token);
+      function resetBtn() {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
 
-        fetch(SCRIPT_URL, { 
-          method: 'POST', 
-          body: fd
-        })
-          .then(response => {
-            if (!response.ok) throw new Error('Network error');
-            return response.json();
-          })
-          .then(data => {
-            if (data && data.status === 'success') {
-              msg.style.color = "#90EE90";
-              msg.textContent = "✓ Enterprise request received — we'll be in touch!";
-              form.reset();
-              btn.textContent = "Registered Successfully";
-            } else {
-              throw new Error(data ? data.message : 'Unknown response');
-            }
-          })
-          .catch(error => {
-            console.error('Enterprise Error:', error);
-            msg.style.color = "#ef4444";
-            if (/Human verification/i.test(error.message)) {
-              msg.textContent = error.message;
-            } else {
-              msg.textContent = /^Invalid/.test(error.message) ? "Please check your details and try again." : "Could not register. Please try again.";
-            }
-            btn.disabled = false;
-            btn.textContent = originalText;
-          });
-      });
+      function startEntVerification() {
+        openHumanCheck(function(token) {
+          btn.textContent = "Sending Code...";
+          btn.disabled = true;
+          msg.textContent = "";
+
+          sendEmailOtp(entEmail, entName, "Enterprise", token)
+            .then(() => {
+              btn.textContent = "Waiting for Verification...";
+              openOtpModal({
+                email: entEmail,
+                onCancel: resetBtn,
+                onResend: startEntVerification,
+                onVerify: function(otpCode, done) {
+                  btn.textContent = "Registering...";
+
+                  const fd = new FormData();
+                  fd.append("type", "Enterprise");
+                  fd.append("name", entName);
+                  fd.append("email", entEmail);
+                  fd.append("detail1", ec.value);
+                  fd.append("detail2", "");
+                  fd.append("country", ect.value);
+                  fd.append("otp", otpCode);
+
+                  fetch(SCRIPT_URL, { 
+                    method: 'POST', 
+                    body: fd
+                  })
+                    .then(response => {
+                      if (!response.ok) throw new Error('Network error');
+                      return response.json();
+                    })
+                    .then(data => {
+                      if (data && data.status === 'success') {
+                        done(null);
+                        msg.style.color = "#90EE90";
+                        msg.textContent = "✓ Enterprise request received — we'll be in touch!";
+                        form.reset();
+                        btn.textContent = "Registered Successfully";
+                      } else {
+                        throw new Error(data ? data.message : 'Unknown response');
+                      }
+                    })
+                    .catch(error => {
+                      console.error('Enterprise Error:', error);
+                      done(error.message || "Could not verify code. Please try again.");
+                    });
+                }
+              });
+            })
+            .catch(error => {
+              console.error('Enterprise OTP Error:', error);
+              msg.style.color = "#ef4444";
+              msg.textContent = error.message || "Could not send verification code. Please try again.";
+              resetBtn();
+            });
+        }, resetBtn);
+      }
+
+      startEntVerification();
     });
 
 // ── Buttons that used inline onclick= (blocked by the security policy), wired here instead ──
