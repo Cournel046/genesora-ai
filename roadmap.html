@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; manifest-src 'self'; form-action 'none'; base-uri 'self'; object-src 'none'" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <script src="genesora-guard.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Roadmap — Genesora AI</title>
   <meta name="description" content="Follow Genesora AI's journey from concept to launch. See where we are, what we're building, and what's coming next. Launching soon." />
@@ -817,31 +820,7 @@
     </div>
   </footer>
 
-  <script>
-    // Scroll reveal for cards and general elements
-    const revealEls = document.querySelectorAll('.scroll-reveal');
-    const revealObs = new IntersectionObserver((entries) => {
-      entries.forEach((entry, i) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => entry.target.classList.add('visible'), i * 80);
-          revealObs.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
-    revealEls.forEach(el => revealObs.observe(el));
-
-    // Timeline phase cards
-    const phases = document.querySelectorAll('.phase');
-    const phaseObs = new IntersectionObserver((entries) => {
-      entries.forEach((entry, i) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => entry.target.classList.add('visible'), i * 100);
-          phaseObs.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
-    phases.forEach(el => phaseObs.observe(el));
-  </script>
+  <script src="genesora-roadmap.js"></script>
 
 </body>
 </html>

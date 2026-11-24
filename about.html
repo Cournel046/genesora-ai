@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://script.google.com https://script.googleusercontent.com; manifest-src 'self'; form-action 'none'; base-uri 'self'; object-src 'none'" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <script src="genesora-guard.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About — Genesora AI</title>
   <meta name="description" content="Genesora AI is rethinking how humans connect with artificial intelligence — and how companies find the people they need. Learn our mission, story, and vision." />
@@ -532,7 +535,7 @@
 
         <div class="founder-card scroll-reveal">
           <div class="founder-avatar">
-            <img src="kamal-kori.png" alt="Kamal Kori" onerror="this.style.display='none'; this.parentElement.textContent='K';" />
+            <img src="kamal-kori.png" alt="Kamal Kori" data-fallback="K" />
           </div>
           <div>
             <div class="founder-label">Founder & CEO</div>
@@ -558,7 +561,7 @@
 
         <div class="founder-card scroll-reveal fade-in-delay-1">
           <div class="founder-avatar" style="background: linear-gradient(135deg, var(--purple-soft), var(--blue-soft)); color: var(--purple);">
-            <img src="karanvir-ghai.png" alt="Karanvir Ghai" onerror="this.style.display='none'; this.parentElement.textContent='K';" />
+            <img src="karanvir-ghai.png" alt="Karanvir Ghai" data-fallback="K" />
           </div>
           <div>
             <div class="founder-label" style="color: var(--purple);">Co-founder & CTO</div>
@@ -634,18 +637,7 @@
     </div>
   </footer>
 
-  <script>
-    const revealEls = document.querySelectorAll('.scroll-reveal');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry, i) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => { entry.target.classList.add('visible'); }, i * 80);
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-    revealEls.forEach(el => observer.observe(el));
-  </script>
+  <script src="genesora-about.js"></script>
 
 </body>
 </html>

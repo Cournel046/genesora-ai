@@ -325,7 +325,7 @@
             (pos ? '<span class="rf-num" id="rfNum">#' + pos.toLocaleString() + '</span>' + (isDemo ? '<span class="rf-demo">demo data</span>' : '')
                  : '<span class="rf-num small">Spot saved ✓</span>') +
           '</div>' +
-          '<div class="rf-friends"><b id="rfCount">' + (d.referrals || 0) + '</b><span>friends joined</span></div>' +
+          '<div class="rf-friends"><b id="rfCount">' + (Number(d.referrals) || 0) + '</b><span>friends joined</span></div>' +
         '</div>' +
         '<p class="rf-text">Every friend who joins with your link moves you up <b>' + SPOTS + ' spots</b>. Share it anywhere:</p>' +
         '<div class="rf-link"><input type="text" id="rfLink" readonly value="' + esc(link) + '" aria-label="Your referral link" />' +
