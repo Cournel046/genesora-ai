@@ -978,6 +978,114 @@
       var rect = card.getBoundingClientRect();
       if (rect.top < 0) card.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
     }
+    /* Score card: a 1080x1350 picture drawn on a <canvas> in the browser (nothing is uploaded anywhere). */
+    function roundRectPath(ctx, x, y, w, h, rad) {
+      ctx.beginPath();
+      ctx.moveTo(x + rad, y); ctx.lineTo(x + w - rad, y); ctx.arcTo(x + w, y, x + w, y + rad, rad);
+      ctx.lineTo(x + w, y + h - rad); ctx.arcTo(x + w, y + h, x + w - rad, y + h, rad);
+      ctx.lineTo(x + rad, y + h); ctx.arcTo(x, y + h, x, y + h - rad, rad);
+      ctx.lineTo(x, y + rad); ctx.arcTo(x, y, x + rad, y, rad); ctx.closePath();
+    }
+    function drawGena(ctx, cx, cy, R, energy) {
+      var g = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.4, R * 0.1, cx, cy, R);
+      g.addColorStop(0, '#9aa8ff'); g.addColorStop(1, '#5b4bd6');
+      ctx.save();
+      ctx.shadowColor = 'rgba(124,92,255,0.55)'; ctx.shadowBlur = 50;
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+      ctx.lineWidth = 8; ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.stroke();
+      // headset
+      ctx.strokeStyle = '#e8ecff'; ctx.lineWidth = 9; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.arc(cx, cy, R + 6, Math.PI * 1.08, Math.PI * 1.92); ctx.stroke();
+      ctx.fillStyle = '#e8ecff'; roundRectPath(ctx, cx - R - 14, cy - 16, 20, 44, 9); ctx.fill(); roundRectPath(ctx, cx + R - 6, cy - 16, 20, 44, 9); ctx.fill();
+      // eyes
+      [-1, 1].forEach(function (s) {
+        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(cx + s * R * 0.36, cy - R * 0.1, R * 0.17, R * 0.21, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#1a1840'; ctx.beginPath(); ctx.arc(cx + s * R * 0.36, cy - R * 0.07, R * 0.09, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(cx + s * R * 0.36 + R * 0.03, cy - R * 0.11, R * 0.03, 0, Math.PI * 2); ctx.fill();
+      });
+      // cheeks + mouth (mood follows the score)
+      ctx.fillStyle = 'rgba(255,120,170,0.45)';
+      [-1, 1].forEach(function (s) { ctx.beginPath(); ctx.ellipse(cx + s * R * 0.62, cy + R * 0.2, R * 0.12, R * 0.07, 0, 0, Math.PI * 2); ctx.fill(); });
+      ctx.strokeStyle = '#1a1840'; ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.beginPath();
+      if (energy >= 70) ctx.arc(cx, cy + R * 0.18, R * 0.32, Math.PI * 0.12, Math.PI * 0.88);
+      else if (energy >= 45) { ctx.moveTo(cx - R * 0.2, cy + R * 0.42); ctx.lineTo(cx + R * 0.2, cy + R * 0.42); }
+      else ctx.arc(cx, cy + R * 0.55, R * 0.22, Math.PI * 1.15, Math.PI * 1.85);
+      ctx.stroke();
+    }
+    function buildScoreCard(r) {
+      var W = 1080, H = 1350, FONT = 'Sora, "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
+      var fontsReady = (document.fonts && document.fonts.load)
+        ? Promise.race([Promise.all([document.fonts.load('800 80px Sora'), document.fonts.load('500 30px Sora')]), new Promise(function (res) { setTimeout(res, 900); })]).catch(function () {})
+        : Promise.resolve();
+      return fontsReady.then(function () {
+        var cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+        var c = cv.getContext('2d');
+        var bg = c.createLinearGradient(0, 0, W, H);
+        bg.addColorStop(0, '#0a0f24'); bg.addColorStop(0.55, '#171a47'); bg.addColorStop(1, '#0b2a36');
+        c.fillStyle = bg; c.fillRect(0, 0, W, H);
+        var gl = c.createRadialGradient(W * 0.85, H * 0.1, 0, W * 0.85, H * 0.1, 520); gl.addColorStop(0, 'rgba(124,58,237,0.38)'); gl.addColorStop(1, 'rgba(124,58,237,0)');
+        c.fillStyle = gl; c.fillRect(0, 0, W, H);
+        var gl2 = c.createRadialGradient(W * 0.08, H * 0.92, 0, W * 0.08, H * 0.92, 560); gl2.addColorStop(0, 'rgba(16,185,129,0.28)'); gl2.addColorStop(1, 'rgba(16,185,129,0)');
+        c.fillStyle = gl2; c.fillRect(0, 0, W, H);
+
+        c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+        c.fillStyle = '#ffffff'; c.font = '800 46px ' + FONT; c.fillText('Genesora AI', W / 2, 100);
+        c.fillStyle = '#6ee7b7'; c.font = '700 26px ' + FONT; c.fillText('60-SECOND INTERVIEW CHALLENGE', W / 2, 150);
+
+        drawGena(c, W / 2, 330, 105, r.energy);
+
+        // score ring
+        var cx = W / 2, cy = 760, R = 215, a0 = -Math.PI / 2;
+        c.lineWidth = 30; c.lineCap = 'round';
+        c.strokeStyle = 'rgba(255,255,255,0.10)'; c.beginPath(); c.arc(cx, cy, R, 0, Math.PI * 2); c.stroke();
+        var rg = c.createLinearGradient(cx - R, cy - R, cx + R, cy + R); rg.addColorStop(0, '#2563eb'); rg.addColorStop(1, '#10b981');
+        c.strokeStyle = rg; c.beginPath(); c.arc(cx, cy, R, a0, a0 + Math.PI * 2 * (r.energy / 100)); c.stroke();
+        c.fillStyle = '#ffffff'; c.font = '800 200px ' + FONT; c.fillText(String(r.energy), cx, cy + 62);
+        c.fillStyle = 'rgba(255,255,255,0.6)'; c.font = '600 44px ' + FONT; c.fillText('/ 100', cx, cy + 128);
+
+        var title = String(r.title).replace(/\s*[^\w\s]+$/, '');
+        c.fillStyle = '#ffffff'; c.font = '800 70px ' + FONT; c.fillText(title, W / 2, 1100);
+
+        // three stat chips
+        var chips = [['Confidence', r.confidence], ['Buzzwords', String(r.buzz)], ['Structure', r.star + '/4']];
+        var cw = 300, gap = 30, x0 = (W - (cw * 3 + gap * 2)) / 2;
+        chips.forEach(function (ch, i) {
+          var x = x0 + i * (cw + gap);
+          c.fillStyle = 'rgba(255,255,255,0.08)'; roundRectPath(c, x, 1140, cw, 96, 24); c.fill();
+          c.strokeStyle = 'rgba(255,255,255,0.16)'; c.lineWidth = 2; roundRectPath(c, x, 1140, cw, 96, 24); c.stroke();
+          c.fillStyle = 'rgba(255,255,255,0.62)'; c.font = '600 22px ' + FONT; c.fillText(ch[0].toUpperCase(), x + cw / 2, 1176);
+          c.fillStyle = '#ffffff'; c.font = '800 34px ' + FONT; c.fillText(ch[1], x + cw / 2, 1216);
+        });
+
+        c.fillStyle = 'rgba(255,255,255,0.75)'; c.font = '600 30px ' + FONT; c.fillText('Think you can beat me?', W / 2, 1290);
+        c.fillStyle = '#6ee7b7'; c.font = '800 30px ' + FONT; c.fillText('genesoraai.com', W / 2, 1330);
+
+        return new Promise(function (resolve, reject) {
+          if (cv.toBlob) cv.toBlob(function (b) { b ? resolve(b) : reject(new Error('card')); }, 'image/png');
+          else reject(new Error('card'));
+        });
+      });
+    }
+    $('#chImg').addEventListener('click', function () {
+      if (!lastResult) return;
+      var b = this, label = b.textContent, r = lastResult, s = shareText(r);
+      b.disabled = true; b.textContent = 'Making card…';
+      buildScoreCard(r).then(function (blob) {
+        var file = null;
+        try { file = new File([blob], 'genesora-score-' + r.energy + '.png', { type: 'image/png' }); } catch (e) { /* old browser */ }
+        if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+          return navigator.share({ files: [file], title: 'My Genesora AI interview score', text: s.text }).catch(function () {});
+        }
+        var url = URL.createObjectURL(blob), a = document.createElement('a');
+        a.href = url; a.download = 'genesora-score-' + r.energy + '.png';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+        toast('Score card saved 📸', 'Share the picture anywhere, and tell your friends to beat it!');
+      }).catch(function () {
+        toast("Couldn't make the card", 'Try "Copy brag text" instead.');
+      }).then(function () { b.disabled = false; b.textContent = label; });
+    });
     $('#chShareNative').addEventListener('click', function () {
       if (!lastResult) return;
       var s = shareText(lastResult);
